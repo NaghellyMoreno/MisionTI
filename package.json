@@ -1,0 +1,30 @@
+{
+  "name": "mision-ti",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Misión TI: Rescate Empresarial — tablero en vivo del juego de la clase de Gestión de Recursos Tecnológicos",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fontsource-variable/instrument-sans": "5.3.0",
+    "@fontsource/chakra-petch": "5.3.0",
+    "@fontsource/ibm-plex-mono": "5.3.0",
+    "@supabase/supabase-js": "2.58.0",
+    "next": "15.5.28",
+    "react": "19.2.9",
+    "react-dom": "19.2.9",
+    "server-only": "^0.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.2",
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2",
+    "typescript": "5.7.2",
+    "vitest": "3.2.7"
+  }
+}
