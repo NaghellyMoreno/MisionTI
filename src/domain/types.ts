@@ -26,6 +26,8 @@ export interface CompanyCase {
   situation: string;
   /** Las entidades públicas deben seguir la contratación estatal. */
   isPublic: boolean;
+  /** Modo exprés para quien juega sola: menos carga, mismas reglas y mismo presupuesto. */
+  express?: { note: string; questions: string[] };
 }
 
 export type ItemTag = "tangible" | "intangible" | "respaldo" | "soporte" | "capacitacion";

@@ -82,6 +82,7 @@ function Request({ purchase, snapshot, action }: { purchase: Purchase; snapshot:
           <strong style={{ fontSize: 17 }}>{item.name}</strong>
           <span className="chip">{item.method}</span>
           <span className={`chip ${routeWarning ? "coral" : ""}`}>{route.name}</span>
+          {company.express && <span className="chip mint">Caso exprés · juega sola</span>}
         </div>
         <span className="muted" style={{ fontSize: 13 }}>
           {company.name} · saldo <span className="mono">{balance}</span> → <span className={`mono ${after < 0 ? "coral" : ""}`}>{after}</span> TC

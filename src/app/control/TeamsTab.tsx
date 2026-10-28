@@ -26,7 +26,10 @@ export function TeamsTab({ snapshot }: { snapshot: Snapshot }) {
                 <tr key={r.teamId}>
                   <td className="mono dim">{r.position}</td>
                   <td className="mono" style={{ fontSize: 18 }}>{r.label}</td>
-                  <td>{CASES.find((c) => c.id === r.caseId)?.name}</td>
+                  <td>
+                    {CASES.find((c) => c.id === r.caseId)?.name}
+                    {CASES.find((c) => c.id === r.caseId)?.express && <span className="chip mint" style={{ marginLeft: 6 }}>Exprés</span>}
+                  </td>
                   <td className="muted" style={{ fontSize: 13 }}>{team.members.join(", ")}</td>
                   <td>
                     <div className="row wrap" style={{ gap: 4 }}>

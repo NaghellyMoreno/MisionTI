@@ -3,7 +3,7 @@ import type { Team } from "../types";
 /**
  * Grupos de juego a partir de la lista oficial del curso.
  * Lista actualizada: el equipo 13 desapareció (Andrés Felipe Ríos pasó al 12)
- * y el equipo 14 queda con una sola integrante.
+ * y el equipo 14 queda con una sola integrante, que juega el caso exprés.
  * El equipo 3 dirige la clase y no participa como grupo.
  */
 export const TEAMS: Team[] = [
@@ -17,7 +17,7 @@ export const TEAMS: Team[] = [
   { id: "EQ10", label: "10", caseId: "cafe", members: ["Jhony Alejandro Pérez", "Juan Pablo Pulgarín"] },
   { id: "EQ11", label: "11", caseId: "tiendaya", members: ["Felipe Gaviria", "Juan Fernando García", "Juan José Serna"] },
   { id: "EQ12", label: "12", caseId: "alcaldia", members: ["David Estiven Cuartas", "David Ramírez", "Andrés Felipe Ríos"] },
-  { id: "EQ14", label: "14", caseId: "clinica", members: ["Juliana del Pilar Moreno"] },
+  { id: "EQ14", label: "14", caseId: "rincon", members: ["Juliana del Pilar Moreno"] },
 ];
 
 export const STAFF = [

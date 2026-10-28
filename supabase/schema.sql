@@ -81,7 +81,7 @@ insert into public.teams (id, label, case_id, members, sort) values
   ('EQ10', '10',    'cafe',     '["Jhony Alejandro Pérez","Juan Pablo Pulgarín"]', 10),
   ('EQ11', '11',    'tiendaya', '["Felipe Gaviria","Juan Fernando García","Juan José Serna"]', 11),
   ('EQ12', '12',    'alcaldia', '["David Estiven Cuartas","David Ramírez","Andrés Felipe Ríos"]', 12),
-  ('EQ14', '14',    'clinica',  '["Juliana del Pilar Moreno"]', 14)
+  ('EQ14', '14',    'rincon',   '["Juliana del Pilar Moreno"]', 14)
 on conflict (id) do nothing;
 
 -- Códigos aleatorios de 4 dígitos (se ven en la app: Control → Ajustes)

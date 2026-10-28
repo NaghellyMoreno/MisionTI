@@ -598,3 +598,10 @@ a { color: var(--mint); }
 .phase-Pausa { --phase: var(--dim); }
 .phase-Fuente .phase-chip, .phase-chip.phase-Fuente { color: var(--mint); }
 .board .phase-chip { color: var(--board-go) !important; border-color: rgba(200, 223, 219, 0.35) !important; }
+
+/* ---------- Caso exprés ---------- */
+.express summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.express summary::-webkit-details-marker { display: none; }
+.express[open] .hint { display: none; }
+.express-list { margin: 0; padding-left: 20px; display: grid; gap: 8px; font-size: 14px; }
+.express-list li::marker { font-family: var(--mono); color: var(--accent); }

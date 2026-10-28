@@ -83,6 +83,21 @@ export function TeamApp({ initial }: { initial: Snapshot }) {
           <Clock left={countdown.left} status={countdown.status} />
         </section>
 
+        {company.express && (
+          <details className="panel tick express">
+            <summary>
+              <span className="label">Su lienzo exprés</span>
+              <span className="hint">Ver las 6 preguntas</span>
+            </summary>
+            <p className="muted" style={{ margin: "10px 0 8px" }}>{company.express.note}</p>
+            <ol className="express-list">
+              {company.express.questions.map((q) => (
+                <li key={q}>{q}</li>
+              ))}
+            </ol>
+          </details>
+        )}
+
         {crisis && (
           <section className="panel alert tick stack-sm" role="alert">
             <span className="label coral">Crisis activa</span>

@@ -52,6 +52,25 @@ export const CASES: CompanyCase[] = [
     situation: "Trámites presenciales y servidores sobrecalentados. Toda compra sigue la contratación pública.",
     isPublic: true,
   },
+  {
+    id: "rincon",
+    name: "Papelería El Rincón Digital",
+    sector: "Emprendimiento unipersonal",
+    situation:
+      "La dueña atiende sola la papelería y café internet del pueblo: dos computadores viejos, una impresora que falla, ventas anotadas en un cuaderno y ningún respaldo.",
+    isPublic: false,
+    express: {
+      note: "Caso exprés: es una empresa de una sola persona. Con 2 o 3 compras bien justificadas es suficiente, y el lienzo se responde con una frase por nivel.",
+      questions: [
+        "Diagnóstico · ¿Cuál es el problema que más le cuesta dinero al negocio?",
+        "Adquisición · ¿Qué 2 o 3 recursos compra y por qué esos?",
+        "Implementación · ¿Dónde quedan instalados dentro del local?",
+        "Capacitación · ¿Qué necesita aprender la dueña para aprovecharlos?",
+        "Operación · ¿Quién le da soporte si algo falla un sábado?",
+        "Fin de ciclo · ¿Cuándo daría de baja los computadores viejos: por daño o por obsolescencia?",
+      ],
+    },
+  },
 ];
 
 export const LEGAL_ROUTES: LegalRoute[] = [

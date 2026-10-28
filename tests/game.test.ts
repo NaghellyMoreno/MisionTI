@@ -129,3 +129,16 @@ describe("Administración", () => {
     expect((await game.state.get()).marketOpen).toBe(false);
   });
 });
+
+describe("Caso exprés", () => {
+  it("el equipo 14 juega la papelería con las mismas reglas y presupuesto", async () => {
+    const { TEAMS } = await import("@/domain/data/teams");
+    const { CASES } = await import("@/domain/data/catalog");
+    const team = TEAMS.find((t) => t.id === "EQ14")!;
+    const company = CASES.find((c) => c.id === team.caseId)!;
+    expect(company.express?.questions).toHaveLength(6);
+    expect(await bal("EQ14")).toBe(100);
+    await buy("EQ14", "respaldo");
+    expect(await bal("EQ14")).toBe(90);
+  });
+});
