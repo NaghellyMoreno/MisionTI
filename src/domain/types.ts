@@ -13,7 +13,7 @@ export type StaffName = "José" | "Karen" | "Dylber" | "Camila";
 
 export interface Team {
   id: TeamId;
-  /** Etiqueta visible: "07", "13·14" */
+  /** Etiqueta visible: "07", "14" */
   label: string;
   caseId: CaseId;
   members: string[];
