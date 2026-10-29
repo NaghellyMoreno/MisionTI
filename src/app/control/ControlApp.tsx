@@ -3,7 +3,8 @@
 import { useState } from "react";
 import type { Snapshot } from "@/application/snapshot";
 import { currentAgenda } from "@/application/snapshot";
-import { AGENDA } from "@/domain/data/agenda";
+import { AGENDA, agendaClock } from "@/domain/data/agenda";
+import { POP_SECTIONS } from "@/domain/data/questions";
 import type { ProjectorScreen } from "@/domain/types";
 import { Brand, Clock, Signal, useAction, useCountdown, useToasts } from "@/ui/parts";
 import { useLive } from "@/ui/useLive";
@@ -14,12 +15,33 @@ import { CrisisTab } from "./CrisisTab";
 import { SemaforoAdmin } from "./SemaforoAdmin";
 import { GalleryAdmin } from "./GalleryAdmin";
 import { SettingsTab } from "./SettingsTab";
+import { AttendanceTab } from "./AttendanceTab";
+import { ClassAdmin } from "./ClassAdmin";
+import { GuestAdmin } from "./GuestAdmin";
+import { QuizAdmin } from "./QuizAdmin";
+import { GradesTab } from "./GradesTab";
 
-type Tab = "solicitudes" | "grupos" | "crisis" | "semaforo" | "galeria" | "ajustes";
+type Tab =
+  | "asistencia"
+  | "clase"
+  | "solicitudes"
+  | "crisis"
+  | "semaforo"
+  | "galeria"
+  | "invitado"
+  | "quiz"
+  | "notas"
+  | "grupos"
+  | "ajustes";
 export type ActionApi = ReturnType<typeof useAction>;
 
 const SCREENS: { id: ProjectorScreen; label: string }[] = [
+  { id: "sala", label: "Sala" },
+  { id: "teoria", label: "Teoría" },
   { id: "ranking", label: "Ranking" },
+  { id: "sorpresa", label: "Sorpresa" },
+  { id: "invitado", label: "Invitado" },
+  { id: "quiz", label: "Quiz" },
   { id: "crisis", label: "Crisis" },
   { id: "semaforo", label: "Semáforo" },
   { id: "galeria", label: "Galería" },
@@ -31,7 +53,7 @@ export function ControlApp({ initial, liveDatabase }: { initial: Snapshot; liveD
   const { snapshot } = live;
   const toasts = useToasts();
   const action = useAction(toasts.push, live.refresh);
-  const [tab, setTab] = useState<Tab>("solicitudes");
+  const [tab, setTab] = useState<Tab>("asistencia");
   const staff = snapshot.staff!;
   const me = snapshot.viewer.role === "staff" ? snapshot.viewer.name : "";
 
@@ -40,12 +62,18 @@ export function ControlApp({ initial, liveDatabase }: { initial: Snapshot; liveD
   const countdown = useCountdown(snapshot.state, live.serverNow);
   const running = snapshot.state.timer.status === "running";
 
-  const tabs: { id: Tab; label: string; count?: number }[] = [
+  const online = snapshot.roster.filter((r) => r.online).length;
+  const tabs: { id: Tab; label: string; count?: number; info?: string }[] = [
+    { id: "asistencia", label: "Asistencia", info: `${online}/${snapshot.roster.length}` },
+    { id: "clase", label: "Clase" },
     { id: "solicitudes", label: "Solicitudes", count: pending },
-    { id: "grupos", label: "Grupos" },
     { id: "crisis", label: "Crisis" },
+    { id: "invitado", label: "Invitado" },
     { id: "semaforo", label: "Semáforo" },
     { id: "galeria", label: "Galería" },
+    { id: "quiz", label: "Quiz" },
+    { id: "notas", label: "Notas" },
+    { id: "grupos", label: "Grupos" },
     { id: "ajustes", label: "Ajustes" },
   ];
 
@@ -72,7 +100,7 @@ export function ControlApp({ initial, liveDatabase }: { initial: Snapshot; liveD
               <span className="chip phase-chip"><span className="dot" />{agenda.current.phase}</span>
             </div>
             <strong style={{ fontFamily: "var(--display)", fontSize: 18, fontWeight: 600, lineHeight: 1.25 }}>{agenda.current.title}</strong>
-            <span className="muted" style={{ fontSize: 13 }}>A cargo: {agenda.current.lead}</span>
+            <span className="muted" style={{ fontSize: 13 }}>{agendaClock(agenda.index)} · A cargo: {agenda.current.lead}</span>
             <Clock left={countdown.left} status={countdown.status} className="big-timer" />
             <div className="progress"><i style={{ width: `${countdown.ratio * 100}%` }} /></div>
             <div className="timer-controls">
@@ -87,6 +115,8 @@ export function ControlApp({ initial, liveDatabase }: { initial: Snapshot; liveD
               <button className="btn sm" onClick={() => action.run(() => controlAgenda("plus1"))}>+1 min</button>
               <button className="btn sm" onClick={() => action.run(() => controlAgenda("reset"))}>Reiniciar</button>
             </div>
+            {agenda.current.energy && <span className="board-note">⚡ {agenda.current.energy}</span>}
+            {agenda.current.pop && <span className="board-note">🎯 Al cerrar: pregunta sorpresa de {POP_SECTIONS[agenda.current.pop]}</span>}
           </section>
 
           <section className="panel stack-sm">
@@ -95,7 +125,7 @@ export function ControlApp({ initial, liveDatabase }: { initial: Snapshot; liveD
               {AGENDA.map((a, i) => (
                 <li key={i} className={`phase-${a.phase}`}>
                   <button aria-current={i === agenda.index ? "step" : undefined} onClick={() => action.run(() => controlAgenda({ goto: i }))}>
-                    <span className="n">{String(i + 1).padStart(2, "0")}</span>
+                    <span className="n">{agendaClock(i).replace(" p. m.", "")}</span>
                     <span className={i < agenda.index ? "done" : ""}>{a.title}</span>
                     <span className="m">{a.minutes}′</span>
                   </button>
@@ -131,9 +161,15 @@ export function ControlApp({ initial, liveDatabase }: { initial: Snapshot; liveD
               <button key={t.id} role="tab" aria-selected={tab === t.id} onClick={() => setTab(t.id)}>
                 {t.label}
                 {!!t.count && <span className="count">{t.count}</span>}
+                {t.info && <span className="mono dim" style={{ fontSize: 11, letterSpacing: 0 }}>{t.info}</span>}
               </button>
             ))}
           </nav>
+          {tab === "asistencia" && <AttendanceTab snapshot={snapshot} />}
+          {tab === "clase" && <ClassAdmin snapshot={snapshot} action={action} />}
+          {tab === "invitado" && <GuestAdmin snapshot={snapshot} action={action} />}
+          {tab === "quiz" && <QuizAdmin snapshot={snapshot} action={action} serverNow={live.serverNow} />}
+          {tab === "notas" && <GradesTab snapshot={snapshot} action={action} />}
           {tab === "solicitudes" && <RequestsTab snapshot={snapshot} action={action} />}
           {tab === "grupos" && <TeamsTab snapshot={snapshot} />}
           {tab === "crisis" && <CrisisTab snapshot={snapshot} action={action} />}

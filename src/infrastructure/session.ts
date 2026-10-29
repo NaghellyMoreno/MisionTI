@@ -32,7 +32,7 @@ export function decodeSession(token: string | undefined): Viewer {
     const data = JSON.parse(Buffer.from(body, "base64url").toString());
     if (typeof data.exp !== "number" || data.exp < Date.now()) return { role: "public" };
     if (data.role === "staff") return { role: "staff", name: data.name };
-    if (data.role === "team") return { role: "team", teamId: data.teamId };
+    if (data.role === "team" && data.studentId) return { role: "team", teamId: data.teamId, studentId: data.studentId };
   } catch {}
   return { role: "public" };
 }

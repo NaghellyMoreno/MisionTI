@@ -12,6 +12,20 @@ import { DismissCrisis, TriggerCrisis } from "@/application/usecases/crisis";
 import { ControlAgenda, type TimerCommand } from "@/application/usecases/agenda";
 import { CastGalleryVote, CastLight, CloseScenario, OpenScenario, RevealScenario, SetGallery } from "@/application/usecases/voting";
 import { AdjustBalance, ResetGame, SetMarket, SetScreen } from "@/application/usecases/admin";
+import {
+  AnswerPop,
+  AnswerQuiz,
+  ControlQuiz,
+  ControlSlides,
+  LaunchPop,
+  SaveGuestQuestion,
+  SetCanvasScore,
+  SetGuestQuestionStatus,
+  SetWeights,
+} from "@/application/usecases/classroom";
+import { findStudent } from "@/domain/students";
+import type { PopSection } from "@/domain/data/agenda";
+import type { GuestQuestionStatus } from "@/domain/types";
 
 /*
  * Capa de entrada: valida quién llama y delega en un caso de uso.
@@ -47,10 +61,12 @@ const samePin = (a: string, b: string) => a.length === b.length && timingSafeEqu
 
 /* ---------- Acceso ---------- */
 
-export async function loginTeam(teamId: string, pin: string): Promise<ActionResult> {
+export async function loginTeam(teamId: string, studentId: string, pin: string): Promise<ActionResult> {
   const result = await run(async () => {
     if (!(await getGame().access.verify(teamId, pin.trim()))) throw new GameRuleError("Código incorrecto para este grupo.");
-    await writeSession({ role: "team", teamId });
+    const student = findStudent(await getGame().teams.list(), studentId);
+    if (!student || student.teamId !== teamId) throw new GameRuleError("Elijan su nombre.");
+    await writeSession({ role: "team", teamId, studentId });
   });
   if (result.ok) redirect("/equipo");
   return result;
@@ -97,7 +113,80 @@ export async function castGalleryVote(picks: string[]) {
   });
 }
 
+/* ---------- Estudiantes ---------- */
+
+export async function answerPop(answerId: string, choice: number) {
+  try {
+    const { studentId } = await requireTeam();
+    const result = await new AnswerPop(getGame()).execute({ studentId, answerId, choice });
+    return { ok: true as const, ...result };
+  } catch (error) {
+    if (error instanceof GameRuleError) return { ok: false as const, error: error.message };
+    console.error(error);
+    return { ok: false as const, error: "No se pudo enviar. Lo intentaremos de nuevo." };
+  }
+}
+
+export async function answerQuiz(choice: number) {
+  return run(async () => {
+    const { studentId, teamId } = await requireTeam();
+    await new AnswerQuiz(getGame()).execute({ studentId, teamId, choice });
+  });
+}
+
+export async function saveGuestQuestion(text: string) {
+  return run(async () => {
+    const { teamId, studentId } = await requireTeam();
+    await new SaveGuestQuestion(getGame()).execute({ teamId, studentId, text });
+    return "Pregunta guardada para la entrevista.";
+  });
+}
+
 /* ---------- Equipo docente ---------- */
+
+export async function controlSlides(command: "next" | "prev" | { goto: number }) {
+  return run(async () => {
+    await requireStaff();
+    await new ControlSlides(getGame()).execute(command);
+  });
+}
+
+export async function launchPop(section: PopSection, count: number, questionId?: string) {
+  return run(async () => {
+    await requireStaff();
+    const n = await new LaunchPop(getGame()).execute({ section, count, questionId });
+    return `Pregunta sorpresa enviada a ${n} estudiante(s).`;
+  });
+}
+
+export async function controlQuiz(command: "start" | "reveal" | "next" | "finish" | "reset") {
+  return run(async () => {
+    await requireStaff();
+    await new ControlQuiz(getGame()).execute(command);
+  });
+}
+
+export async function setGuestQuestionStatus(id: string, status: GuestQuestionStatus) {
+  return run(async () => {
+    await requireStaff();
+    await new SetGuestQuestionStatus(getGame()).execute(id, status);
+  });
+}
+
+export async function setCanvasScore(teamId: string, score: number | null) {
+  return run(async () => {
+    await requireStaff();
+    await new SetCanvasScore(getGame()).execute(teamId, score);
+  });
+}
+
+export async function setWeights(weights: { sorpresa: number; quiz: number; lienzo: number; juego: number }) {
+  return run(async () => {
+    await requireStaff();
+    await new SetWeights(getGame()).execute(weights);
+    return "Pesos actualizados.";
+  });
+}
 
 export async function resolvePurchase(purchaseId: string, approve: boolean, note?: string) {
   return run(async () => {

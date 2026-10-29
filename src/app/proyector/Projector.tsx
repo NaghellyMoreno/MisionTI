@@ -5,6 +5,8 @@ import { activeCrisis, currentAgenda } from "@/application/snapshot";
 import { CASES } from "@/domain/data/catalog";
 import { Brand, Clock, Coins, useCountdown } from "@/ui/parts";
 import { useLive } from "@/ui/useLive";
+import { GuestScreen, LobbyScreen, PopScreen, QuizScreen, TheoryScreen } from "./ClassScreens";
+import { useSoundCues } from "./useSoundCues";
 
 const caseName = (id: string) => CASES.find((c) => c.id === id)?.name ?? "";
 
@@ -13,6 +15,7 @@ export function Projector({ initial }: { initial: Snapshot }) {
   const { snapshot } = live;
   const agenda = currentAgenda(snapshot.state);
   const countdown = useCountdown(snapshot.state, live.serverNow);
+  const sound = useSoundCues(snapshot);
 
   return (
     <div className="projector">
@@ -32,15 +35,28 @@ export function Projector({ initial }: { initial: Snapshot }) {
         </div>
       </header>
       <main className="proj-body">
-        <Screen snapshot={snapshot} />
+        <Screen snapshot={snapshot} serverNow={live.serverNow} />
       </main>
+      <button className="sound-toggle" onClick={sound.enabled ? sound.disable : sound.enable} title="Sonidos del proyector">
+        {sound.enabled ? "🔊" : "🔇 Activar sonido"}
+      </button>
     </div>
   );
 }
 
-function Screen({ snapshot }: { snapshot: Snapshot }) {
+function Screen({ snapshot, serverNow }: { snapshot: Snapshot; serverNow: () => number }) {
   const crisis = activeCrisis(snapshot.state);
   switch (snapshot.state.screen) {
+    case "sala":
+      return <LobbyScreen snapshot={snapshot} />;
+    case "teoria":
+      return <TheoryScreen snapshot={snapshot} />;
+    case "sorpresa":
+      return snapshot.pop ? <PopScreen snapshot={snapshot} serverNow={serverNow} /> : <TheoryScreen snapshot={snapshot} />;
+    case "invitado":
+      return <GuestScreen snapshot={snapshot} />;
+    case "quiz":
+      return <QuizScreen snapshot={snapshot} serverNow={serverNow} />;
     case "crisis":
       return crisis ? <CrisisScreen card={crisis} /> : <Ranking snapshot={snapshot} />;
     case "semaforo":

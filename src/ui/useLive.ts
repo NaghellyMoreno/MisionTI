@@ -13,7 +13,9 @@ const POLL_WITHOUT_REALTIME = 3_000;
  * Mantiene la pantalla sincronizada: escucha los avisos de Supabase Realtime
  * y, como respaldo, consulta el estado periódicamente.
  */
-export function useLive(initial: Snapshot) {
+const HEARTBEAT_MS = 15_000;
+
+export function useLive(initial: Snapshot, options: { heartbeat?: boolean } = {}) {
   const [snapshot, setSnapshot] = useState(initial);
   const [online, setOnline] = useState(true);
   const [realtime, setRealtime] = useState(false);
@@ -64,6 +66,29 @@ export function useLive(initial: Snapshot) {
       document.removeEventListener("visibilitychange", onFocus);
     };
   }, [realtime, refresh]);
+
+  // Señal de vida para la lista de asistencia (solo celulares de estudiantes).
+  useEffect(() => {
+    if (!options.heartbeat) return;
+    const beat = () => {
+      void fetch("/api/presence", { method: "POST", cache: "no-store" })
+        .then((r) => setOnline(r.ok))
+        .catch(() => setOnline(false));
+    };
+    beat();
+    const id = setInterval(beat, HEARTBEAT_MS);
+    const onBack = () => {
+      beat();
+      void refresh();
+    };
+    window.addEventListener("online", onBack);
+    document.addEventListener("visibilitychange", onBack);
+    return () => {
+      clearInterval(id);
+      window.removeEventListener("online", onBack);
+      document.removeEventListener("visibilitychange", onBack);
+    };
+  }, [options.heartbeat, refresh]);
 
   const serverNow = useCallback(() => Date.now() + offset.current, []);
   return { snapshot, refresh, online, realtime, serverNow };

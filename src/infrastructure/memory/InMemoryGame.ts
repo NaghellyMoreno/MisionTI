@@ -1,10 +1,14 @@
 import { INITIAL_BALANCE } from "@/domain/data/catalog";
 import { TEAMS } from "@/domain/data/teams";
 import { initialGameState } from "@/domain/rules";
-import type { GameState, LedgerEntry, Purchase, Team, Vote } from "@/domain/types";
+import type { Answer, GameState, GuestQuestion, GuestQuestionStatus, LedgerEntry, Presence, Purchase, Team, Vote } from "@/domain/types";
 import type {
   AccessCodes,
+  AnswerRepository,
   ChangeNotifier,
+  GuestQuestionRepository,
+  NewAnswer,
+  PresenceRepository,
   GameDependencies,
   GameStateRepository,
   LedgerRepository,
@@ -76,6 +80,43 @@ class MemoryVotes implements VoteRepository, Resettable {
   async clear() { this.rows = []; }
 }
 
+class MemoryPresence implements PresenceRepository, Resettable {
+  private rows = new Map<string, Presence>();
+  async touch(p: Presence) { this.rows.set(p.studentId, { ...p }); }
+  async list() { return [...this.rows.values()]; }
+  async clear() { this.rows.clear(); }
+}
+
+class MemoryAnswers implements AnswerRepository, Resettable {
+  private rows: Answer[] = [];
+  async list() { return this.rows.map((r) => ({ ...r })); }
+  async createMany(rows: NewAnswer[]) {
+    for (const r of rows) this.rows.push({ ...r, id: id() });
+  }
+  async respond(answerId: string, patch: Pick<Answer, "choice" | "correct" | "points" | "answeredAt">) {
+    const row = this.rows.find((r) => r.id === answerId && r.choice === null);
+    if (!row) return false;
+    Object.assign(row, patch);
+    return true;
+  }
+  async clear() { this.rows = []; }
+}
+
+class MemoryGuestQuestions implements GuestQuestionRepository, Resettable {
+  private rows: GuestQuestion[] = [];
+  async list() { return this.rows.map((r) => ({ ...r })); }
+  async save(input: { teamId: string; studentId: string; text: string }) {
+    const row = this.rows.find((r) => r.teamId === input.teamId);
+    if (row) Object.assign(row, { text: input.text, studentId: input.studentId, updatedAt: stamp() });
+    else this.rows.push({ id: id(), ...input, status: "lista", updatedAt: stamp() });
+  }
+  async setStatus(questionId: string, status: GuestQuestionStatus) {
+    const row = this.rows.find((r) => r.id === questionId);
+    if (row) Object.assign(row, { status, updatedAt: stamp() });
+  }
+  async clear() { this.rows = []; }
+}
+
 class MemoryState implements GameStateRepository {
   private state: GameState = initialGameState();
   async get() { return structuredClone(this.state); }
@@ -101,6 +142,9 @@ export function createInMemoryGame(teams: Team[] = TEAMS, pins: Record<string, s
     ledger,
     purchases: new MemoryPurchases(),
     votes: new MemoryVotes(),
+    presence: new MemoryPresence(),
+    answers: new MemoryAnswers(),
+    guestQuestions: new MemoryGuestQuestions(),
     state: new MemoryState(),
     notifier: new SilentNotifier(),
   };

@@ -1,4 +1,4 @@
-import type { GameState, LedgerEntry, Purchase, Team, TeamId, Vote } from "@/domain/types";
+import type { Answer, GameState, GuestQuestion, GuestQuestionStatus, LedgerEntry, Presence, Purchase, StudentId, Team, TeamId, Vote } from "@/domain/types";
 
 /*
  * Puertos de la aplicación (Dependency Inversion + Interface Segregation).
@@ -37,6 +37,29 @@ export interface VoteRepository {
   upsert(vote: Omit<Vote, "createdAt">): Promise<void>;
 }
 
+/** Señal de vida de cada estudiante conectado (lista de asistencia). */
+export interface PresenceRepository {
+  touch(presence: Presence): Promise<void>;
+  list(): Promise<Presence[]>;
+}
+
+export type NewAnswer = Omit<Answer, "id">;
+
+/** Respuestas individuales: preguntas sorpresa y quiz final. */
+export interface AnswerRepository {
+  list(): Promise<Answer[]>;
+  createMany(rows: NewAnswer[]): Promise<void>;
+  /** Registra la respuesta solo si aún no había respondido. Devuelve false si ya respondió. */
+  respond(id: string, patch: Pick<Answer, "choice" | "correct" | "points" | "answeredAt">): Promise<boolean>;
+}
+
+/** Preguntas que cada grupo le hará al invitado. */
+export interface GuestQuestionRepository {
+  list(): Promise<GuestQuestion[]>;
+  save(input: { teamId: TeamId; studentId: StudentId; text: string }): Promise<void>;
+  setStatus(id: string, status: GuestQuestionStatus): Promise<void>;
+}
+
 export interface GameStateRepository {
   get(): Promise<GameState>;
   update(mutate: (state: GameState) => GameState): Promise<GameState>;
@@ -58,6 +81,9 @@ export interface GameDependencies {
   ledger: LedgerRepository & Resettable;
   purchases: PurchaseRepository & Resettable;
   votes: VoteRepository & Resettable;
+  presence: PresenceRepository & Resettable;
+  answers: AnswerRepository & Resettable;
+  guestQuestions: GuestQuestionRepository & Resettable;
   state: GameStateRepository;
   notifier: ChangeNotifier;
 }

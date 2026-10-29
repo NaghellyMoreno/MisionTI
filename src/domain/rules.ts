@@ -2,6 +2,7 @@ import { CASES, CATALOG } from "./data/catalog";
 import type { TeamContext } from "./crisis/CrisisEffect";
 import type { CatalogItem, GameState, LedgerEntry, Purchase, Team, TeamId, TimerState } from "./types";
 import { AGENDA } from "./data/agenda";
+import { DEFAULT_WEIGHTS } from "./grading";
 
 /** Error de negocio: su mensaje se muestra tal cual al usuario. */
 export class GameRuleError extends Error {}
@@ -115,7 +116,13 @@ export function initialGameState(): GameState {
     semaforo: { scenarioId: null, status: "cerrado" },
     awardedScenarios: [],
     gallery: { status: "cerrada" },
-    screen: "ranking",
+    screen: "sala",
+    slideIndex: 0,
+    pop: null,
+    quiz: { index: -1, status: "cerrado", openedAt: null },
+    guestCurrent: null,
+    canvasScores: {},
+    weights: { ...DEFAULT_WEIGHTS },
     version: 1,
   };
 }

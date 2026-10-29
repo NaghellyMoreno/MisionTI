@@ -1,4 +1,5 @@
 import { AGENDA } from "@/domain/data/agenda";
+import { firstSlideOf } from "@/domain/data/lessons";
 import { freshTimer, minutesToMs, remainingMs } from "@/domain/rules";
 import type { GameState } from "@/domain/types";
 import type { GameDependencies } from "../ports";
@@ -23,7 +24,9 @@ function apply(s: GameState, command: TimerCommand, now: number): GameState {
   const t = s.timer;
   const goto = (index: number): GameState => {
     const i = Math.min(Math.max(index, 0), AGENDA.length - 1);
-    return { ...s, agendaIndex: i, timer: freshTimer(i) };
+    // Al cambiar de actividad, la teoría salta a su primera diapositiva.
+    const slide = firstSlideOf(i);
+    return { ...s, agendaIndex: i, timer: freshTimer(i), slideIndex: slide ?? s.slideIndex };
   };
 
   if (typeof command === "object") return goto(command.goto);

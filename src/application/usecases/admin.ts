@@ -47,17 +47,27 @@ export class AdjustBalance {
   }
 }
 
-/** Deja la partida como al inicio: 100 TC por grupo y sin compras ni votos. */
+/** Deja la partida como al inicio: 100 TC por grupo, sin compras, votos, respuestas ni asistencia. */
 export class ResetGame {
-  constructor(private readonly deps: Deps<"teams" | "ledger" | "purchases" | "votes" | "state" | "notifier">) {}
+  constructor(
+    private readonly deps: Deps<"teams" | "ledger" | "purchases" | "votes" | "presence" | "answers" | "guestQuestions" | "state" | "notifier">,
+  ) {}
 
   async execute() {
-    await Promise.all([this.deps.ledger.clear(), this.deps.purchases.clear(), this.deps.votes.clear()]);
+    await Promise.all([
+      this.deps.ledger.clear(),
+      this.deps.purchases.clear(),
+      this.deps.votes.clear(),
+      this.deps.presence.clear(),
+      this.deps.answers.clear(),
+      this.deps.guestQuestions.clear(),
+    ]);
     const teams = await this.deps.teams.list();
     await this.deps.ledger.append(
       teams.map((t) => ({ teamId: t.id, amount: INITIAL_BALANCE, kind: "inicial" as const, note: "Presupuesto inicial" })),
     );
-    await this.deps.state.update((s) => ({ ...initialGameState(), version: s.version + 1 }));
+    // Se conservan los pesos de la nota que haya configurado el equipo docente.
+    await this.deps.state.update((s) => ({ ...initialGameState(), weights: s.weights, version: s.version + 1 }));
     await this.deps.notifier.notify();
   }
 }

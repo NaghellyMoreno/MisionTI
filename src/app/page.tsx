@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getGame } from "@/infrastructure/container";
 import { readViewer } from "@/infrastructure/session";
 import { CASES } from "@/domain/data/catalog";
+import { studentsOf } from "@/domain/students";
 import { LoginForm } from "./LoginForm";
 import { Brand } from "@/ui/parts";
 
@@ -12,10 +13,13 @@ export default async function Home() {
   if (viewer.role === "team") redirect("/equipo");
   if (viewer.role === "staff") redirect("/control");
 
-  const teams = (await getGame().teams.list()).map((t) => ({
+  const list = await getGame().teams.list();
+  const students = studentsOf(list);
+  const teams = list.map((t) => ({
     id: t.id,
     label: t.label,
     caseName: CASES.find((c) => c.id === t.caseId)?.name ?? "",
+    students: students.filter((s) => s.teamId === t.id).map((s) => ({ id: s.id, name: s.name })),
   }));
 
   return (
@@ -31,7 +35,7 @@ export default async function Home() {
             Rescate<br />
             <em>empresarial.</em>
           </h1>
-          <p>Su firma consultora tiene 100 TecnoCoins y una empresa en crisis. Compren con criterio: las crisis ya vienen en camino.</p>
+          <p>Su firma consultora tiene 100 TecnoCoins y una empresa en crisis. Entren con su nombre: la app puede escogerlos para una pregunta sorpresa en cualquier momento.</p>
         </section>
         <LoginForm teams={teams} />
       </main>

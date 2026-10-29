@@ -91,7 +91,67 @@ export interface Vote {
   createdAt: string;
 }
 
-export type ProjectorScreen = "ranking" | "crisis" | "semaforo" | "galeria" | "podio";
+export type ProjectorScreen =
+  | "sala"
+  | "teoria"
+  | "ranking"
+  | "crisis"
+  | "sorpresa"
+  | "semaforo"
+  | "galeria"
+  | "invitado"
+  | "quiz"
+  | "podio";
+
+export type StudentId = string;
+
+export interface Student {
+  id: StudentId;
+  teamId: TeamId;
+  name: string;
+}
+
+export type AnswerKind = "sorpresa" | "quiz";
+
+export interface Answer {
+  id: string;
+  kind: AnswerKind;
+  questionId: string;
+  studentId: StudentId;
+  teamId: TeamId;
+  /** Opción elegida (0–3); null mientras no responda. */
+  choice: number | null;
+  correct: boolean;
+  points: number;
+  sentAt: string;
+  answeredAt: string | null;
+  /** epoch ms límite para responder (preguntas sorpresa). */
+  deadline: number | null;
+}
+
+export interface Presence {
+  studentId: StudentId;
+  teamId: TeamId;
+  lastSeen: number;
+}
+
+export type GuestQuestionStatus = "lista" | "en-pantalla" | "hecha";
+
+export interface GuestQuestion {
+  id: string;
+  teamId: TeamId;
+  studentId: StudentId;
+  text: string;
+  status: GuestQuestionStatus;
+  updatedAt: string;
+}
+
+export interface GradeWeights {
+  sorpresa: number;
+  quiz: number;
+  lienzo: number;
+  juego: number;
+}
 
 export interface TimerState {
   status: "idle" | "running" | "paused";
@@ -111,5 +171,14 @@ export interface GameState {
   awardedScenarios: ScenarioId[];
   gallery: { status: "cerrada" | "votando" | "revelada" };
   screen: ProjectorScreen;
+  /** Diapositiva de teoría en pantalla. */
+  slideIndex: number;
+  /** Última ronda de preguntas sorpresa (para el proyector). */
+  pop: { questionId: string; studentIds: StudentId[]; launchedAt: number; deadline: number } | null;
+  quiz: { index: number; status: "cerrado" | "abierto" | "revelado" | "terminado"; openedAt: number | null };
+  guestCurrent: string | null;
+  /** Nota del lienzo por grupo (0–5), la pone José con la rúbrica. */
+  canvasScores: Record<TeamId, number>;
+  weights: GradeWeights;
   version: number;
 }

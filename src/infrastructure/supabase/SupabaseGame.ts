@@ -1,9 +1,13 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { initialGameState } from "@/domain/rules";
-import type { GameState, LedgerEntry, Purchase, Team, Vote } from "@/domain/types";
+import type { Answer, GameState, GuestQuestion, GuestQuestionStatus, LedgerEntry, Presence, Purchase, Team, Vote } from "@/domain/types";
 import type {
   AccessCodes,
+  AnswerRepository,
   GameDependencies,
+  GuestQuestionRepository,
+  NewAnswer,
+  PresenceRepository,
   GameStateRepository,
   LedgerRepository,
   NewLedgerEntry,
@@ -139,6 +143,116 @@ class SupabaseVotes implements VoteRepository, Resettable {
   }
 }
 
+class SupabasePresence implements PresenceRepository, Resettable {
+  constructor(private readonly db: SupabaseClient) {}
+
+  async touch(p: Presence) {
+    check(
+      await this.db
+        .from("presence")
+        .upsert({ student_id: p.studentId, team_id: p.teamId, last_seen: new Date(p.lastSeen).toISOString() }, { onConflict: "student_id" }),
+    );
+  }
+
+  async list(): Promise<Presence[]> {
+    const rows = check(await this.db.from("presence").select("*"));
+    return (rows ?? []).map((r) => ({ studentId: r.student_id, teamId: r.team_id, lastSeen: Date.parse(r.last_seen) }));
+  }
+
+  async clear() {
+    check(await this.db.from("presence").delete().not("student_id", "is", null));
+  }
+}
+
+const toAnswer = (r: Record<string, unknown>): Answer => ({
+  id: r.id as string,
+  kind: r.kind as Answer["kind"],
+  questionId: r.question_id as string,
+  studentId: r.student_id as string,
+  teamId: r.team_id as string,
+  choice: (r.choice as number | null) ?? null,
+  correct: !!r.correct,
+  points: (r.points as number) ?? 0,
+  sentAt: r.sent_at as string,
+  answeredAt: (r.answered_at as string) ?? null,
+  deadline: r.deadline ? Date.parse(r.deadline as string) : null,
+});
+
+class SupabaseAnswers implements AnswerRepository, Resettable {
+  constructor(private readonly db: SupabaseClient) {}
+
+  async list() {
+    const rows = check(await this.db.from("answers").select("*").order("sent_at"));
+    return (rows ?? []).map(toAnswer);
+  }
+
+  async createMany(rows: NewAnswer[]) {
+    if (!rows.length) return;
+    check(
+      await this.db.from("answers").insert(
+        rows.map((a) => ({
+          kind: a.kind,
+          question_id: a.questionId,
+          student_id: a.studentId,
+          team_id: a.teamId,
+          choice: a.choice,
+          correct: a.correct,
+          points: a.points,
+          sent_at: a.sentAt,
+          answered_at: a.answeredAt,
+          deadline: a.deadline ? new Date(a.deadline).toISOString() : null,
+        })),
+      ),
+    );
+  }
+
+  async respond(id: string, patch: Pick<Answer, "choice" | "correct" | "points" | "answeredAt">) {
+    const rows = check(
+      await this.db
+        .from("answers")
+        .update({ choice: patch.choice, correct: patch.correct, points: patch.points, answered_at: patch.answeredAt })
+        .eq("id", id)
+        .is("choice", null)
+        .select("id"),
+    );
+    return (rows ?? []).length > 0;
+  }
+
+  async clear() {
+    check(await this.db.from("answers").delete().not("id", "is", null));
+  }
+}
+
+class SupabaseGuestQuestions implements GuestQuestionRepository, Resettable {
+  constructor(private readonly db: SupabaseClient) {}
+
+  async list(): Promise<GuestQuestion[]> {
+    const rows = check(await this.db.from("guest_questions").select("*"));
+    return (rows ?? []).map((r) => ({
+      id: r.id, teamId: r.team_id, studentId: r.student_id, text: r.text, status: r.status, updatedAt: r.updated_at,
+    }));
+  }
+
+  async save(input: { teamId: string; studentId: string; text: string }) {
+    check(
+      await this.db
+        .from("guest_questions")
+        .upsert(
+          { team_id: input.teamId, student_id: input.studentId, text: input.text, updated_at: new Date().toISOString() },
+          { onConflict: "team_id" },
+        ),
+    );
+  }
+
+  async setStatus(id: string, status: GuestQuestionStatus) {
+    check(await this.db.from("guest_questions").update({ status, updated_at: new Date().toISOString() }).eq("id", id));
+  }
+
+  async clear() {
+    check(await this.db.from("guest_questions").delete().not("id", "is", null));
+  }
+}
+
 class SupabaseState implements GameStateRepository {
   constructor(private readonly db: SupabaseClient) {}
 
@@ -164,6 +278,9 @@ export function createSupabaseGame(env: { url: string; serviceKey: string }): Ga
     ledger: new SupabaseLedger(db),
     purchases: new SupabasePurchases(db),
     votes: new SupabaseVotes(db),
+    presence: new SupabasePresence(db),
+    answers: new SupabaseAnswers(db),
+    guestQuestions: new SupabaseGuestQuestions(db),
     state: new SupabaseState(db),
     notifier: new BroadcastNotifier(env.url, env.serviceKey),
   };

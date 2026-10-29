@@ -9,17 +9,19 @@ import { useLive } from "@/ui/useLive";
 import { logout } from "../actions";
 import { MarketTab } from "./MarketTab";
 import { AssetsTab } from "./AssetsTab";
-import { SemaforoTab } from "./SemaforoTab";
-import { GalleryTab } from "./GalleryTab";
+import { VoteTab } from "./VoteTab";
+import { ClassTab } from "./ClassTab";
+import { GuestTab } from "./GuestTab";
+import { PopOverlay } from "./PopOverlay";
 
-type Tab = "mercado" | "activos" | "semaforo" | "galeria";
+type Tab = "clase" | "mercado" | "invitado" | "votar" | "activos";
 
 export function TeamApp({ initial }: { initial: Snapshot }) {
-  const live = useLive(initial);
+  const live = useLive(initial, { heartbeat: true });
   const { snapshot } = live;
   const toasts = useToasts();
   const action = useAction(toasts.push, live.refresh);
-  const [tab, setTab] = useState<Tab>("mercado");
+  const [tab, setTab] = useState<Tab>("clase");
 
   const me = snapshot.team!;
   const company = CASES.find((c) => c.id === me.team.caseId)!;
@@ -32,20 +34,25 @@ export function TeamApp({ initial }: { initial: Snapshot }) {
   const semaforoLive = snapshot.state.semaforo.status === "votando";
   const galleryLive = snapshot.state.gallery.status === "votando";
 
-  // Cuando el equipo docente abre una votación, se lleva al grupo a esa pestaña una vez.
-  const lastOpen = useRef({ semaforo: snapshot.state.semaforo.scenarioId, gallery: snapshot.state.gallery.status });
+  const quizOpen = snapshot.state.quiz.status === "abierto";
+  const guestLive = snapshot.state.agendaIndex >= 12 && snapshot.state.agendaIndex <= 13;
+
+  // Cuando el equipo docente abre una votación o el quiz, se lleva a cada celular a esa pestaña una vez.
+  const lastOpen = useRef({ semaforo: snapshot.state.semaforo.scenarioId, gallery: snapshot.state.gallery.status, quiz: snapshot.state.quiz.index });
   useEffect(() => {
     const prev = lastOpen.current;
-    if (semaforoLive && prev.semaforo !== snapshot.state.semaforo.scenarioId) setTab("semaforo");
-    if (galleryLive && prev.gallery !== "votando") setTab("galeria");
-    lastOpen.current = { semaforo: snapshot.state.semaforo.scenarioId, gallery: snapshot.state.gallery.status };
-  }, [semaforoLive, galleryLive, snapshot.state.semaforo.scenarioId, snapshot.state.gallery.status]);
+    if (semaforoLive && prev.semaforo !== snapshot.state.semaforo.scenarioId) setTab("votar");
+    if (galleryLive && prev.gallery !== "votando") setTab("votar");
+    if (quizOpen && prev.quiz !== snapshot.state.quiz.index) setTab("clase");
+    lastOpen.current = { semaforo: snapshot.state.semaforo.scenarioId, gallery: snapshot.state.gallery.status, quiz: snapshot.state.quiz.index };
+  }, [semaforoLive, galleryLive, quizOpen, snapshot.state.semaforo.scenarioId, snapshot.state.gallery.status, snapshot.state.quiz.index]);
 
   const tabs: { id: Tab; label: string; icon: React.ReactNode; badge?: boolean }[] = [
+    { id: "clase", label: "Clase", icon: Icon.slides, badge: quizOpen && tab !== "clase" },
     { id: "mercado", label: "Mercado", icon: Icon.market, badge: snapshot.state.marketOpen && tab !== "mercado" },
+    { id: "invitado", label: "Invitado", icon: Icon.mic, badge: guestLive && !me.guestQuestion && tab !== "invitado" },
+    { id: "votar", label: "Votar", icon: Icon.light, badge: (semaforoLive || galleryLive) && tab !== "votar" },
     { id: "activos", label: "Activos", icon: Icon.assets },
-    { id: "semaforo", label: "Semáforo", icon: Icon.light, badge: semaforoLive && tab !== "semaforo" },
-    { id: "galeria", label: "Galería", icon: Icon.gallery, badge: galleryLive && tab !== "galeria" },
   ];
 
   return (
@@ -55,7 +62,7 @@ export function TeamApp({ initial }: { initial: Snapshot }) {
         <div className="row" style={{ gap: 10 }}>
           <Signal online={live.online} realtime={live.realtime} />
           <form action={logout}>
-            <button className="btn ghost sm" type="submit">Salir</button>
+            <button className="btn ghost sm" type="submit" title="Para que otro integrante entre desde este celular">Cambiar</button>
           </form>
         </div>
       </header>
@@ -70,7 +77,7 @@ export function TeamApp({ initial }: { initial: Snapshot }) {
             <Coins value={me.balance} />
           </div>
           <div className="hero-meta muted" style={{ fontSize: 13 }}>
-            <span>{me.team.members.join(" · ")}</span>
+            <span>Hola, <b style={{ color: "var(--board-text)" }}>{me.student.name}</b>{me.team.members.length > 1 ? ` · con ${me.team.members.filter((m) => m !== me.student.name).join(", ")}` : ""}</span>
           </div>
         </section>
 
@@ -112,10 +119,11 @@ export function TeamApp({ initial }: { initial: Snapshot }) {
           </section>
         )}
 
+        {tab === "clase" && <ClassTab snapshot={snapshot} action={action} serverNow={live.serverNow} />}
         {tab === "mercado" && <MarketTab snapshot={snapshot} action={action} />}
+        {tab === "invitado" && <GuestTab snapshot={snapshot} action={action} />}
+        {tab === "votar" && <VoteTab snapshot={snapshot} action={action} />}
         {tab === "activos" && <AssetsTab snapshot={snapshot} />}
-        {tab === "semaforo" && <SemaforoTab snapshot={snapshot} action={action} />}
-        {tab === "galeria" && <GalleryTab snapshot={snapshot} action={action} />}
       </main>
 
       <nav className="tabbar" aria-label="Secciones">
@@ -127,6 +135,7 @@ export function TeamApp({ initial }: { initial: Snapshot }) {
           </button>
         ))}
       </nav>
+      <PopOverlay pending={me.pendingPops} serverNow={live.serverNow} refresh={live.refresh} />
       {toasts.view}
     </>
   );
