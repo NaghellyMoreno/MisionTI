@@ -1,6 +1,6 @@
 # Misión TI · Rescate Empresarial
 
-App de la clase **Gestión de Recursos Tecnológicos** (martes 4 de noviembre, 1:00 a 4:00 p. m.).
+App de la clase **Gestión de Recursos Tecnológicos** 
 Presenta la teoría, lleva el juego, lanza preguntas sorpresa individuales, modera la entrevista con **KOSMOS TIC** por Google Meet, hace el quiz final y calcula la nota de 0 a 5.
 
 | Ruta | Quién | Para qué |

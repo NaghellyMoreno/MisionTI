@@ -20,7 +20,8 @@ export interface Slide {
 
 /**
  * Teoría de la clase y contextualización de KOSMOS TIC.
- * Las citas de la empresa son textuales del catálogo oficial y de kosmostic.com.
+ * Las citas de la empresa son textuales del catálogo oficial y de kosmostic.com;
+ * las de teoría, del documento maestro del MRAE v3.0 de MinTIC.
  */
 export const SLIDES: Slide[] = [
   /* ---------- FASE 1 · FUENTE ---------- */
@@ -31,7 +32,7 @@ export const SLIDES: Slide[] = [
     kicker: "Fase 1 · Fuente",
     title: "Una empresa puede tener la mejor tecnología… y aun así fracasar.",
     lead: "Hoy su firma consultora va a rescatar una. Tienen 100 TecnoCoins, una empresa en crisis y tres horas.",
-    sources: ["profesor"],
+    sources: [],
   },
   {
     id: "que-es",
@@ -47,21 +48,22 @@ export const SLIDES: Slide[] = [
       "5 · Operación y sostenibilidad",
       "6 · Desistimiento y fin de ciclo",
     ],
-    sources: ["profesor", "itil", "iso55000"],
+    sources: ["iso19770", "mrae", "iso55000"],
   },
   {
     id: "fuentes",
     agenda: 1,
     kind: "concepto",
     kicker: "¿De dónde sale lo que verán hoy?",
-    title: "Cuatro fuentes, ninguna inventada",
+    title: "Cuatro fuentes",
     points: [
-      "Bibliografía: ITIL 4 (gestión de activos de TI), COBIT 2019 (gobierno de TI) e ISO 55000 (gestión de activos).",
+      "Bibliografía: ISO/IEC 19770-1 (gestión de activos de TI), ISO 55000 (gestión de activos), ITIL 4, COBIT 2019 y NIST SP 800-88 (borrado seguro).",
+      "Guía oficial colombiana: Marco de Referencia de Arquitectura Empresarial v3.0 de MinTIC (2023).",
       "Normativa: Ley 80 de 1993, Ley 1150 de 2007, Ley 1581 de 2012, Ley 1672 de 2013 y Ley 2300 de 2023.",
       "Empresa real: catálogo oficial y sitio web de KOSMOS TIC.",
       "Experto: KOSMOS TIC en vivo a las 2:47 p. m.",
     ],
-    sources: ["itil", "cobit", "iso55000", "catalogo", "web"],
+    sources: ["iso19770", "iso55000", "itil", "cobit", "nist80088", "mrae", "catalogo", "web"],
   },
   {
     id: "expediente",
@@ -104,7 +106,7 @@ export const SLIDES: Slide[] = [
       "Las cartas de crisis premian o castigan sus decisiones.",
       "Ojo: la app puede escoger a cualquiera para una pregunta sorpresa individual.",
     ],
-    sources: ["profesor"],
+    sources: [],
   },
   {
     id: "nivel1",
@@ -119,7 +121,11 @@ export const SLIDES: Slide[] = [
       "Oportunidades tecnológicas: lo que se puede aprovechar.",
       "Retos de la organización: lo que puede frenar el cambio.",
     ],
-    sources: ["profesor", "itil"],
+    quote: {
+      text: "…su situación actual (línea base), que corresponde a la forma como opera en el presente la entidad…",
+      cite: "MinTIC · MRAE v3.0 (2023), dominio de arquitectura institucional",
+    },
+    sources: ["mrae", "iso19770"],
   },
   {
     id: "nivel1-kosmos",
@@ -161,7 +167,11 @@ export const SLIDES: Slide[] = [
       "Qué adquirir y con qué método: compra, leasing, suscripción, desarrollo o donación.",
       "Costo total de propiedad: comprar es solo el comienzo; también cuestan la operación, el mantenimiento y el retiro.",
     ],
-    sources: ["profesor", "itil"],
+    quote: {
+      text: "…dando prioridad a adquisiciones en modalidad de servicio o por demanda y propendiendo por minimizar la compra de bienes de hardware.",
+      cite: "MinTIC · MRAE v3.0 (2023), lineamiento MGGTI.LI.GO.06",
+    },
+    sources: ["mrae", "iso55000", "itil"],
   },
   {
     id: "ruta-legal",
@@ -229,7 +239,11 @@ export const SLIDES: Slide[] = [
       "Ubicación lógica: red, nube, segmentos, permisos.",
       "Configurar, instalar y probar antes de entregarlo a los usuarios.",
     ],
-    sources: ["profesor", "itil"],
+    quote: {
+      text: "…durante la implementación y paso a producción de los servicios de TI, se debe garantizar la estabilidad de la operación de TI…",
+      cite: "MinTIC · MRAE v3.0 (2023), lineamiento MGGTI.LI.ST.02",
+    },
+    sources: ["mrae", "itil"],
   },
   {
     id: "nivel3-kosmos",
@@ -258,8 +272,13 @@ export const SLIDES: Slide[] = [
       "¿A quién? Usuarios finales, administradores y personal de soporte.",
       "¿Qué temas? Lo que cada rol necesita para hacer su trabajo.",
       "¿Cómo sacarle el máximo partido? Formación por roles, multiplicadores internos y medir el uso real.",
+      "Gestión del cambio cada vez que se adquiere o despliega una solución nueva.",
     ],
-    sources: ["profesor", "itil"],
+    quote: {
+      text: "…define y desarrolla acciones para movilizar a los grupos de interés buscando impulsar la adopción de las facilidades y servicios de tecnología…",
+      cite: "MinTIC · MRAE v3.0 (2023), dominio de Uso y Apropiación de TI",
+    },
+    sources: ["mrae", "itil"],
   },
   {
     id: "nivel4-kosmos",
@@ -291,11 +310,15 @@ export const SLIDES: Slide[] = [
     kicker: "Nivel 5",
     title: "Operación y sostenibilidad",
     points: [
-      "Soporte técnico: quién atiende, en qué horario y cómo se escala un problema.",
+      "Soporte técnico: una mesa de servicio como único punto de contacto, con soporte de primer, segundo y tercer nivel.",
       "Mantenimiento preventivo (antes de que falle), correctivo (cuando falla) y evolutivo (para mejorar).",
-      "Administración: inventario, licencias, contratos e indicadores durante toda su estadía.",
+      "Administración: inventario, licencias, contratos con acuerdos de nivel de servicio (ANS) e indicadores durante toda su estadía.",
     ],
-    sources: ["profesor", "itil", "iso55000"],
+    quote: {
+      text: "…debe implementar un plan de mantenimiento preventivo y evolutivo sobre toda la infraestructura y demás Servicios Tecnológicos…",
+      cite: "MinTIC · MRAE v3.0 (2023), lineamiento MGGTI.LI.ST.09",
+    },
+    sources: ["mrae", "itil", "iso55000"],
   },
   {
     id: "nivel5-kosmos",
@@ -323,10 +346,14 @@ export const SLIDES: Slide[] = [
     points: [
       "Retiro por daño: no funciona y repararlo no es rentable.",
       "Retiro por obsolescencia: funciona, pero ya no le sirve a la organización (sin soporte del fabricante, incompatible o ineficiente).",
-      "Antes de retirarlo: borrar de forma segura los datos personales (Ley 1581 de 2012).",
+      "Antes de retirarlo: borrado seguro de los medios, para que recuperar los datos sea inviable (NIST SP 800-88), y protección de los datos personales (Ley 1581 de 2012).",
       "Después: disposición responsable como RAEE (Ley 1672 de 2013).",
     ],
-    sources: ["profesor", "ley1581", "ley1672"],
+    quote: {
+      text: "…debe gestionar la correcta disposición de residuos tecnológicos de acuerdo con el Plan Institucional de Gestión Ambiental…",
+      cite: "MinTIC · MRAE v3.0 (2023), lineamiento MGGTI.LI.ST.12",
+    },
+    sources: ["mrae", "nist80088", "ley1581", "ley1672"],
   },
   {
     id: "nivel6-kosmos",
@@ -423,7 +450,7 @@ export const SLIDES: Slide[] = [
     kicker: "Cierre",
     title: "La tecnología no se compra: se gestiona de principio a fin.",
     lead: "¿Qué cambiarían de su lienzo después de escuchar a KOSMOS TIC?",
-    sources: ["profesor"],
+    sources: ["iso19770", "mrae"],
   },
 ];
 

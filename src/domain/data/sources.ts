@@ -50,7 +50,24 @@ export const SOURCES = {
   itil: { id: "itil", short: "ITIL 4", full: "AXELOS / PeopleCert. ITIL 4: prácticas de gestión de activos de TI y de servicios." },
   cobit: { id: "cobit", short: "COBIT 2019", full: "ISACA. COBIT 2019: marco de gobierno y gestión de la información y la tecnología." },
   iso55000: { id: "iso55000", short: "ISO 55000", full: "ISO 55000: gestión de activos — visión general, principios y terminología." },
-  profesor: { id: "profesor", short: "Video del profesor", full: "José Castellanos. Explicación en video: Gestión de Recursos Tecnológicos." },
+  mrae: {
+    id: "mrae",
+    short: "MinTIC · MRAE v3.0",
+    full: "Ministerio de Tecnologías de la Información y las Comunicaciones. Documento Maestro – Marco de Referencia de Arquitectura Empresarial (MRAE) v3.0, mayo de 2023. Lineamientos del Modelo de Gestión y Gobierno de TI (MGGTI).",
+    url: "https://lenguaje.mintic.gov.co/sites/default/files/archivos/marco%20referencia_compressed.pdf",
+  },
+  iso19770: {
+    id: "iso19770",
+    short: "ISO/IEC 19770-1:2017",
+    full: "ISO/IEC 19770-1:2017. Tecnologías de la información — Gestión de activos de TI — Parte 1: Sistemas de gestión de activos de TI — Requisitos.",
+    url: "https://committee.iso.org/sites/jtc1sc7/home/projects/flagship-standards/isoiec-19770-12017.html",
+  },
+  nist80088: {
+    id: "nist80088",
+    short: "NIST SP 800-88 Rev. 2",
+    full: "NIST (R. Chandramouli y E. Hibbard). SP 800-88 Rev. 2: Guidelines for Media Sanitization, septiembre de 2025.",
+    url: "https://csrc.nist.gov/pubs/sp/800/88/r2/final",
+  },
 } satisfies Record<string, Source>;
 
 export type SourceId = keyof typeof SOURCES;
