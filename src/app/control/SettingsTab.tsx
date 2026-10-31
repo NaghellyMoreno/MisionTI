@@ -11,6 +11,7 @@ export function SettingsTab({ snapshot, action }: { snapshot: Snapshot; action: 
   const [amount, setAmount] = useState("10");
   const [note, setNote] = useState("");
   const [codes, setCodes] = useState<Record<string, string> | null>(null);
+  const [copied, setCopied] = useState(false);
   const [confirm, setConfirm] = useState("");
 
   const toggle = (id: string) => setTeams((t) => (t.includes(id) ? t.filter((x) => x !== id) : [...t, id]));
@@ -71,14 +72,34 @@ export function SettingsTab({ snapshot, action }: { snapshot: Snapshot; action: 
           </button>
         </div>
         {codes && (
-          <div className="codes">
-            {staff.teams.map((t) => (
-              <div key={t.id} className="code">
-                <span className="mono">Grupo {t.label}</span>
-                <b>{codes[t.id] ?? "—"}</b>
-              </div>
-            ))}
-          </div>
+          <>
+            <div className="codes">
+              {staff.teams.map((t) => (
+                <div key={t.id} className="code">
+                  <span className="mono">Grupo {t.label}</span>
+                  <b>{codes[t.id] ?? "—"}</b>
+                </div>
+              ))}
+            </div>
+            <div className="row wrap" style={{ gap: 8 }}>
+              <button
+                className="btn sm"
+                onClick={async () => {
+                  const text = staff.teams.map((t) => `${t.id}=${codes[t.id] ?? ""}`).join(",");
+                  try {
+                    await navigator.clipboard.writeText(text);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2500);
+                  } catch {
+                    window.prompt("Copien este texto:", text);
+                  }
+                }}
+              >
+                {copied ? "Copiado ✓" : "Copiar para la prueba de carga"}
+              </button>
+              <span className="hint">npm run carga -- --url https://su-app.vercel.app --codigos "…"</span>
+            </div>
+          </>
         )}
       </div>
 

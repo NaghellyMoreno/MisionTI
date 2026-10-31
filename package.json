@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "test": "vitest run",
+    "carga": "node scripts/prueba-carga.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
