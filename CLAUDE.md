@@ -3,7 +3,7 @@
 Contexto para trabajar en este proyecto desde VS Code. Respondan y escriban la interfaz **en español de Colombia**.
 
 ## Qué es
-App web (Next.js 15 + TypeScript + Supabase, desplegada en Vercel) para dictar una clase de 3 horas de **Gestión de Recursos Tecnológicos**. La clase es el **martes 4 de noviembre de 2026, de 1:00 a 4:00 p. m.**, en el programa de Ingeniería de Sistemas y Computación.
+App web (Next.js 15 + TypeScript + Supabase, desplegada en Vercel) para dictar una clase de 3 horas de **Gestión de Recursos Tecnológicos**. La clase es el **miércoles 4 de noviembre de 2026, de 1:00 a 4:00 p. m.**, en el programa de Ingeniería de Sistemas y Computación.
 
 - **Equipo a cargo (equipo 3):** José Castellanos (docente, director de la misión), Karen Moreno (estratega y cronometrista), Dylber Cabrera (game master) y Camila Giraldo (anfitriona y evaluación).
 - **Participantes:** 27 estudiantes en 11 grupos de juego (`src/domain/data/teams.ts`). El equipo 13 se eliminó; Andrés Felipe Ríos pasó al 12. Juliana Moreno (equipo 14) juega sola el **caso exprés** "Papelería El Rincón Digital", que tiene menos carga.

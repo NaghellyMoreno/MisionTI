@@ -14,7 +14,7 @@ export interface AgendaItem {
   energy?: string;
 }
 
-/** Hora de inicio de la clase: martes 4 de noviembre, 1:00 p. m. */
+/** Hora de inicio de la clase: miércoles 4 de noviembre, 1:00 p. m. */
 export const CLASS_START = { hour: 13, minute: 0 };
 export const CLASS_DATE = "2026-11-04";
 
