@@ -5,12 +5,14 @@ import type { Snapshot } from "@/application/snapshot";
 import { CASES } from "@/domain/data/catalog";
 import { GALLERY_VOTES } from "@/domain/rules";
 import { castGalleryVote } from "../actions";
+import { CanvasBoard } from "@/ui/CanvasBoard";
 import type { ActionApi } from "./TeamApp";
 
 export function GalleryTab({ snapshot, action }: { snapshot: Snapshot; action: ActionApi }) {
   const me = snapshot.team!;
   const status = snapshot.gallery.status;
   const [picks, setPicks] = useState<string[]>(me.myGallery);
+  const [viewing, setViewing] = useState<string | null>(null);
   useEffect(() => setPicks(me.myGallery), [me.myGallery.join(",")]);
 
   const toggle = (id: string) =>
@@ -45,12 +47,25 @@ export function GalleryTab({ snapshot, action }: { snapshot: Snapshot; action: A
       </div>
 
       {status !== "votando" ? (
-        <div className="empty">Cuando los lienzos estén en la pared, José abrirá la votación. Cada grupo elige los {GALLERY_VOTES} mejores (no el propio).</div>
+        <div className="empty">Cuando José abra la Galería, aquí podrán leer el lienzo de cada grupo y votar por los {GALLERY_VOTES} mejores (no el propio).</div>
       ) : (
         <>
           <p className="muted" style={{ margin: 0 }}>
-            Recorran la galería y elijan las {GALLERY_VOTES} mejores hojas de ruta. Pueden cambiar su voto hasta el cierre.
+            Toquen un grupo para leer su lienzo y elijan las {GALLERY_VOTES} mejores hojas de ruta. Pueden cambiar su voto hasta el cierre.
           </p>
+          <div className="row wrap" style={{ gap: 6 }}>
+            {others.map((r) => (
+              <button key={r.teamId} type="button" className={`btn sm ${viewing === r.teamId ? "on" : ""}`} onClick={() => setViewing(viewing === r.teamId ? null : r.teamId)}>
+                Leer G·{r.label}
+              </button>
+            ))}
+          </div>
+          {viewing && snapshot.canvases?.find((c) => c.teamId === viewing) && (
+            <div className="panel">
+              <CanvasBoard canvas={snapshot.canvases.find((c) => c.teamId === viewing)!} size="sm" />
+            </div>
+          )}
+          <span className="label" style={{ marginTop: 6 }}>Su voto</span>
           <div className="pick-grid">
             {others.map((r) => (
               <button key={r.teamId} type="button" className="pick" aria-pressed={picks.includes(r.teamId)} onClick={() => toggle(r.teamId)}>

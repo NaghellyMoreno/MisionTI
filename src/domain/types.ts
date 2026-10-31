@@ -148,6 +148,18 @@ export interface GuestQuestion {
   updatedAt: string;
 }
 
+export interface CanvasEntry {
+  teamId: TeamId;
+  /** Casilla del lienzo (ver `CANVAS_FIELDS`). */
+  field: string;
+  text: string;
+  updatedBy: StudentId;
+  updatedAt: string;
+}
+
+/** Puntaje de 1 a 5 por criterio de la rúbrica, por grupo. */
+export type RubricScores = Record<TeamId, Partial<Record<string, number>>>;
+
 export interface GradeWeights {
   sorpresa: number;
   quiz: number;
@@ -181,6 +193,10 @@ export interface GameState {
   guestCurrent: string | null;
   /** Nota del lienzo por grupo (0–5), la pone José con la rúbrica. */
   canvasScores: Record<TeamId, number>;
+  /** Rúbrica del lienzo digital; si un grupo la tiene, su nota del lienzo es el promedio. */
+  rubric: RubricScores;
+  /** Lienzo que el proyector muestra en la Galería (null = rotación automática). */
+  galleryFocus: TeamId | null;
   weights: GradeWeights;
   version: number;
 }

@@ -122,6 +122,7 @@ export const Icon = {
   market: svg(<><path d="M4 7h16l-1.5 9.5a2 2 0 0 1-2 1.5h-9a2 2 0 0 1-2-1.5L4 7Z" /><path d="M9 7V5a3 3 0 0 1 6 0v2" /></>),
   assets: svg(<><rect x="3" y="4" width="18" height="12" rx="2" /><path d="M8 20h8M12 16v4" /></>),
   light: svg(<><rect x="8" y="2.5" width="8" height="19" rx="4" /><circle cx="12" cy="7" r="1.6" /><circle cx="12" cy="12" r="1.6" /><circle cx="12" cy="17" r="1.6" /></>),
+  canvas: svg(<><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18M9 9v12M15 9v12" /></>),
   slides: svg(<><rect x="3" y="4" width="18" height="13" rx="2" /><path d="M7 21h10M12 17v4M7 9h6M7 12h10" /></>),
   mic: svg(<><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" /></>),
   gallery: svg(<><rect x="3" y="3" width="7.5" height="7.5" rx="1.5" /><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5" /><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5" /><path d="m14.5 17 2 2 4-4" /></>),

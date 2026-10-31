@@ -20,6 +20,7 @@ import { ClassAdmin } from "./ClassAdmin";
 import { GuestAdmin } from "./GuestAdmin";
 import { QuizAdmin } from "./QuizAdmin";
 import { GradesTab } from "./GradesTab";
+import { CanvasAdmin } from "./CanvasAdmin";
 
 type Tab =
   | "asistencia"
@@ -28,6 +29,7 @@ type Tab =
   | "crisis"
   | "semaforo"
   | "galeria"
+  | "lienzos"
   | "invitado"
   | "quiz"
   | "notas"
@@ -70,6 +72,7 @@ export function ControlApp({ initial, liveDatabase }: { initial: Snapshot; liveD
     { id: "crisis", label: "Crisis" },
     { id: "invitado", label: "Invitado" },
     { id: "semaforo", label: "Semáforo" },
+    { id: "lienzos", label: "Lienzos" },
     { id: "galeria", label: "Galería" },
     { id: "quiz", label: "Quiz" },
     { id: "notas", label: "Notas" },
@@ -169,6 +172,7 @@ export function ControlApp({ initial, liveDatabase }: { initial: Snapshot; liveD
           {tab === "clase" && <ClassAdmin snapshot={snapshot} action={action} />}
           {tab === "invitado" && <GuestAdmin snapshot={snapshot} action={action} />}
           {tab === "quiz" && <QuizAdmin snapshot={snapshot} action={action} serverNow={live.serverNow} />}
+          {tab === "lienzos" && <CanvasAdmin snapshot={snapshot} action={action} />}
           {tab === "notas" && <GradesTab snapshot={snapshot} action={action} />}
           {tab === "solicitudes" && <RequestsTab snapshot={snapshot} action={action} />}
           {tab === "grupos" && <TeamsTab snapshot={snapshot} />}

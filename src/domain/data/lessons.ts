@@ -147,6 +147,7 @@ export const SLIDES: Slide[] = [
     kind: "actividad",
     kicker: "Manos a la obra",
     title: "Diagnóstico de su empresa en el lienzo",
+    lead: "Pestaña Lienzo del celular · casilla 1. Se guarda solo; uno dicta y otro escribe.",
     points: [
       "¿Cuál es la situación actual?",
       "Tres necesidades específicas.",
@@ -225,6 +226,7 @@ export const SLIDES: Slide[] = [
       "Elijan el recurso, la ruta legal y escriban por qué lo necesitan.",
       "El presupuesto no alcanza para todo: prioricen según su diagnóstico.",
       "Las crisis vienen en camino.",
+      "Al terminar: casilla 2 del Lienzo, qué compraron y por qué ruta.",
     ],
     sources: [],
   },
@@ -300,7 +302,8 @@ export const SLIDES: Slide[] = [
     kind: "actividad",
     kicker: "Manos a la obra",
     title: "¿Dónde queda cada recurso y a quién capacitan?",
-    points: ["Dibujen la ubicación física o lógica.", "Definan a quién capacitar, en qué y cómo."],
+    lead: "Pestaña Lienzo del celular · casillas 3 y 4.",
+    points: ["Casilla 3: la ubicación física o lógica de cada recurso.", "Casilla 4: a quién capacitar, en qué y cómo."],
     sources: [],
   },
   {
@@ -378,7 +381,8 @@ export const SLIDES: Slide[] = [
     kind: "actividad",
     kicker: "Manos a la obra",
     title: "Soporte, mantenimiento y criterio de baja",
-    points: ["¿Quién da soporte y cada cuánto se hace mantenimiento?", "¿Cuándo darían de baja su recurso principal: por daño u obsolescencia?"],
+    lead: "Pestaña Lienzo del celular · casillas 5 y 6. Al abrir la Galería el lienzo se cierra.",
+    points: ["Casilla 5: ¿quién da soporte y cada cuánto se hace mantenimiento?", "Casilla 6: ¿cuándo darían de baja su recurso principal: por daño u obsolescencia?"],
     sources: [],
   },
   {
@@ -431,7 +435,11 @@ export const SLIDES: Slide[] = [
     kind: "actividad",
     kicker: "Fase 4 · Evaluación",
     title: "Galería",
-    points: ["Recorran los lienzos.", "Cada grupo vota por los 2 mejores, sin contar el propio."],
+    points: [
+      "El proyector muestra cada lienzo; en el celular pueden leerlos todos.",
+      "Cuando aparezca su lienzo, el vocero lo defiende de pie en 20 segundos.",
+      "Cada grupo vota por los 2 mejores, sin contar el propio.",
+    ],
     sources: [],
   },
   {

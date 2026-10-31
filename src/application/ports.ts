@@ -1,4 +1,4 @@
-import type { Answer, GameState, GuestQuestion, GuestQuestionStatus, LedgerEntry, Presence, Purchase, StudentId, Team, TeamId, Vote } from "@/domain/types";
+import type { Answer, CanvasEntry, GameState, GuestQuestion, GuestQuestionStatus, LedgerEntry, Presence, Purchase, StudentId, Team, TeamId, Vote } from "@/domain/types";
 
 /*
  * Puertos de la aplicación (Dependency Inversion + Interface Segregation).
@@ -64,6 +64,12 @@ export interface GuestQuestionRepository {
   setText(id: string, text: string): Promise<void>;
 }
 
+/** Lienzo digital: una fila por grupo y casilla (dos personas en casillas distintas no se pisan). */
+export interface CanvasRepository {
+  list(): Promise<CanvasEntry[]>;
+  save(entry: Omit<CanvasEntry, "updatedAt">): Promise<void>;
+}
+
 export interface GameStateRepository {
   get(): Promise<GameState>;
   update(mutate: (state: GameState) => GameState): Promise<GameState>;
@@ -88,6 +94,7 @@ export interface GameDependencies {
   presence: PresenceRepository & Resettable;
   answers: AnswerRepository & Resettable;
   guestQuestions: GuestQuestionRepository & Resettable;
+  canvas: CanvasRepository & Resettable;
   state: GameStateRepository;
   notifier: ChangeNotifier;
 }

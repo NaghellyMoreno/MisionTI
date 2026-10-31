@@ -4,7 +4,8 @@ import type { Snapshot } from "@/application/snapshot";
 import { activeCrisis, currentAgenda } from "@/application/snapshot";
 import { CASES } from "@/domain/data/catalog";
 import { Brand, Clock, Coins, useCountdown } from "@/ui/parts";
-import { useLive } from "@/ui/useLive";
+import { useLive, useTick } from "@/ui/useLive";
+import { CanvasBoard } from "@/ui/CanvasBoard";
 import { GuestScreen, LobbyScreen, PopScreen, QuizScreen, TheoryScreen } from "./ClassScreens";
 import { useSoundCues } from "./useSoundCues";
 
@@ -62,7 +63,7 @@ function Screen({ snapshot, serverNow, join }: { snapshot: Snapshot; serverNow: 
     case "semaforo":
       return snapshot.scenario ? <SemaforoScreen snapshot={snapshot} /> : <Ranking snapshot={snapshot} />;
     case "galeria":
-      return <GalleryScreen snapshot={snapshot} />;
+      return <GalleryScreen snapshot={snapshot} serverNow={serverNow} />;
     case "podio":
       return <Podium snapshot={snapshot} />;
     default:
@@ -138,8 +139,31 @@ function SemaforoScreen({ snapshot }: { snapshot: Snapshot }) {
   );
 }
 
-function GalleryScreen({ snapshot }: { snapshot: Snapshot }) {
+const ROTATE_MS = 15_000;
+
+function GalleryScreen({ snapshot, serverNow }: { snapshot: Snapshot; serverNow: () => number }) {
+  useTick(1000);
   const { status, voted, results } = snapshot.gallery;
+  const canvases = snapshot.canvases ?? [];
+  if (status === "votando" && canvases.length) {
+    // Un lienzo a la vez: el que fije el panel o, si no, rotación cada 15 s (igual en todos los proyectores).
+    const focus = canvases.find((c) => c.teamId === snapshot.state.galleryFocus);
+    const index = focus ? canvases.indexOf(focus) : Math.floor(serverNow() / ROTATE_MS) % canvases.length;
+    const shown = canvases[index];
+    return (
+      <section className="gallery-screen" key={shown.teamId}>
+        <CanvasBoard canvas={shown} size="lg" />
+        <footer className="gallery-foot">
+          <div className="gallery-dots">
+            {canvases.map((c, i) => (
+              <span key={c.teamId} className={i === index ? "on" : ""}>G·{c.label}</span>
+            ))}
+          </div>
+          <span className="mono muted">{focus ? "Fijado por el panel" : "Cambia cada 15 s"} · {voted} de {snapshot.ranking.length} grupos han votado</span>
+        </footer>
+      </section>
+    );
+  }
   if (status !== "revelada" || !results) {
     return (
       <section className="takeover">

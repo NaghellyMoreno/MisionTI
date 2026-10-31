@@ -1,5 +1,5 @@
 import { FINAL_QUIZ } from "@/domain/data/questions";
-import { gradeStudent, type GradeRow } from "@/domain/grading";
+import { gradeStudent, rubricScore, type GradeRow } from "@/domain/grading";
 import { balances } from "@/domain/rules";
 import { studentsOf } from "@/domain/students";
 import type { GameDependencies } from "./ports";
@@ -34,7 +34,7 @@ export class GetGrades {
         teamId: s.teamId,
         answers: answers.filter((a) => a.studentId === s.id),
         quizQuestionsOpened: opened,
-        canvasScore: state.canvasScores[s.teamId],
+        canvasScore: rubricScore(state.rubric[s.teamId]) ?? state.canvasScores[s.teamId],
         teamBalance: bal.get(s.teamId) ?? 0,
         balances: all,
         weights: state.weights,

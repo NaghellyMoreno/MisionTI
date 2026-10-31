@@ -122,6 +122,8 @@ export function initialGameState(): GameState {
     quiz: { index: -1, status: "cerrado", openedAt: null },
     guestCurrent: null,
     canvasScores: {},
+    rubric: {},
+    galleryFocus: null,
     weights: { ...DEFAULT_WEIGHTS },
     version: 1,
   };

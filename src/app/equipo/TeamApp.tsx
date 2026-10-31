@@ -12,9 +12,11 @@ import { AssetsTab } from "./AssetsTab";
 import { VoteTab } from "./VoteTab";
 import { ClassTab } from "./ClassTab";
 import { GuestTab } from "./GuestTab";
+import { CanvasTab } from "./CanvasTab";
+import { CANVAS_FIELDS } from "@/domain/data/canvas";
 import { PopOverlay } from "./PopOverlay";
 
-type Tab = "clase" | "mercado" | "invitado" | "votar" | "activos";
+type Tab = "clase" | "lienzo" | "mercado" | "invitado" | "votar" | "activos";
 
 export function TeamApp({ initial }: { initial: Snapshot }) {
   const live = useLive(initial, { heartbeat: true });
@@ -47,8 +49,10 @@ export function TeamApp({ initial }: { initial: Snapshot }) {
     lastOpen.current = { semaforo: snapshot.state.semaforo.scenarioId, gallery: snapshot.state.gallery.status, quiz: snapshot.state.quiz.index };
   }, [semaforoLive, galleryLive, quizOpen, snapshot.state.semaforo.scenarioId, snapshot.state.gallery.status, snapshot.state.quiz.index]);
 
+  const canvasNow = CANVAS_FIELDS.some((f) => f.agenda === snapshot.state.agendaIndex) && snapshot.state.gallery.status === "cerrada";
   const tabs: { id: Tab; label: string; icon: React.ReactNode; badge?: boolean }[] = [
     { id: "clase", label: "Clase", icon: Icon.slides, badge: quizOpen && tab !== "clase" },
+    { id: "lienzo", label: "Lienzo", icon: Icon.canvas, badge: canvasNow && tab !== "lienzo" },
     { id: "mercado", label: "Mercado", icon: Icon.market, badge: snapshot.state.marketOpen && tab !== "mercado" },
     { id: "invitado", label: "Invitado", icon: Icon.mic, badge: guestLive && !me.guestQuestion && tab !== "invitado" },
     { id: "votar", label: "Votar", icon: Icon.light, badge: (semaforoLive || galleryLive) && tab !== "votar" },
@@ -90,20 +94,6 @@ export function TeamApp({ initial }: { initial: Snapshot }) {
           <Clock left={countdown.left} status={countdown.status} />
         </section>
 
-        {company.express && (
-          <details className="panel tick express">
-            <summary>
-              <span className="label">Su lienzo exprés</span>
-              <span className="hint">Ver las 6 preguntas</span>
-            </summary>
-            <p className="muted" style={{ margin: "10px 0 8px" }}>{company.express.note}</p>
-            <ol className="express-list">
-              {company.express.questions.map((q) => (
-                <li key={q}>{q}</li>
-              ))}
-            </ol>
-          </details>
-        )}
 
         {crisis && (
           <section className="panel alert tick stack-sm" role="alert">
@@ -121,6 +111,7 @@ export function TeamApp({ initial }: { initial: Snapshot }) {
 
         {tab === "clase" && <ClassTab snapshot={snapshot} action={action} serverNow={live.serverNow} />}
         {tab === "mercado" && <MarketTab snapshot={snapshot} action={action} />}
+        {tab === "lienzo" && <CanvasTab snapshot={snapshot} refresh={live.refresh} />}
         {tab === "invitado" && <GuestTab snapshot={snapshot} action={action} />}
         {tab === "votar" && <VoteTab snapshot={snapshot} action={action} />}
         {tab === "activos" && <AssetsTab snapshot={snapshot} />}

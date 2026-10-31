@@ -50,7 +50,7 @@ export class AdjustBalance {
 /** Deja la partida como al inicio: 100 TC por grupo, sin compras, votos, respuestas ni asistencia. */
 export class ResetGame {
   constructor(
-    private readonly deps: Deps<"teams" | "ledger" | "purchases" | "votes" | "presence" | "answers" | "guestQuestions" | "state" | "notifier">,
+    private readonly deps: Deps<"teams" | "ledger" | "purchases" | "votes" | "presence" | "answers" | "guestQuestions" | "canvas" | "state" | "notifier">,
   ) {}
 
   async execute() {
@@ -61,6 +61,7 @@ export class ResetGame {
       this.deps.presence.clear(),
       this.deps.answers.clear(),
       this.deps.guestQuestions.clear(),
+      this.deps.canvas.clear(),
     ]);
     const teams = await this.deps.teams.list();
     await this.deps.ledger.append(

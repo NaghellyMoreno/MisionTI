@@ -71,7 +71,8 @@ create table if not exists public.answers (
   points      int not null default 0,
   sent_at     timestamptz not null default now(),
   answered_at timestamptz,
-  deadline    timestamptz
+  deadline    timestamptz,
+  voided      boolean not null default false
 );
 create index if not exists answers_student_idx on public.answers(student_id);
 -- En el quiz, cada estudiante responde una sola vez por pregunta
@@ -85,6 +86,16 @@ create table if not exists public.guest_questions (
   text       text not null,
   status     text not null default 'lista' check (status in ('lista','en-pantalla','hecha')),
   updated_at timestamptz not null default now()
+);
+
+-- Lienzo digital: una fila por grupo y casilla ------------------------
+create table if not exists public.canvas_entries (
+  team_id    text not null references public.teams(id) on delete cascade,
+  field      text not null,
+  text       text not null default '',
+  updated_by text not null,
+  updated_at timestamptz not null default now(),
+  primary key (team_id, field)
 );
 
 -- Estado general de la partida (una sola fila) --------------------------
@@ -104,6 +115,7 @@ alter table public.game_state enable row level security;
 alter table public.presence        enable row level security;
 alter table public.answers         enable row level security;
 alter table public.guest_questions enable row level security;
+alter table public.canvas_entries  enable row level security;
 
 -- =====================================================================
 -- Datos iniciales: los 11 grupos de juego de la lista del curso

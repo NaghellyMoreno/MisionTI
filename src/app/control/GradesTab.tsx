@@ -4,7 +4,8 @@ import { useState } from "react";
 import type { Snapshot } from "@/application/snapshot";
 import { COMPONENT_LABELS } from "@/domain/grading";
 import type { GradeWeights } from "@/domain/types";
-import { setCanvasScore, setWeights } from "../actions";
+import { setWeights } from "../actions";
+import { rubricScore } from "@/domain/grading";
 import type { ActionApi } from "./ControlApp";
 
 const KEYS: (keyof GradeWeights)[] = ["sorpresa", "quiz", "lienzo", "juego"];
@@ -20,30 +21,19 @@ export function GradesTab({ snapshot, action }: { snapshot: Snapshot; action: Ac
     <section className="stack">
       <div className="panel tick stack-sm">
         <div className="row between wrap">
-          <span className="label">Nota del lienzo por grupo (rúbrica, 0 a 5)</span>
-          <span className="hint">La pone José; vacía = aún sin calificar</span>
+          <span className="label">Nota del lienzo por grupo (promedio de la rúbrica)</span>
+          <span className="hint">Se califica en la pestaña Lienzos, criterio por criterio</span>
         </div>
         <div className="canvas-grid">
-          {staff.teams.map((t) => (
-            <label key={t.id} className="canvas-cell">
-              <span className="mono">G·{t.label}</span>
-              <input
-                className="input mono"
-                type="number"
-                min={0}
-                max={5}
-                step={0.1}
-                defaultValue={canvas[t.id] ?? ""}
-                placeholder="—"
-                onBlur={(e) => {
-                  const raw = e.target.value.replace(",", ".").trim();
-                  const value = raw === "" ? null : Number(raw);
-                  if (value === (canvas[t.id] ?? null)) return;
-                  action.run(() => setCanvasScore(t.id, value));
-                }}
-              />
-            </label>
-          ))}
+          {staff.teams.map((t) => {
+            const score = rubricScore(snapshot.state.rubric?.[t.id]) ?? canvas[t.id];
+            return (
+              <div key={t.id} className="canvas-cell">
+                <span className="mono">G·{t.label}</span>
+                <span className={`mono canvas-score ${score === undefined ? "dim" : ""}`}>{score === undefined ? "—" : score.toFixed(1).replace(".", ",")}</span>
+              </div>
+            );
+          })}
         </div>
       </div>
 

@@ -1,9 +1,10 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { initialGameState } from "@/domain/rules";
-import type { Answer, GameState, GuestQuestion, GuestQuestionStatus, LedgerEntry, Presence, Purchase, Team, Vote } from "@/domain/types";
+import type { Answer, CanvasEntry, GameState, GuestQuestion, GuestQuestionStatus, LedgerEntry, Presence, Purchase, Team, Vote } from "@/domain/types";
 import type {
   AccessCodes,
   AnswerRepository,
+  CanvasRepository,
   GameDependencies,
   GuestQuestionRepository,
   NewAnswer,
@@ -263,6 +264,30 @@ class SupabaseGuestQuestions implements GuestQuestionRepository, Resettable {
   }
 }
 
+class SupabaseCanvas implements CanvasRepository, Resettable {
+  constructor(private readonly db: SupabaseClient) {}
+
+  async list(): Promise<CanvasEntry[]> {
+    const rows = check(await this.db.from("canvas_entries").select("*"));
+    return (rows ?? []).map((r) => ({
+      teamId: r.team_id, field: r.field, text: r.text, updatedBy: r.updated_by, updatedAt: r.updated_at,
+    }));
+  }
+
+  async save(entry: Omit<CanvasEntry, "updatedAt">) {
+    check(
+      await this.db.from("canvas_entries").upsert(
+        { team_id: entry.teamId, field: entry.field, text: entry.text, updated_by: entry.updatedBy, updated_at: new Date().toISOString() },
+        { onConflict: "team_id,field" },
+      ),
+    );
+  }
+
+  async clear() {
+    check(await this.db.from("canvas_entries").delete().not("team_id", "is", null));
+  }
+}
+
 class SupabaseState implements GameStateRepository {
   constructor(private readonly db: SupabaseClient) {}
 
@@ -291,6 +316,7 @@ export function createSupabaseGame(env: { url: string; serviceKey: string }): Ga
     presence: new SupabasePresence(db),
     answers: new SupabaseAnswers(db),
     guestQuestions: new SupabaseGuestQuestions(db),
+    canvas: new SupabaseCanvas(db),
     state: new SupabaseState(db),
     notifier: new BroadcastNotifier(env.url, env.serviceKey),
   };

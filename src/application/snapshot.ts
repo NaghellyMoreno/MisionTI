@@ -37,6 +37,15 @@ export interface QuestionView {
   options: string[];
 }
 
+export interface CanvasView {
+  teamId: TeamId;
+  label: string;
+  caseId: string;
+  /** Texto de cada casilla y quién la escribió por última vez. */
+  fields: Record<string, { text: string; by: string | null }>;
+  filled: number;
+}
+
 export interface Snapshot {
   serverNow: number;
   viewer: Viewer;
@@ -77,7 +86,10 @@ export interface Snapshot {
     current: null | { teamLabel: string; levelName: string; topic: string; text: string };
     queue: { teamId: TeamId; teamLabel: string; level: number; levelName: string; status: "sin-pregunta" | GuestQuestion["status"] }[];
   };
+  /** Lienzos de todos los grupos: siempre para el equipo docente; para los demás, desde que abre la Galería. */
+  canvases?: CanvasView[];
   team?: {
+    canvas: CanvasView;
     team: Team;
     student: { id: StudentId; name: string };
     balance: number;
@@ -109,14 +121,14 @@ export class GetSnapshot {
   constructor(
     private readonly deps: Pick<
       GameDependencies,
-      "teams" | "ledger" | "purchases" | "votes" | "presence" | "answers" | "guestQuestions" | "state"
+      "teams" | "ledger" | "purchases" | "votes" | "presence" | "answers" | "guestQuestions" | "canvas" | "state"
     >,
     private readonly clock: () => number = Date.now,
   ) {}
 
   async execute(viewer: Viewer): Promise<Snapshot> {
     const now = this.clock();
-    const [teams, ledger, purchases, votes, presence, answers, guestQuestions, state] = await Promise.all([
+    const [teams, ledger, purchases, votes, presence, answers, guestQuestions, canvasRows, state] = await Promise.all([
       this.deps.teams.list(),
       this.deps.ledger.list(),
       this.deps.purchases.list(),
@@ -124,6 +136,7 @@ export class GetSnapshot {
       this.deps.presence.list(),
       this.deps.answers.list(),
       this.deps.guestQuestions.list(),
+      this.deps.canvas.list(),
       this.deps.state.get(),
     ]);
     const teamLabel = new Map(teams.map((t) => [t.id, t.label]));
@@ -257,7 +270,14 @@ export class GetSnapshot {
       queue,
     };
 
+    const canvasOf = (team: Team): CanvasView => {
+      const fields: CanvasView["fields"] = {};
+      for (const e of canvasRows) if (e.teamId === team.id) fields[e.field] = { text: e.text, by: studentName.get(e.updatedBy) ?? null };
+      return { teamId: team.id, label: team.label, caseId: team.caseId, fields, filled: Object.values(fields).filter((f) => f.text.trim()).length };
+    };
+
     const snapshot: Snapshot = { serverNow: now, viewer, state, ranking: rows, roster, scenario, gallery, pop, quiz, guest };
+    if (viewer.role === "staff" || state.gallery.status !== "cerrada") snapshot.canvases = teams.map(canvasOf);
 
     if (viewer.role === "team") {
       const team = teams.find((t) => t.id === viewer.teamId);
@@ -266,6 +286,7 @@ export class GetSnapshot {
         const myAnswers = answers.filter((a) => a.studentId === viewer.studentId);
         const myPops = myAnswers.filter((a) => a.kind === "sorpresa");
         snapshot.team = {
+          canvas: canvasOf(team),
           team,
           student: { id: viewer.studentId, name: studentName.get(viewer.studentId) ?? "" },
           balance: balanceOf(team.id, ledger),

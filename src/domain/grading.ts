@@ -70,6 +70,13 @@ export function gradeStudent(input: GradeInput): GradeRow {
   };
 }
 
+/** Nota del lienzo = promedio de los criterios calificados en la rúbrica (1 a 5). */
+export function rubricScore(scores: Partial<Record<string, number>> | undefined): number | undefined {
+  const values = Object.values(scores ?? {}).filter((v): v is number => typeof v === "number");
+  if (!values.length) return undefined;
+  return values.reduce((a, b) => a + b, 0) / values.length;
+}
+
 /** Presupuesto: 3,0 para el saldo más bajo y 5,0 para el más alto del curso. */
 export function budgetScore(balance: number, all: number[]): number {
   const min = Math.min(...all);

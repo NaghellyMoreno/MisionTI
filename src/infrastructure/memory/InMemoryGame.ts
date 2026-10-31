@@ -1,10 +1,11 @@
 import { INITIAL_BALANCE } from "@/domain/data/catalog";
 import { TEAMS } from "@/domain/data/teams";
 import { initialGameState } from "@/domain/rules";
-import type { Answer, GameState, GuestQuestion, GuestQuestionStatus, LedgerEntry, Presence, Purchase, Team, Vote } from "@/domain/types";
+import type { Answer, CanvasEntry, GameState, GuestQuestion, GuestQuestionStatus, LedgerEntry, Presence, Purchase, Team, Vote } from "@/domain/types";
 import type {
   AccessCodes,
   AnswerRepository,
+  CanvasRepository,
   ChangeNotifier,
   GuestQuestionRepository,
   NewAnswer,
@@ -125,6 +126,15 @@ class MemoryGuestQuestions implements GuestQuestionRepository, Resettable {
   async clear() { this.rows = []; }
 }
 
+class MemoryCanvas implements CanvasRepository, Resettable {
+  private rows = new Map<string, CanvasEntry>();
+  async list() { return [...this.rows.values()].map((r) => ({ ...r })); }
+  async save(entry: Omit<CanvasEntry, "updatedAt">) {
+    this.rows.set(`${entry.teamId}:${entry.field}`, { ...entry, updatedAt: stamp() });
+  }
+  async clear() { this.rows.clear(); }
+}
+
 class MemoryState implements GameStateRepository {
   private state: GameState = initialGameState();
   async get() { return structuredClone(this.state); }
@@ -153,6 +163,7 @@ export function createInMemoryGame(teams: Team[] = TEAMS, pins: Record<string, s
     presence: new MemoryPresence(),
     answers: new MemoryAnswers(),
     guestQuestions: new MemoryGuestQuestions(),
+    canvas: new MemoryCanvas(),
     state: new MemoryState(),
     notifier: new SilentNotifier(),
   };

@@ -26,6 +26,7 @@ import {
   EditGuestQuestion,
 } from "@/application/usecases/classroom";
 import { findStudent } from "@/domain/students";
+import { FocusGallery, SaveCanvasField, SetRubricScore } from "@/application/usecases/canvas";
 import type { PopSection } from "@/domain/data/agenda";
 import type { GuestQuestionStatus } from "@/domain/types";
 
@@ -137,6 +138,13 @@ export async function answerQuiz(choice: number) {
   });
 }
 
+export async function saveCanvasField(field: string, text: string) {
+  return run(async () => {
+    const { teamId, studentId } = await requireTeam();
+    await new SaveCanvasField(getGame()).execute({ teamId, studentId, field, text });
+  });
+}
+
 export async function saveGuestQuestion(text: string) {
   return run(async () => {
     const { teamId, studentId } = await requireTeam();
@@ -189,6 +197,20 @@ export async function editGuestQuestion(id: string, text: string) {
     await requireStaff();
     await new EditGuestQuestion(getGame()).execute(id, text);
     return "Pregunta corregida.";
+  });
+}
+
+export async function setRubricScore(teamId: string, criterion: string, score: number | null) {
+  return run(async () => {
+    await requireStaff();
+    await new SetRubricScore(getGame()).execute(teamId, criterion, score);
+  });
+}
+
+export async function focusGallery(teamId: string | null) {
+  return run(async () => {
+    await requireStaff();
+    await new FocusGallery(getGame()).execute(teamId);
   });
 }
 
