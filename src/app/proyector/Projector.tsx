@@ -10,7 +10,7 @@ import { useSoundCues } from "./useSoundCues";
 
 const caseName = (id: string) => CASES.find((c) => c.id === id)?.name ?? "";
 
-export function Projector({ initial }: { initial: Snapshot }) {
+export function Projector({ initial, join }: { initial: Snapshot; join: { url: string; svg: string } }) {
   const live = useLive(initial);
   const { snapshot } = live;
   const agenda = currentAgenda(snapshot.state);
@@ -35,7 +35,7 @@ export function Projector({ initial }: { initial: Snapshot }) {
         </div>
       </header>
       <main className="proj-body">
-        <Screen snapshot={snapshot} serverNow={live.serverNow} />
+        <Screen snapshot={snapshot} serverNow={live.serverNow} join={join} />
       </main>
       <button className="sound-toggle" onClick={sound.enabled ? sound.disable : sound.enable} title="Sonidos del proyector">
         {sound.enabled ? "🔊" : "🔇 Activar sonido"}
@@ -44,11 +44,11 @@ export function Projector({ initial }: { initial: Snapshot }) {
   );
 }
 
-function Screen({ snapshot, serverNow }: { snapshot: Snapshot; serverNow: () => number }) {
+function Screen({ snapshot, serverNow, join }: { snapshot: Snapshot; serverNow: () => number; join: { url: string; svg: string } }) {
   const crisis = activeCrisis(snapshot.state);
   switch (snapshot.state.screen) {
     case "sala":
-      return <LobbyScreen snapshot={snapshot} />;
+      return <LobbyScreen snapshot={snapshot} join={join} />;
     case "teoria":
       return <TheoryScreen snapshot={snapshot} />;
     case "sorpresa":

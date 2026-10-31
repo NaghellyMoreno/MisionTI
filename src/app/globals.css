@@ -824,3 +824,10 @@ a { color: var(--mint); }
   .step .block { height: 48px !important; font-size: 26px; border-bottom: 1px solid var(--line-2); border-radius: 10px; }
   .pop-names { gap: 8px; }
 }
+
+/* ---------- Ingreso con QR en la sala ---------- */
+.lobby-join { display: flex; align-items: center; gap: 18px; padding: 14px 18px; background: var(--ink-2); border: 1px solid var(--line); border-radius: 12px; }
+.lobby-qr { width: clamp(110px, 17vh, 170px); aspect-ratio: 1; flex: none; }
+.lobby-qr svg { width: 100%; height: 100%; display: block; }
+.lobby-url { font-size: clamp(15px, 2.2vh, 20px); color: var(--accent); word-break: break-all; }
+.lobby-head { flex-wrap: wrap; }

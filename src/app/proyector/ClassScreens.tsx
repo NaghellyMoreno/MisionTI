@@ -11,7 +11,7 @@ import { useTick } from "@/ui/useLive";
 const LETTERS = ["A", "B", "C", "D"];
 
 /** Sala de espera: quién ya se conectó. */
-export function LobbyScreen({ snapshot }: { snapshot: Snapshot }) {
+export function LobbyScreen({ snapshot, join }: { snapshot: Snapshot; join: { url: string; svg: string } }) {
   const online = snapshot.roster.filter((r) => r.online).length;
   const teams = [...new Set(snapshot.roster.map((r) => r.teamId))];
   const label = new Map(snapshot.ranking.map((r) => [r.teamId, r]));
@@ -21,6 +21,15 @@ export function LobbyScreen({ snapshot }: { snapshot: Snapshot }) {
         <div className="stack-sm">
           <span className="label">Sala de espera · entren desde su celular</span>
           <h2 className="h-display" style={{ fontSize: "clamp(28px, min(3.6vw, 6vh), 44px)" }}>Misión TI empieza a la 1:00 p. m.</h2>
+        </div>
+        <div className="lobby-join">
+          {/* SVG generado en el servidor con la dirección de la app: contenido propio, no del usuario. */}
+          <div className="lobby-qr" aria-label={`Código QR para entrar: ${join.url}`} dangerouslySetInnerHTML={{ __html: join.svg }} />
+          <div className="stack-sm" style={{ gap: 4 }}>
+            <span className="label">Escaneen para entrar</span>
+            <span className="mono lobby-url">{join.url.replace(/^https?:\/\//, "")}</span>
+            <span className="hint">Grupo → nombre → código del grupo</span>
+          </div>
         </div>
         <div className="board lobby-count">
           <span className="coins" style={{ fontSize: "clamp(36px, min(5vw, 8vh), 64px)" }}>{online}<span className="unit">de {snapshot.roster.length}</span></span>
