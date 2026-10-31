@@ -299,7 +299,7 @@ a { color: var(--mint); }
 .login-main { width: min(100%, 980px); margin: 0 auto; padding: 32px var(--gutter) 40px; display: grid; gap: 28px; align-content: start; }
 .login-hero h1 { font-family: var(--display); font-weight: 700; font-size: clamp(34px, 7vw, 64px); line-height: 0.98; margin: 10px 0 12px; letter-spacing: 0.01em; }
 .login-hero h1 em { font-style: normal; color: var(--accent); }
-.login-hero p { color: var(--muted); max-width: 52ch; margin: 0; }
+.login-hero p { color: var(--muted); margin: 0; }
 .seg { display: inline-flex; padding: 3px; border: 1px solid var(--line-2); border-radius: 8px; background: var(--ink-2); }
 .seg button { border: 0; background: transparent; padding: 8px 14px; border-radius: 5px; cursor: pointer; font-family: var(--display); font-weight: 600; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); min-height: 36px; }
 .seg button[aria-pressed="true"] { background: var(--ink-4); color: var(--text); box-shadow: inset 0 -2px 0 var(--accent); }
@@ -755,4 +755,72 @@ a { color: var(--mint); }
 
 @media (max-width: 960px) {
   .class-admin { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---------- Proyector responsivo ----------
+   Cifras y márgenes escalan con el alto de la pantalla para que el ranking y la sala
+   quepan en un video beam de 1366×768. Si algo no cabe, el cuerpo hace scroll en vez de cortarse. */
+.proj-top { padding: clamp(10px, 2.2vh, 22px) clamp(16px, 3vw, 40px); gap: clamp(12px, 2vw, 28px); }
+.proj-clock { padding: clamp(6px, 1.4vh, 14px) clamp(12px, 1.6vw, 22px); }
+.proj-timer { font-size: clamp(40px, min(6vw, 8vh), 72px); }
+.proj-body { padding: 2.2vh clamp(16px, 3vw, 40px); overflow-y: auto; overflow-x: hidden; min-height: 0; }
+.proj-row { grid-template-columns: minmax(36px, 70px) minmax(80px, 170px) minmax(0, 1fr) auto; gap: clamp(10px, 1.6vw, 20px); padding: 0.3vh clamp(10px, 1.4vw, 18px); }
+.proj-row .team { font-size: clamp(18px, 3.4vh, 40px); }
+.proj-row .coins { font-size: clamp(20px, 4vh, 48px); line-height: 1.1; }
+.proj-row .case { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lobby { gap: clamp(10px, 2vh, 22px); }
+.lobby-count { padding: clamp(8px, 1.4vh, 16px) clamp(14px, 2vw, 28px); }
+.lobby-grid { grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); gap: clamp(6px, 1.2vh, 12px); }
+.lobby-team { padding: clamp(8px, 1.3vh, 14px) 16px; gap: clamp(2px, 0.5vh, 6px); }
+.lobby-name { font-size: clamp(14px, 2.1vh, 17px); }
+.crisis-card { padding: clamp(24px, 5vh, 48px) clamp(20px, 4vw, 56px); }
+.crisis-card h2 { font-size: clamp(34px, min(6vw, 8vh), 64px); }
+.crisis-card .flavor { font-size: clamp(17px, 2.2vw, 24px); }
+.crisis-card .rule { font-size: clamp(19px, 2.5vw, 28px); }
+.proj-scenario .scenario-text { font-size: clamp(24px, min(3.6vw, 5.5vh), 42px); }
+.proj-light .lamp { width: clamp(56px, 14vh, 120px); height: clamp(56px, 14vh, 120px); }
+.proj-light .n { font-size: clamp(28px, 5vh, 48px); }
+.step .block { font-size: clamp(36px, 7vh, 64px); }
+.step .team { font-size: clamp(26px, 5vh, 44px); }
+.step .coins { font-size: clamp(22px, 4vh, 34px); }
+.guest-card { padding: clamp(20px, 5vh, 44px) clamp(20px, 4vw, 52px); }
+.guest-question { font-size: clamp(24px, min(3.6vw, 5vh), 52px); }
+.quiz-big { font-size: clamp(24px, min(3.8vw, 5vh), 54px); }
+.quiz-opt { padding: clamp(10px, 2vh, 20px) clamp(12px, 1.6vw, 22px); font-size: clamp(17px, 2.6vh, 28px); grid-template-columns: auto 1fr auto; }
+.quiz-letter { width: clamp(36px, 6vh, 54px); height: clamp(36px, 6vh, 54px); font-size: clamp(18px, 3vh, 26px); }
+.pop-name { min-width: min(220px, 100%); padding: clamp(10px, 2vh, 18px) clamp(14px, 2vw, 26px); }
+.pop-first { font-size: clamp(26px, min(3.4vw, 5vh), 40px); }
+.slide-lg .slide-title { font-size: clamp(30px, min(4.6vw, 5.6vh), 64px); }
+.slide-lg .slide-lead, .slide-lg .slide-points { font-size: clamp(17px, min(2.4vw, 3vh), 30px); }
+.slide-lg .slide-quote p { font-size: clamp(19px, min(2.8vw, 3.6vh), 38px); }
+.slide-portada.slide-lg .slide-title { font-size: clamp(38px, min(6.4vw, 8vh), 88px); }
+
+/* Tablet vertical y pantallas angostas */
+@media (max-width: 900px) {
+  .proj-top { grid-template-columns: 1fr auto; }
+  .proj-now { grid-column: 1 / -1; grid-row: 2; }
+  .proj-row .case .leader, .proj-row .case .mono { display: none; }
+  .proj-rank > .row .label.plain { visibility: hidden; }
+  .lobby-head { flex-wrap: wrap; }
+  .quiz-options { grid-template-columns: 1fr; }
+  .quiz-head { flex-direction: column-reverse; gap: 12px !important; }
+  .podium { gap: 10px; }
+}
+
+/* Celular: el proyector se lee como una página con scroll */
+@media (max-width: 600px) {
+  .projector { height: auto; min-height: 100dvh; overflow: visible; }
+  .proj-body { overflow: visible; }
+  .proj-row { grid-template-columns: 28px 1fr auto; row-gap: 0; }
+  .proj-row .pos { font-size: 15px; }
+  .proj-row .team { grid-column: 2; }
+  .proj-row .case { grid-column: 2; grid-row: 2; font-size: 13px; }
+  .proj-row .coins { grid-column: 3; grid-row: 1 / span 2; }
+  .proj-lights { gap: 10px; }
+  .proj-light .name { font-size: 11px; letter-spacing: 0.08em; }
+  .podium { grid-template-columns: 1fr; }
+  .podium .step { order: 2; }
+  .podium .step.first { order: 1; }
+  .step .block { height: 48px !important; font-size: 26px; border-bottom: 1px solid var(--line-2); border-radius: 10px; }
+  .pop-names { gap: 8px; }
 }

@@ -20,17 +20,17 @@ export function LobbyScreen({ snapshot }: { snapshot: Snapshot }) {
       <div className="lobby-head">
         <div className="stack-sm">
           <span className="label">Sala de espera · entren desde su celular</span>
-          <h2 className="h-display" style={{ fontSize: 44 }}>Misión TI empieza a la 1:00 p. m.</h2>
+          <h2 className="h-display" style={{ fontSize: "clamp(28px, min(3.6vw, 6vh), 44px)" }}>Misión TI empieza a la 1:00 p. m.</h2>
         </div>
         <div className="board lobby-count">
-          <span className="coins" style={{ fontSize: 64 }}>{online}<span className="unit">de {snapshot.roster.length}</span></span>
+          <span className="coins" style={{ fontSize: "clamp(36px, min(5vw, 8vh), 64px)" }}>{online}<span className="unit">de {snapshot.roster.length}</span></span>
           <span className="label">conectados</span>
         </div>
       </div>
       <div className="lobby-grid">
         {teams.map((t) => (
           <div key={t} className="lobby-team">
-            <span className="mono" style={{ fontSize: 22 }}>G·{label.get(t)?.label}</span>
+            <span className="mono" style={{ fontSize: "clamp(17px, 2.6vh, 22px)" }}>G·{label.get(t)?.label}</span>
             <span className="hint">{CASES.find((c) => c.id === label.get(t)?.caseId)?.name}</span>
             {snapshot.roster
               .filter((r) => r.teamId === t)
@@ -66,7 +66,7 @@ export function PopScreen({ snapshot, serverNow }: { snapshot: Snapshot; serverN
   return (
     <section className="takeover pop-screen">
       <span className="chip coral live" style={{ fontSize: 14, padding: "6px 14px" }}><span className="dot" />Pregunta sorpresa</span>
-      <h2 className="h-display" style={{ fontSize: 56 }}>{pop.reveal ? "Se acabó el tiempo" : "Revisen su celular…"}</h2>
+      <h2 className="h-display" style={{ fontSize: "clamp(32px, min(5vw, 7vh), 56px)" }}>{pop.reveal ? "Se acabó el tiempo" : "Revisen su celular…"}</h2>
       <div className="pop-names">
         {pop.students.map((s, i) => (
           <div key={s.id} className={`pop-name ${s.answered ? "done" : ""}`} style={{ animationDelay: `${i * 220}ms` }}>
@@ -84,7 +84,7 @@ export function PopScreen({ snapshot, serverNow }: { snapshot: Snapshot; serverN
           </p>
         </div>
       ) : (
-        <span className="coins" style={{ fontSize: 96 }}>{left}<span className="unit">seg</span></span>
+        <span className="coins" style={{ fontSize: "clamp(56px, min(8vw, 12vh), 96px)" }}>{left}<span className="unit">seg</span></span>
       )}
     </section>
   );
@@ -96,7 +96,7 @@ export function GuestScreen({ snapshot }: { snapshot: Snapshot }) {
     <section className="guest-screen">
       <div className="stack-sm">
         <span className="label">Conexión en vivo · {GUEST_MEETING.channel}</span>
-        <h2 className="h-display" style={{ fontSize: 40 }}>{GUEST_MEETING.company}</h2>
+        <h2 className="h-display" style={{ fontSize: "clamp(26px, min(3.4vw, 5.5vh), 40px)" }}>{GUEST_MEETING.company}</h2>
       </div>
       {cur ? (
         <article className="guest-card">
@@ -130,8 +130,8 @@ export function QuizScreen({ snapshot, serverNow }: { snapshot: Snapshot; server
     return (
       <section className="takeover">
         <span className="label" style={{ fontSize: 16 }}>Quiz final individual</span>
-        <h2 className="h-display" style={{ fontSize: 72 }}>Saquen el celular.</h2>
-        <p className="muted" style={{ fontSize: 26, margin: 0 }}>{q.total} preguntas · acertar rápido da más puntos</p>
+        <h2 className="h-display" style={{ fontSize: "clamp(36px, min(6vw, 9vh), 72px)" }}>Saquen el celular.</h2>
+        <p className="muted" style={{ fontSize: "clamp(18px, 2.4vw, 26px)", margin: 0 }}>{q.total} preguntas · acertar rápido da más puntos</p>
       </section>
     );
   }
@@ -148,9 +148,9 @@ export function QuizScreen({ snapshot, serverNow }: { snapshot: Snapshot; server
         <span className="label" style={{ fontSize: 14 }}>Pregunta {q.index + 1} de {q.total}</span>
         <span className="mono muted" style={{ fontSize: 20 }}>{q.answered}/{online} respondieron</span>
       </div>
-      <div className="row between" style={{ alignItems: "start", gap: 32 }}>
+      <div className="row between quiz-head" style={{ alignItems: "start", gap: 32 }}>
         <p className="quiz-big">{q.question.text}</p>
-        {!revealed && <span className={`coins ${left <= 5 ? "coral" : ""}`} style={{ fontSize: 110, lineHeight: 1 }}>{left}</span>}
+        {!revealed && <span className={`coins ${left <= 5 ? "coral" : ""}`} style={{ fontSize: "clamp(56px, min(9vw, 13vh), 110px)", lineHeight: 1 }}>{left}</span>}
       </div>
       <div className="quiz-options">
         {q.question.options.map((o, i) => (

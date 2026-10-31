@@ -6,8 +6,8 @@ import { loginStaff, loginTeam } from "./actions";
 
 type TeamOption = { id: string; label: string; caseName: string; students: { id: string; name: string }[] };
 
-export function LoginForm({ teams }: { teams: TeamOption[] }) {
-  const [mode, setMode] = useState<"team" | "staff">("team");
+/** Ingreso de estudiantes (`/`) o del equipo docente (`/control`): cada ruta muestra solo el suyo. */
+export function LoginForm({ mode, teams = [] }: { mode: "team" | "staff"; teams?: TeamOption[] }) {
   const [teamId, setTeamId] = useState<string | null>(null);
   const [studentId, setStudentId] = useState<string | null>(null);
   const [staff, setStaff] = useState<string | null>(null);
@@ -45,12 +45,6 @@ export function LoginForm({ teams }: { teams: TeamOption[] }) {
     });
   };
 
-  const switchMode = (m: "team" | "staff") => {
-    setMode(m);
-    setError(null);
-    setPin(["", "", "", ""]);
-  };
-
   const pickTeam = (id: string) => {
     setTeamId(id);
     const only = teams.find((t) => t.id === id)?.students;
@@ -66,10 +60,7 @@ export function LoginForm({ teams }: { teams: TeamOption[] }) {
       }}
     >
       <div className="row between wrap">
-        <div className="seg" role="group" aria-label="Tipo de acceso">
-          <button type="button" aria-pressed={mode === "team"} onClick={() => switchMode("team")}>Soy estudiante</button>
-          <button type="button" aria-pressed={mode === "staff"} onClick={() => switchMode("staff")}>Equipo docente</button>
-        </div>
+        <span className="label">{mode === "team" ? "Ingreso de estudiantes" : "Equipo docente"}</span>
         <span className="hint">
           {mode === "team" ? "1 · Su grupo   2 · Su nombre   3 · Código del grupo" : "Código del equipo docente"}
         </span>

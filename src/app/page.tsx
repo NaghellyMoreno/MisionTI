@@ -26,7 +26,6 @@ export default async function Home() {
     <div className="login">
       <header className="topbar">
         <Brand />
-        <a className="btn ghost sm" href="/proyector">Proyector ↗</a>
       </header>
       <main className="login-main">
         <section className="login-hero">
@@ -35,9 +34,12 @@ export default async function Home() {
             Rescate<br />
             <em>empresarial.</em>
           </h1>
-          <p>Su firma consultora tiene 100 TecnoCoins y una empresa en crisis. Entren con su nombre: la app puede escogerlos para una pregunta sorpresa en cualquier momento.</p>
+          <p>
+            Su firma consultora tiene 100 TecnoCoins y una empresa en crisis. Seleccionen su grupo y entren con su nombre de equipo y su código de acceso.{" "}
+            <strong>Nota:</strong> la app puede escogerlos para una pregunta sorpresa en cualquier momento.
+          </p>
         </section>
-        <LoginForm teams={teams} />
+        <LoginForm mode="team" teams={teams} />
       </main>
       <footer className="login-foot">
         <span>José Castellanos · Karen Moreno · Dylber Cabrera · Camila Giraldo</span>

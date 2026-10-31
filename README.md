@@ -5,9 +5,9 @@ Presenta la teoría, lleva el juego, lanza preguntas sorpresa individuales, mode
 
 | Ruta | Quién | Para qué |
 |---|---|---|
-| `/` | Todos | Ingreso: grupo → nombre → código del grupo (o equipo docente) |
+| `/` | Estudiantes | Ingreso: grupo → nombre → código del grupo |
 | `/equipo` | Cada estudiante, en su celular | Clase en vivo, preguntas sorpresa, Mercado, pregunta al invitado, votaciones, quiz |
-| `/control` | José, Karen, Dylber, Camila | Asistencia, teoría, sorpresas, compras, crisis, invitado, quiz, notas |
+| `/control` | José, Karen, Dylber, Camila | Ingreso docente (nombre + código), asistencia, teoría, sorpresas, compras, crisis, invitado, quiz, notas |
 | `/proyector` | Video beam | Sala de espera, teoría, ranking, crisis, sorpresas, invitado, quiz y podio |
 
 ---

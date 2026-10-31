@@ -30,7 +30,7 @@ export function Projector({ initial }: { initial: Snapshot }) {
           <span className="title">{agenda.current.title}</span>
           <div className="progress"><i style={{ width: `${countdown.ratio * 100}%` }} /></div>
         </div>
-        <div className="board" style={{ padding: "14px 22px" }}>
+        <div className="board proj-clock">
           <Clock left={countdown.left} status={countdown.status} className="proj-timer" />
         </div>
       </header>
@@ -123,7 +123,7 @@ function SemaforoScreen({ snapshot }: { snapshot: Snapshot }) {
           {!revealed && <span className="chip amber live"><span className="dot" />{sc.voted}/{snapshot.ranking.length} grupos votaron</span>}
         </div>
         <p className="scenario-text">{sc.text}</p>
-        {revealed && <p className="muted" style={{ fontSize: 24, margin: 0 }}>{sc.explanation}</p>}
+        {revealed && <p className="muted" style={{ fontSize: "clamp(17px, 2.2vw, 24px)", margin: 0 }}>{sc.explanation}</p>}
       </div>
       <div className="proj-lights">
         {LIGHTS.map((l) => (
@@ -144,8 +144,8 @@ function GalleryScreen({ snapshot }: { snapshot: Snapshot }) {
     return (
       <section className="takeover">
         <span className="label" style={{ fontSize: 16 }}>Galería de lienzos</span>
-        <h2 className="h-display" style={{ fontSize: 72 }}>Recorran la pared y voten.</h2>
-        <p className="muted" style={{ fontSize: 26, margin: 0 }}>Dos votos por grupo · no el propio</p>
+        <h2 className="h-display" style={{ fontSize: "clamp(36px, min(6vw, 9vh), 72px)" }}>Recorran la pared y voten.</h2>
+        <p className="muted" style={{ fontSize: "clamp(18px, 2.4vw, 26px)", margin: 0 }}>Dos votos por grupo · no el propio</p>
         <Coins value={voted} digits={2} unit={false} className="" />
         <span className="muted mono">de {snapshot.ranking.length} grupos han votado</span>
       </section>
@@ -157,7 +157,7 @@ function GalleryScreen({ snapshot }: { snapshot: Snapshot }) {
       <span className="label" style={{ fontSize: 14 }}>Resultados de la Galería</span>
       <div className="bars" style={{ gap: 14 }}>
         {results.map((r) => (
-          <div key={r.teamId} className="bar" style={{ gridTemplateColumns: "120px 1fr 80px", fontSize: 26 }}>
+          <div key={r.teamId} className="bar" style={{ gridTemplateColumns: "minmax(70px, 120px) 1fr minmax(40px, 80px)", fontSize: "clamp(18px, 2.4vw, 26px)" }}>
             <span>G·{r.label}</span>
             <span className="track" style={{ height: 22 }}><i style={{ width: `${(r.votes / max) * 100}%` }} /></span>
             <span style={{ textAlign: "right" }}>{r.votes}</span>
@@ -177,7 +177,7 @@ function Podium({ snapshot }: { snapshot: Snapshot }) {
         <span className="team">G·{r.label}</span>
         <span className="muted">{caseName(r.caseId)}</span>
         <Coins value={r.balance} className="" />
-        <div className="block" style={{ height }}>{place}</div>
+        <div className="block" style={{ height: `min(${height}px, ${height / 8}vh)` }}>{place}</div>
       </div>
     );
   return (

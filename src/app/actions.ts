@@ -84,8 +84,9 @@ export async function loginStaff(name: string, pin: string): Promise<ActionResul
 }
 
 export async function logout() {
+  const { role } = await readViewer();
   await clearSession();
-  redirect("/");
+  redirect(role === "staff" ? "/control" : "/");
 }
 
 /* ---------- Grupos ---------- */
