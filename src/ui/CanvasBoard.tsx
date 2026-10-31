@@ -16,7 +16,7 @@ export function CanvasBoard({ canvas, size = "md" }: { canvas: CanvasView; size?
         {CANVAS_FIELDS.map((f) => {
           const entry = canvas.fields[f.id];
           return (
-            <section key={f.id} className={`canvas-cell-ro ${entry?.text.trim() ? "" : "empty"}`}>
+            <section key={f.id} className={`canvas-cell-ro ${entry?.text.trim() ? "" : "is-empty"}`}>
               <span className="label">{f.level} · {f.title}</span>
               <p>{entry?.text.trim() || "Sin escribir"}</p>
             </section>

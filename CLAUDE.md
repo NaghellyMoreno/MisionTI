@@ -11,7 +11,7 @@ App web (Next.js 15 + TypeScript + Supabase, desplegada en Vercel) para dictar u
 
 ## Las 4 fases de la clase (requisito del curso)
 1. **Fuente:** tema central y origen de la información (bibliografía, normativa, empresa real, experto).
-2. **Entrega:** taller gamificado: empresas ficticias en crisis, 100 TecnoCoins, Mercado, cartas de crisis y lienzo. La teoría de los 6 niveles del ciclo de vida se presenta en la app.
+2. **Entrega:** taller gamificado: empresas ficticias en crisis, 100 TecnoCoins, Mercado, cartas de crisis y lienzo digital (en el celular; la clase no usa materiales físicos). La teoría de los 6 niveles del ciclo de vida se presenta en la app.
 3. **Invitado experto:** entrevista tipo podcast; cada grupo hace una pregunta sobre su nivel del ciclo.
 4. **Evaluación:** preguntas sorpresa individuales, Semáforo, Galería, quiz final individual y lienzo con rúbrica → nota de 0 a 5.
 
@@ -38,7 +38,9 @@ Ciclo de vida (tema del profesor): identificación y diagnóstico → análisis 
 | Catálogo, casos de empresa y rutas legales | `src/domain/data/catalog.ts` |
 | Cartas de crisis | `src/domain/crisis/` |
 | Cálculo de la nota | `src/domain/grading.ts` |
-| Esquema de base de datos | `supabase/schema.sql` (nuevo) y `supabase/migracion-v2.sql` (actualizar) |
+| Casillas del lienzo y rúbrica | `src/domain/data/canvas.ts` |
+| Prueba de carga | `scripts/prueba-carga.mjs` (`npm run carga`) |
+| Esquema de base de datos | `supabase/schema.sql` (nuevo) y `supabase/migracion-v2.sql`, `migracion-v3.sql` (actualizar, en orden) |
 
 ## Comandos
 ```bash
@@ -50,6 +52,8 @@ npm run build
 Antes de dar algo por terminado: `npx tsc --noEmit`, `npm test` y `npm run build` deben pasar. Si cambian el modelo de datos, actualicen ambos adaptadores (memoria y Supabase), `schema.sql` y una migración nueva.
 
 ## Pendiente o por decidir
+- Cambiar `STAFF_PIN` en Vercel: `2026` es el código de pruebas y está escrito en el repositorio.
+- Correr la prueba de carga contra Vercel antes de la clase.
 - Confirmar con KOSMOS TIC el nombre de quien se conecta y el enlace de Meet.
 - La propuesta en PDF (fases, cronograma y materiales) se escribió para 13 grupos; la app ya usa 11.
 - La integración con Supabase en vivo debe probarse en un ensayo real en el salón, con los celulares en el wifi de la universidad.

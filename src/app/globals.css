@@ -841,25 +841,27 @@ a { color: var(--mint); }
 .canvas-field.current { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
 .canvas-field .textarea { min-height: 96px; }
 
-.canvas-board { display: grid; gap: 14px; }
+.canvas-board { display: grid; gap: 14px; align-content: start; }
 .canvas-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
 .canvas-team { font-size: 22px; }
 .canvas-case { font-family: var(--display); font-weight: 600; color: var(--muted); }
 .canvas-grid-6 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .canvas-cell-ro { border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; background: var(--ink-3); display: grid; gap: 6px; align-content: start; }
 .canvas-cell-ro p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
-.canvas-cell-ro.empty p { color: var(--dim); font-style: italic; }
+.canvas-cell-ro.is-empty p { color: var(--dim); font-style: italic; }
 .canvas-sm .canvas-grid-6 { grid-template-columns: minmax(0, 1fr); }
 .canvas-sm .canvas-cell-ro p { font-size: 14px; }
 .canvas-md .canvas-cell-ro p { font-size: 14px; }
+.canvas-md .canvas-grid-6 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.canvas-lg .canvas-grid-6 { grid-auto-rows: minmax(28vh, auto); }
 .canvas-lg .canvas-team { font-size: clamp(30px, 4.5vh, 44px); }
 .canvas-lg .canvas-case { font-size: clamp(20px, 3vh, 28px); }
 .canvas-lg .canvas-cell-ro { padding: 16px 18px; background: var(--ink-2); }
 .canvas-lg .canvas-cell-ro .label { font-size: 13px; }
 .canvas-lg .canvas-cell-ro p { font-size: clamp(15px, 2.15vh, 21px); line-height: 1.4; }
 
-.gallery-screen { display: grid; grid-template-rows: 1fr auto; gap: 16px; animation: rise 0.35s ease-out; min-height: 0; }
-.gallery-foot { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+.gallery-screen { display: grid; grid-template-rows: auto 1fr auto; gap: 16px; animation: rise 0.35s ease-out; min-height: 0; }
+.gallery-foot { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding-right: 170px; }
 .gallery-dots { display: flex; gap: 6px; flex-wrap: wrap; }
 .gallery-dots span { font-family: var(--mono); font-size: 13px; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--dim); }
 .gallery-dots span.on { background: var(--accent); border-color: var(--accent); color: #fff; }

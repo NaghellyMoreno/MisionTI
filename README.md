@@ -16,7 +16,7 @@ Presenta la teoría, lleva el juego, lanza preguntas sorpresa individuales, mode
 
 ### Supabase
 - **Proyecto nuevo:** SQL Editor → pegar [`supabase/schema.sql`](supabase/schema.sql) → **Run**.
-- **Si ya habían ejecutado la versión anterior:** ejecuten solo [`supabase/migracion-v2.sql`](supabase/migracion-v2.sql). Actualiza los grupos y crea las tablas nuevas sin borrar nada.
+- **Si ya habían ejecutado una versión anterior:** ejecuten las migraciones que les falten, en orden: [`migracion-v2.sql`](supabase/migracion-v2.sql) (grupos, asistencia, respuestas, invitado) y [`migracion-v3.sql`](supabase/migracion-v3.sql) (lienzo digital y preguntas anuladas). Ninguna borra datos.
 
 ### Vercel
 Variables de entorno (Settings → Environment Variables) y luego **Redeploy**:
@@ -26,8 +26,9 @@ Variables de entorno (Settings → Environment Variables) y luego **Redeploy**:
 | `NEXT_PUBLIC_SUPABASE_URL` | URL del proyecto de Supabase |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | clave anon / publishable |
 | `SUPABASE_SERVICE_ROLE_KEY` | clave service_role / secret (privada) |
-| `STAFF_PIN` | código de 4 dígitos del equipo docente |
+| `STAFF_PIN` | código de 4 dígitos del equipo docente. **No usen 2026**: es el de pruebas y aparece en este repositorio |
 | `SESSION_SECRET` | frase larga y aleatoria (32+ caracteres) |
+| `APP_URL` | opcional: la dirección que muestra el QR de la sala (si no, se toma de la petición) |
 
 Los pasos detallados para crear el proyecto y subirlo a GitHub están en la sección 7.
 
@@ -35,28 +36,46 @@ Los pasos detallados para crear el proyecto y subirlo a GitHub están en la secc
 
 ## 2. Antes de la clase (checklist)
 
+- [ ] **Prueba de carga** (sección 2.1) contra la dirección de Vercel.
 - [ ] **Ensayo en el mismo salón** con varios celulares conectados al wifi de la universidad. Si el wifi bloquea algo, el indicador del celular pasa a "sincronizando" o "sin conexión": en ese caso, pidan usar datos móviles.
 - [ ] Al terminar el ensayo: **Control → Ajustes → Reiniciar partida** (escribir `REINICIAR`). Borra compras, respuestas, preguntas y asistencia; conserva los pesos de la nota.
-- [ ] **Control → Ajustes → Mostrar códigos**: un código por grupo para el sobre.
-- [ ] Código QR de la dirección de la app en la primera diapositiva o en el tablero.
+- [ ] **Control → Ajustes → Mostrar códigos**: tengan a mano el código de cada grupo para decírselo al entrar (no lo proyecten).
+- [ ] El QR de ingreso ya aparece en la pantalla **Sala** del proyector: no hay que imprimir nada.
 - [ ] `/proyector` abierto en el computador del video beam (F11) y clic en **🔇 Activar sonido**.
 - [ ] Confirmar con KOSMOS TIC el enlace de Meet para las **2:47 p. m.**
 - [ ] 12:45 p. m.: proyector en **Sala**. Los estudiantes van entrando y su nombre se pone verde.
 
+### 2.1 Prueba de carga (¿se va a caer?)
+
+Simula los 27 celulares durante unos minutos: cada uno entra, envía su señal de asistencia y pide el estado de la clase cada 3 segundos (el peor caso, cuando falla el canal en vivo).
+
+1. **Control → Ajustes → Mostrar códigos → Copiar para la prueba de carga.**
+2. Desde la carpeta del proyecto:
+   ```bash
+   npm run carga -- --url https://su-app.vercel.app --codigos "EQ01=1234,EQ02=5678,…" --minutos 3
+   ```
+3. Al final imprime una tabla con tiempos y errores, y un veredicto: **aguanta** si el 95 % de las respuestas tarda menos de 1,5 s y hay menos de 1 % de errores.
+4. **Reinicien la partida** después, para borrar la asistencia de prueba.
+
+Esta prueba mide el servidor y la base de datos. El wifi del salón solo se prueba en el ensayo con celulares reales.
+
 ## 3. Durante la clase
+
+**Sin materiales:** el lienzo, la Galería, el Semáforo, el quiz, los TecnoCoins y las crisis están en la app. Solo se necesitan el proyector con sonido, un computador para el panel y los celulares.
 
 | Hora | Actividad | Qué hacer en `/control` |
 |---|---|---|
 | 12:45 | Sala de espera | Pestaña **Asistencia**: ver quién falta |
 | 1:00 | Alerta Roja | ▶ en el cronograma → **Iniciar**. La teoría salta sola a su diapositiva |
 | 1:10 | Fuentes y expediente KOSMOS TIC | Pestaña **Clase**: avanzar diapositivas. Al cerrar: **🎯 Lanzar** (bloque Fuentes) |
-| 1:22–2:34 | Niveles 1 a 6 + juego | Diapositivas → sorpresa al cerrar cada nivel (el panel sugiere el bloque) → Mercado y crisis como antes |
+| 1:22–2:34 | Niveles 1 a 6 + juego | Diapositivas → sorpresa al cerrar cada nivel (el panel sugiere el bloque) → Mercado y crisis. Los grupos llenan su **Lienzo** en el celular; el avance se ve en la pestaña **Lienzos** |
 | 2:34 | Pausa activa | Diapositiva de pausa: 60 segundos de pie |
 | 2:42 | Afinar pregunta | Los grupos escriben su pregunta en la pestaña **Invitado** del celular |
 | 2:47 | KOSMOS TIC en vivo | Pestaña **Invitado**: **En pantalla** en orden (del nivel 1 al 6) y **Marcar hecha** |
-| 3:17 | Semáforo · Galería | Igual que antes |
+| 3:17 | Semáforo | Pestaña **Semáforo**: abrir, votar de pie con el celular, revelar |
+| 3:27 | Galería | Pestaña **Galería** → **Abrir votación** (los lienzos se cierran). El proyector rota los lienzos cada 15 s o muestra el que fijen en **Lienzos → Proyectar este lienzo**; el vocero lo defiende en 20 s |
 | 3:33 | Quiz final | Pestaña **Quiz**: Iniciar → Revelar → Siguiente (12 preguntas, 20 s cada una) |
-| 3:45 | Notas y premiación | Pestaña **Notas**: nota del lienzo por grupo → **Descargar para Excel** · proyector en **Podio** |
+| 3:45 | Notas y premiación | Pestaña **Lienzos**: José califica la rúbrica (puede hacerlo durante la Galería) → **Notas → Descargar para Excel** · proyector en **Podio** |
 
 **Tip para Meet:** en Google Meet usen *Presentar → Una pestaña* con `/proyector`. Así KOSMOS TIC ve en pantalla la pregunta de cada grupo mientras la escucha.
 
@@ -65,6 +84,16 @@ Los pasos detallados para crear el proyecto y subirlo a GitHub están en la secc
 - La app escoge **al azar entre los conectados**, empezando por quienes menos preguntas han recibido. A nadie se le repite la misma pregunta.
 - El proyector muestra **los nombres** (no la pregunta) y quién ya respondió.
 - **Sin señal:** si el celular pierde la conexión, la respuesta queda guardada en el celular y se envía sola al reconectar (hay 60 segundos de margen).
+- **Anular:** si a alguien se le apagó el celular, en **Clase → Historial** pulsen **Anular**. Esa pregunta no cuenta en su nota y el estudiante vuelve a la fila para otra.
+
+### Lienzo digital
+- Pestaña **Lienzo** del celular: 6 casillas, una por nivel del ciclo. Se guarda solo mientras escriben; cada casilla se guarda por separado, así dos integrantes no se pisan.
+- La casilla de la actividad en curso se resalta con "Ahora".
+- Cuando abre la Galería, el lienzo se cierra para que todos voten sobre la misma versión, y todos los grupos pueden leer los lienzos de los demás.
+- **Rúbrica** (pestaña **Lienzos**): 6 criterios de 1 a 5; la nota del lienzo es el promedio de los criterios calificados.
+
+### Pregunta al invitado
+En **Invitado**, **Corregir** permite pulir la redacción de la pregunta de un grupo antes de ponerla en pantalla.
 
 ### Asistencia
 Cada celular envía una señal cada 15 segundos. Un estudiante está "conectado" si dio señal en los últimos 45 segundos. **Si alguien no tiene celular o batería**, puede entrar desde el de un compañero con el botón **Cambiar** (cierra la sesión del otro en ese celular).
@@ -74,7 +103,7 @@ Cada celular envía una señal cada 15 segundos. Un estudiante está "conectado"
 |---|---|---|
 | Preguntas sorpresa (individual) | 25 % | aciertos ÷ preguntas recibidas × 5 |
 | Quiz final (individual) | 30 % | aciertos ÷ preguntas abiertas × 5 |
-| Lienzo (grupo) | 30 % | rúbrica que pone José en **Notas** |
+| Lienzo (grupo) | 30 % | promedio de la rúbrica que pone José en **Lienzos** |
 | Manejo del presupuesto (grupo) | 15 % | de 3,0 (menor saldo del curso) a 5,0 (mayor saldo) |
 
 Los pesos se cambian en **Notas** (deben sumar 100 %). Si a alguien no le tocó pregunta sorpresa, ese componente se excluye y su peso se reparte entre los demás (la tabla lo marca con *). El archivo descargado abre directo en Excel.
