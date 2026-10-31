@@ -176,6 +176,7 @@ const toAnswer = (r: Record<string, unknown>): Answer => ({
   sentAt: r.sent_at as string,
   answeredAt: (r.answered_at as string) ?? null,
   deadline: r.deadline ? Date.parse(r.deadline as string) : null,
+  voided: !!r.voided,
 });
 
 class SupabaseAnswers implements AnswerRepository, Resettable {
@@ -201,6 +202,7 @@ class SupabaseAnswers implements AnswerRepository, Resettable {
           sent_at: a.sentAt,
           answered_at: a.answeredAt,
           deadline: a.deadline ? new Date(a.deadline).toISOString() : null,
+          voided: a.voided,
         })),
       ),
     );
@@ -216,6 +218,10 @@ class SupabaseAnswers implements AnswerRepository, Resettable {
         .select("id"),
     );
     return (rows ?? []).length > 0;
+  }
+
+  async setVoided(id: string, voided: boolean) {
+    check(await this.db.from("answers").update({ voided }).eq("id", id));
   }
 
   async clear() {
@@ -246,6 +252,10 @@ class SupabaseGuestQuestions implements GuestQuestionRepository, Resettable {
 
   async setStatus(id: string, status: GuestQuestionStatus) {
     check(await this.db.from("guest_questions").update({ status, updated_at: new Date().toISOString() }).eq("id", id));
+  }
+
+  async setText(id: string, text: string) {
+    check(await this.db.from("guest_questions").update({ text, updated_at: new Date().toISOString() }).eq("id", id));
   }
 
   async clear() {

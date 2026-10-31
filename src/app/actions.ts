@@ -22,6 +22,8 @@ import {
   SetCanvasScore,
   SetGuestQuestionStatus,
   SetWeights,
+  VoidPopAnswer,
+  EditGuestQuestion,
 } from "@/application/usecases/classroom";
 import { findStudent } from "@/domain/students";
 import type { PopSection } from "@/domain/data/agenda";
@@ -160,6 +162,14 @@ export async function launchPop(section: PopSection, count: number, questionId?:
   });
 }
 
+export async function voidPopAnswer(answerId: string, voided: boolean) {
+  return run(async () => {
+    await requireStaff();
+    await new VoidPopAnswer(getGame()).execute(answerId, voided);
+    return voided ? "Pregunta anulada: no cuenta en la nota." : "Pregunta restaurada.";
+  });
+}
+
 export async function controlQuiz(command: "start" | "reveal" | "next" | "finish" | "reset") {
   return run(async () => {
     await requireStaff();
@@ -171,6 +181,14 @@ export async function setGuestQuestionStatus(id: string, status: GuestQuestionSt
   return run(async () => {
     await requireStaff();
     await new SetGuestQuestionStatus(getGame()).execute(id, status);
+  });
+}
+
+export async function editGuestQuestion(id: string, text: string) {
+  return run(async () => {
+    await requireStaff();
+    await new EditGuestQuestion(getGame()).execute(id, text);
+    return "Pregunta corregida.";
   });
 }
 

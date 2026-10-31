@@ -99,6 +99,10 @@ class MemoryAnswers implements AnswerRepository, Resettable {
     Object.assign(row, patch);
     return true;
   }
+  async setVoided(answerId: string, voided: boolean) {
+    const row = this.rows.find((r) => r.id === answerId);
+    if (row) row.voided = voided;
+  }
   async clear() { this.rows = []; }
 }
 
@@ -113,6 +117,10 @@ class MemoryGuestQuestions implements GuestQuestionRepository, Resettable {
   async setStatus(questionId: string, status: GuestQuestionStatus) {
     const row = this.rows.find((r) => r.id === questionId);
     if (row) Object.assign(row, { status, updatedAt: stamp() });
+  }
+  async setText(questionId: string, text: string) {
+    const row = this.rows.find((r) => r.id === questionId);
+    if (row) Object.assign(row, { text, updatedAt: stamp() });
   }
   async clear() { this.rows = []; }
 }

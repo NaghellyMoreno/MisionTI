@@ -99,7 +99,7 @@ export interface Snapshot {
     scenarioVotes: { teamId: TeamId; choice: Light }[];
     galleryVoters: TeamId[];
     guestQuestions: GuestQuestion[];
-    popDetail: { studentId: StudentId; name: string; teamLabel: string; questionId: string; choice: number | null; correct: boolean; sentAt: string }[];
+    popDetail: { id: string; studentId: StudentId; name: string; teamLabel: string; questionId: string; choice: number | null; correct: boolean; voided: boolean; sentAt: string }[];
     grades: GradeView[];
   };
 }
@@ -274,12 +274,12 @@ export class GetSnapshot {
           myLight: (scVotes.find((v) => v.teamId === team.id)?.choice as Light) ?? null,
           myGallery: parseGalleryChoice(galleryVotes.find((v) => v.teamId === team.id)?.choice ?? ""),
           pendingPops: myPops
-            .filter((a) => a.choice === null && a.deadline !== null && now <= a.deadline + POP_GRACE_MS)
+            .filter((a) => a.choice === null && !a.voided && a.deadline !== null && now <= a.deadline + POP_GRACE_MS)
             .map((a) => {
               const q = findPopQuestion(a.questionId)!;
               return { answerId: a.id, deadline: a.deadline!, question: { id: q.id, text: q.text, options: [...q.options] } };
             }),
-          popScore: { asked: myPops.length, correct: myPops.filter((a) => a.correct).length },
+          popScore: { asked: myPops.filter((a) => !a.voided).length, correct: myPops.filter((a) => a.correct && !a.voided).length },
           quizChoice: quizQuestion ? (myAnswers.find((a) => a.kind === "quiz" && a.questionId === quizQuestion.id)?.choice ?? null) : null,
           quizPoints: myAnswers.filter((a) => a.kind === "quiz").reduce((s, a) => s + a.points, 0),
           guestTopic: guestTopicOf(team.id),
@@ -300,6 +300,8 @@ export class GetSnapshot {
           .filter((a) => a.kind === "sorpresa")
           .sort(byNewestSent)
           .map((a) => ({
+            id: a.id,
+            voided: a.voided,
             studentId: a.studentId,
             name: studentName.get(a.studentId) ?? a.studentId,
             teamLabel: teamLabel.get(a.teamId) ?? "",

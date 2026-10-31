@@ -51,6 +51,8 @@ export interface AnswerRepository {
   createMany(rows: NewAnswer[]): Promise<void>;
   /** Registra la respuesta solo si aún no había respondido. Devuelve false si ya respondió. */
   respond(id: string, patch: Pick<Answer, "choice" | "correct" | "points" | "answeredAt">): Promise<boolean>;
+  /** Marca o desmarca una respuesta como anulada. */
+  setVoided(id: string, voided: boolean): Promise<void>;
 }
 
 /** Preguntas que cada grupo le hará al invitado. */
@@ -58,6 +60,8 @@ export interface GuestQuestionRepository {
   list(): Promise<GuestQuestion[]>;
   save(input: { teamId: TeamId; studentId: StudentId; text: string }): Promise<void>;
   setStatus(id: string, status: GuestQuestionStatus): Promise<void>;
+  /** Corrige el texto sin cambiar su estado (lo usa el equipo docente). */
+  setText(id: string, text: string): Promise<void>;
 }
 
 export interface GameStateRepository {

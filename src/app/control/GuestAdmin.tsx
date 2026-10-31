@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import type { Snapshot } from "@/application/snapshot";
+import type { GuestQuestion } from "@/domain/types";
 import { GUEST_MEETING, GUEST_TOPICS } from "@/domain/data/guest";
-import { setGuestQuestionStatus } from "../actions";
+import { editGuestQuestion, setGuestQuestionStatus } from "../actions";
 import type { ActionApi } from "./ControlApp";
 
 /** Moderación de la entrevista: las preguntas van en el orden del ciclo de vida. */
@@ -38,7 +40,7 @@ export function GuestAdmin({ snapshot, action }: { snapshot: Snapshot; action: A
                   <span className="chip">Nivel {item.level} · {item.levelName}</span>
                   <span className="hint">{topic.topic}</span>
                 </div>
-                {q ? <p className="quote" style={{ margin: 0 }}>{q.text}</p> : <span className="coral" style={{ fontSize: 14 }}>Este grupo aún no ha escrito su pregunta.</span>}
+                {q ? <QuestionText q={q} action={action} /> : <span className="coral" style={{ fontSize: 14 }}>Este grupo aún no ha escrito su pregunta.</span>}
               </div>
               <div className="row" style={{ gap: 6 }}>
                 {q && !onScreen && (
@@ -57,5 +59,45 @@ export function GuestAdmin({ snapshot, action }: { snapshot: Snapshot; action: A
         })}
       </div>
     </section>
+  );
+}
+
+/** Texto de la pregunta con corrección en línea: para pulir la redacción antes de proyectarla. */
+function QuestionText({ q, action }: { q: GuestQuestion; action: ActionApi }) {
+  const [editing, setEditing] = useState(false);
+  const [text, setText] = useState(q.text);
+
+  if (!editing) {
+    return (
+      <div className="row" style={{ gap: 8, alignItems: "start" }}>
+        <p className="quote grow" style={{ margin: 0 }}>{q.text}</p>
+        <button
+          className="btn ghost sm"
+          onClick={() => {
+            setText(q.text);
+            setEditing(true);
+          }}
+        >
+          Corregir
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <form
+      className="stack-sm"
+      onSubmit={(e) => {
+        e.preventDefault();
+        action.run(() => editGuestQuestion(q.id, text), () => setEditing(false));
+      }}
+    >
+      <textarea className="textarea" value={text} maxLength={240} onChange={(e) => setText(e.target.value)} autoFocus />
+      <div className="row" style={{ gap: 6 }}>
+        <button className="btn sm primary" disabled={action.pending || text.trim() === q.text}>Guardar corrección</button>
+        <button type="button" className="btn sm ghost" onClick={() => setEditing(false)}>Cancelar</button>
+        <span className="hint">{text.trim().length}/240</span>
+      </div>
+    </form>
   );
 }

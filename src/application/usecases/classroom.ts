@@ -64,7 +64,8 @@ export class LaunchPop {
       this.deps.answers.list(),
     ]);
 
-    const pops = answers.filter((a) => a.kind === "sorpresa");
+    // Las anuladas no cuentan: quien perdió la señal vuelve a la fila para otra pregunta.
+    const pops = answers.filter((a) => a.kind === "sorpresa" && !a.voided);
     const question = input.questionId
       ? bank.find((q) => q.id === input.questionId)
       : leastUsed(bank, pops.map((p) => p.questionId), this.random);
@@ -96,6 +97,7 @@ export class LaunchPop {
         sentAt: new Date(now).toISOString(),
         answeredAt: null,
         deadline,
+        voided: false,
       })),
     );
     await this.deps.state.update((s) => ({
@@ -122,6 +124,7 @@ export class AnswerPop {
     const row = (await this.deps.answers.list()).find((a) => a.id === input.answerId);
     if (!row || row.studentId !== input.studentId || row.kind !== "sorpresa") throw new GameRuleError("Esta pregunta no es para ti.");
     if (row.choice !== null) throw new GameRuleError("Ya respondiste esta pregunta.");
+    if (row.voided) throw new GameRuleError("El equipo docente anuló esta pregunta: no cuenta en tu nota.");
     if (!Number.isInteger(input.choice) || input.choice < 0 || input.choice > 3) throw new GameRuleError("Opción no válida.");
     const now = this.clock();
     if (row.deadline !== null && now > row.deadline + POP_GRACE_MS) throw new GameRuleError("Se acabó el tiempo para esta pregunta.");
@@ -137,6 +140,18 @@ export class AnswerPop {
     if (!ok) throw new GameRuleError("Ya respondiste esta pregunta.");
     await this.deps.notifier.notify();
     return { correct, explanation: question.explanation, answer: question.answer };
+  }
+}
+
+/** El equipo docente anula (o restaura) una pregunta sorpresa: deja de contar en la nota. */
+export class VoidPopAnswer {
+  constructor(private readonly deps: Deps<"answers" | "notifier">) {}
+
+  async execute(answerId: string, voided: boolean) {
+    const row = (await this.deps.answers.list()).find((a) => a.id === answerId);
+    if (!row || row.kind !== "sorpresa") throw new GameRuleError("Pregunta sorpresa no encontrada.");
+    await this.deps.answers.setVoided(answerId, voided);
+    await this.deps.notifier.notify();
   }
 }
 
@@ -200,6 +215,7 @@ export class AnswerQuiz {
         sentAt: new Date(quiz.openedAt).toISOString(),
         answeredAt: new Date(now).toISOString(),
         deadline: quiz.openedAt + duration,
+        voided: false,
       },
     ]);
     await this.deps.notifier.notify();
@@ -211,16 +227,34 @@ export class AnswerQuiz {
 export const GUEST_QUESTION_MIN = 10;
 export const GUEST_QUESTION_MAX = 240;
 
+/** Normaliza y valida el texto de una pregunta al invitado. */
+export function cleanGuestQuestion(raw: string): string {
+  const text = raw.trim().replace(/\s+/g, " ");
+  if (text.length < GUEST_QUESTION_MIN) throw new GameRuleError("Escriban una pregunta un poco más completa.");
+  if (text.length > GUEST_QUESTION_MAX) throw new GameRuleError(`Máximo ${GUEST_QUESTION_MAX} caracteres: debe caber en 30 segundos.`);
+  return text;
+}
+
 export class SaveGuestQuestion {
   constructor(private readonly deps: Deps<"guestQuestions" | "notifier">) {}
 
   async execute(input: { teamId: TeamId; studentId: StudentId; text: string }) {
-    const text = input.text.trim().replace(/\s+/g, " ");
-    if (text.length < GUEST_QUESTION_MIN) throw new GameRuleError("Escriban una pregunta un poco más completa.");
-    if (text.length > GUEST_QUESTION_MAX) throw new GameRuleError(`Máximo ${GUEST_QUESTION_MAX} caracteres: debe caber en 30 segundos.`);
+    const text = cleanGuestQuestion(input.text);
     const current = (await this.deps.guestQuestions.list()).find((q) => q.teamId === input.teamId);
     if (current?.status === "hecha") throw new GameRuleError("Su pregunta ya se hizo en la entrevista.");
     await this.deps.guestQuestions.save({ teamId: input.teamId, studentId: input.studentId, text });
+    await this.deps.notifier.notify();
+  }
+}
+
+/** El equipo docente corrige la redacción de una pregunta antes de ponerla en pantalla. */
+export class EditGuestQuestion {
+  constructor(private readonly deps: Deps<"guestQuestions" | "notifier">) {}
+
+  async execute(id: string, rawText: string) {
+    const text = cleanGuestQuestion(rawText);
+    if (!(await this.deps.guestQuestions.list()).some((q) => q.id === id)) throw new GameRuleError("Pregunta no encontrada.");
+    await this.deps.guestQuestions.setText(id, text);
     await this.deps.notifier.notify();
   }
 }

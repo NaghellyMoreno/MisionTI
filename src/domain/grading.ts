@@ -40,7 +40,7 @@ const round1 = (n: number) => Math.round(n * 10) / 10;
  * entre los demás, para no castigar al estudiante por algo que no dependió de él.
  */
 export function gradeStudent(input: GradeInput): GradeRow {
-  const pops = input.answers.filter((a) => a.kind === "sorpresa");
+  const pops = input.answers.filter((a) => a.kind === "sorpresa" && !a.voided);
   const quiz = input.answers.filter((a) => a.kind === "quiz");
   const popCorrect = pops.filter((a) => a.correct).length;
   const quizCorrect = quiz.filter((a) => a.correct).length;

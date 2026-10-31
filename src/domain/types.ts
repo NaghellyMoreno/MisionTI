@@ -127,6 +127,8 @@ export interface Answer {
   answeredAt: string | null;
   /** epoch ms límite para responder (preguntas sorpresa). */
   deadline: number | null;
+  /** Anulada por el equipo docente (p. ej. se le apagó el celular): no cuenta en la nota. */
+  voided: boolean;
 }
 
 export interface Presence {

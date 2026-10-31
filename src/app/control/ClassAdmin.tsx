@@ -6,7 +6,7 @@ import { AGENDA, type PopSection } from "@/domain/data/agenda";
 import { SLIDES } from "@/domain/data/lessons";
 import { POP_BANK, POP_SECTIONS, findPopQuestion } from "@/domain/data/questions";
 import { SlideView } from "@/ui/SlideView";
-import { controlSlides, launchPop } from "../actions";
+import { controlSlides, launchPop, voidPopAnswer } from "../actions";
 import type { ActionApi } from "./ControlApp";
 
 const time = (iso: string) => new Date(iso).toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" });
@@ -98,15 +98,26 @@ export function ClassAdmin({ snapshot, action }: { snapshot: Snapshot; action: A
         <div className="panel stack-sm" style={{ maxHeight: 420, overflowY: "auto" }}>
           <span className="label">Historial de preguntas sorpresa</span>
           {staff.popDetail.length === 0 && <span className="hint">Aún no se ha lanzado ninguna.</span>}
-          {staff.popDetail.map((p, i) => (
-            <div key={i} className="ledger-row">
+          <span className="hint">¿A alguien se le apagó el celular? Anulen su pregunta: no cuenta en la nota y vuelve a la fila.</span>
+          {staff.popDetail.map((p) => (
+            <div key={p.id} className={`ledger-row pop-row ${p.voided ? "voided" : ""}`}>
               <div>
                 <div>{p.name} <span className="dim">· G·{p.teamLabel}</span></div>
                 <div className="when">{time(p.sentAt)} · {p.questionId} · {findPopQuestion(p.questionId)?.text.slice(0, 48)}…</div>
               </div>
-              <span className={`chip ${p.choice === null ? "" : p.correct ? "mint" : "coral"}`}>
-                {p.choice === null ? "sin responder" : p.correct ? "correcta" : "incorrecta"}
-              </span>
+              <div className="row" style={{ gap: 6 }}>
+                <span className={`chip ${p.voided ? "" : p.choice === null ? "" : p.correct ? "mint" : "coral"}`}>
+                  {p.voided ? "anulada" : p.choice === null ? "sin responder" : p.correct ? "correcta" : "incorrecta"}
+                </span>
+                <button
+                  className="btn ghost sm"
+                  disabled={action.pending}
+                  onClick={() => action.run(() => voidPopAnswer(p.id, !p.voided))}
+                  title={p.voided ? "Volver a contarla en la nota" : "Excluirla de la nota"}
+                >
+                  {p.voided ? "Restaurar" : "Anular"}
+                </button>
+              </div>
             </div>
           ))}
         </div>
