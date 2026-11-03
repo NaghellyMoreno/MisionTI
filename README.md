@@ -44,7 +44,7 @@ Los pasos detallados para crear el proyecto y subirlo a GitHub están en la secc
 - [ ] `/proyector` abierto en el computador del video beam (F11) y clic en **🔇 Activar sonido**.
 - [ ] **Control remoto (clicker USB):** conectar el receptor USB al computador del video beam. En ese mismo navegador, ingresar como equipo docente (pantalla de inicio) y abrir `/proyector`. Probar que ▶ pasa la diapositiva y ◀ la devuelve (solo funciona cuando el proyector está en **Teoría**). El botón de pantalla en negro (`.` o `B`) oscurece el proyector; `Esc` o cualquier avance lo restablece.
 - [ ] Imprimir o tener abierto `docs/guion-teoria.pdf` (qué decir en cada diapositiva). El mismo guion aparece en **Control → Clase**, debajo de la diapositiva en pantalla.
-- [ ] Poner la variable `GUEST_MEET_URL` en Vercel (enlace de Meet con Oscar) y confirmar con KOSMOS TIC la conexión de las **3:30 p. m.** El botón **Abrir Meet** aparece en Control → Invitado.
+- [ ] Verificar que **Control → Invitado → Abrir Meet** lleve al Meet con Oscar (la variable `GUEST_MEET_URL` ya está en Vercel; la conexión es a las **3:30 p. m.**).
 - [ ] 12:45 p. m.: proyector en **Sala**. Los estudiantes van entrando y su nombre se pone verde.
 
 ### 2.1 Prueba de carga (¿se va a caer?)

@@ -14,7 +14,7 @@ export interface GuestTopic {
 export const GUEST_MEETING = {
   company: "KOSMOS TIC S.A.S. y BU-TIC",
   /** Persona de KOSMOS TIC que se conecta. */
-  guest: "Oscar",
+  guest: "Oscar Fernando Giraldo Prada",
   channel: "Google Meet",
   /** El enlace de Meet no va aquí (este archivo llega a los celulares): está en GUEST_MEET_URL y solo lo ve el panel docente. */
   start: "3:30 p. m.",

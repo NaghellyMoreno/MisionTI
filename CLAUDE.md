@@ -7,7 +7,7 @@ App web (Next.js 15 + TypeScript + Supabase, desplegada en Vercel) para dictar u
 
 - **Equipo a cargo (equipo 3):** José Castellanos (docente, director de la misión), Karen Moreno (estratega y cronometrista), Dylber Cabrera (game master) y Camila Giraldo (anfitriona y evaluación).
 - **Participantes:** 27 estudiantes en 11 grupos de juego (`src/domain/data/teams.ts`). El equipo 13 se eliminó; Andrés Felipe Ríos pasó al 12. Juliana Moreno (equipo 14) juega sola el **caso exprés** "Papelería El Rincón Digital", que tiene menos carga.
-- **Invitado experto:** KOSMOS TIC S.A.S. y BU-TIC (Manizales; VoIP, IP PBX, SIP Trunk, DID, SMS y campañas masivas, omnicanalidad, CRM). Quien se conecta es **Oscar**, por Google Meet, a las **3:30 p. m.**; la conexión es lo último de la clase y termina a las 4:00 p. m. El enlace de Meet no está en el código: va en la variable `GUEST_MEET_URL` (Vercel y `.env.local`) y solo lo ve el panel docente.
+- **Invitado experto:** KOSMOS TIC S.A.S. y BU-TIC (Manizales; VoIP, IP PBX, SIP Trunk, DID, SMS y campañas masivas, omnicanalidad, CRM). Quien se conecta es **Oscar Fernando Giraldo Prada** (en voz alta, "Oscar"), por Google Meet, a las **3:30 p. m.**; la conexión es lo último de la clase y termina a las 4:00 p. m. El enlace de Meet no está en el código: va en la variable `GUEST_MEET_URL` (Vercel y `.env.local`) y solo lo ve el panel docente.
 
 ## Las 4 fases de la clase (requisito del curso)
 1. **Fuente:** tema central y origen de la información (bibliografía, normativa, empresa real, experto).
@@ -56,6 +56,5 @@ Antes de dar algo por terminado: `npx tsc --noEmit`, `npm test` y `npm run build
 ## Pendiente o por decidir
 - Cambiar `STAFF_PIN` en Vercel: `2026` es el código de pruebas y está escrito en el repositorio.
 - Correr la prueba de carga contra Vercel antes de la clase.
-- Poner `GUEST_MEET_URL` en Vercel y confirmar con KOSMOS TIC la hora (la conexión es a las 3:30 p. m.).
 - La propuesta en PDF (fases, cronograma y materiales) se escribió para 13 grupos; la app ya usa 11.
 - La integración con Supabase en vivo debe probarse en un ensayo real en el salón, con los celulares en el wifi de la universidad.
