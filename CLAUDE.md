@@ -31,6 +31,8 @@ Ciclo de vida (tema del profesor): identificación y diagnóstico → análisis 
 |---|---|
 | Cronograma y horas | `src/domain/data/agenda.ts` |
 | Diapositivas de teoría | `src/domain/data/lessons.ts` |
+| Guion de lo que se dice en cada diapositiva y PDF de estudio | `src/domain/data/guion.ts`, `scripts/generar-guion.py` (salida: `docs/guion-teoria.pdf`) |
+| Teclas del control remoto (clicker) | `src/app/proyector/usePresenterKeys.ts` |
 | Preguntas sorpresa y quiz | `src/domain/data/questions.ts` |
 | Temas de entrevista por grupo | `src/domain/data/guest.ts` |
 | Fuentes citadas | `src/domain/data/sources.ts` |

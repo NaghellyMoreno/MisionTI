@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { Snapshot } from "@/application/snapshot";
 import { AGENDA, type PopSection } from "@/domain/data/agenda";
+import { GUION } from "@/domain/data/guion";
 import { SLIDES } from "@/domain/data/lessons";
 import { POP_BANK, POP_SECTIONS, findPopQuestion } from "@/domain/data/questions";
 import { SlideView } from "@/ui/SlideView";
@@ -34,6 +35,16 @@ export function ClassAdmin({ snapshot, action }: { snapshot: Snapshot; action: A
         <div className="panel slide-preview">
           <SlideView slide={slide} size="md" />
         </div>
+        {GUION[slide.id] && (
+          <div className="panel stack-sm">
+            <span className="label">Qué decir · {AGENDA[slide.agenda]?.lead}</span>
+            <ul className="speaker-notes">
+              {GUION[slide.id].map((line) => (
+                <li key={line}>{line}</li>
+              ))}
+            </ul>
+          </div>
+        )}
         <div className="slide-strip">
           {SLIDES.map((s, i) => (
             <button

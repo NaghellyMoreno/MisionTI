@@ -42,6 +42,8 @@ Los pasos detallados para crear el proyecto y subirlo a GitHub están en la secc
 - [ ] **Control → Ajustes → Mostrar códigos**: tengan a mano el código de cada grupo para decírselo al entrar (no lo proyecten).
 - [ ] El QR de ingreso ya aparece en la pantalla **Sala** del proyector: no hay que imprimir nada.
 - [ ] `/proyector` abierto en el computador del video beam (F11) y clic en **🔇 Activar sonido**.
+- [ ] **Control remoto (clicker USB):** conectar el receptor USB al computador del video beam. En ese mismo navegador, ingresar como equipo docente (pantalla de inicio) y abrir `/proyector`. Probar que ▶ pasa la diapositiva y ◀ la devuelve (solo funciona cuando el proyector está en **Teoría**). El botón de pantalla en negro (`.` o `B`) oscurece el proyector; `Esc` o cualquier avance lo restablece.
+- [ ] Imprimir o tener abierto `docs/guion-teoria.pdf` (qué decir en cada diapositiva). El mismo guion aparece en **Control → Clase**, debajo de la diapositiva en pantalla.
 - [ ] Confirmar con KOSMOS TIC el enlace de Meet para las **2:47 p. m.**
 - [ ] 12:45 p. m.: proyector en **Sala**. Los estudiantes van entrando y su nombre se pone verde.
 
@@ -66,7 +68,7 @@ Esta prueba mide el servidor y la base de datos. El wifi del salón solo se prue
 | Hora | Actividad | Qué hacer en `/control` |
 |---|---|---|
 | 12:45 | Sala de espera | Pestaña **Asistencia**: ver quién falta |
-| 1:00 | Alerta Roja | ▶ en el cronograma → **Iniciar**. La teoría salta sola a su diapositiva |
+| 1:00 | Alerta Roja (sin video: se abre con la frase de la portada) | ▶ en el cronograma → **Iniciar**. La teoría salta sola a su diapositiva |
 | 1:10 | Fuentes y expediente KOSMOS TIC | Pestaña **Clase**: avanzar diapositivas. Al cerrar: **🎯 Lanzar** (bloque Fuentes) |
 | 1:22–2:34 | Niveles 1 a 6 + juego | Diapositivas → sorpresa al cerrar cada nivel (el panel sugiere el bloque) → Mercado y crisis. Los grupos llenan su **Lienzo** en el celular; el avance se ve en la pestaña **Lienzos** |
 | 2:34 | Pausa activa | Diapositiva de pausa: 60 segundos de pie |
@@ -176,3 +178,8 @@ src/
    git push -u origin main
    ```
 3. <https://vercel.com/new> → importar el repositorio → agregar las 5 variables → **Deploy**.
+
+### Teoría con el control remoto
+- El clicker envía teclas: **PageDown / → / ↓** avanzan, **PageUp / ← / ↑** retroceden (`src/app/proyector/usePresenterKeys.ts`). El botón del puntero láser no envía teclas.
+- Requiere sesión docente en el navegador del proyector (la acción `controlSlides` exige `requireStaff`). Si no la hay, el proyector muestra un aviso al pulsar.
+- Si cambian las diapositivas, actualicen también `src/domain/data/guion.ts` (una prueba falla si falta alguna) y regeneren el PDF con `scripts/exportar-guion.mjs` y `scripts/generar-guion.py` (requiere `reportlab==4.2.5`).

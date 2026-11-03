@@ -7,19 +7,23 @@ import { Brand, Clock, Coins, useCountdown } from "@/ui/parts";
 import { useLive, useTick } from "@/ui/useLive";
 import { CanvasBoard } from "@/ui/CanvasBoard";
 import { GuestScreen, LobbyScreen, PopScreen, QuizScreen, TheoryScreen } from "./ClassScreens";
+import { usePresenterKeys } from "./usePresenterKeys";
 import { useSoundCues } from "./useSoundCues";
 
 const caseName = (id: string) => CASES.find((c) => c.id === id)?.name ?? "";
 
-export function Projector({ initial, join }: { initial: Snapshot; join: { url: string; svg: string } }) {
+export function Projector({ initial, join, canControl }: { initial: Snapshot; join: { url: string; svg: string }; canControl: boolean }) {
   const live = useLive(initial);
   const { snapshot } = live;
   const agenda = currentAgenda(snapshot.state);
   const countdown = useCountdown(snapshot.state, live.serverNow);
   const sound = useSoundCues(snapshot);
+  const keys = usePresenterKeys({ enabled: snapshot.state.screen === "teoria", canControl });
 
   return (
     <div className="projector">
+      {keys.black && <div className="proj-black" aria-hidden />}
+      {keys.hint && <div className="proj-hint" role="status">{keys.hint}</div>}
       <header className={`proj-top phase-${agenda.current.phase}`}>
         <Brand href="/proyector" />
         <div className="proj-now">

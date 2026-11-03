@@ -20,7 +20,7 @@ export const CLASS_DATE = "2026-11-04";
 
 /** Cronograma de 3 horas (1:00 a 4:00 p. m.) con 5 minutos de holgura al final. */
 export const AGENDA: AgendaItem[] = [
-  { title: "Alerta Roja", minutes: 10, phase: "Fuente", lead: "José", energy: "Arranque con video y sonido: nada de sentarse a escuchar." },
+  { title: "Alerta Roja", minutes: 10, phase: "Fuente", lead: "José", energy: "Arranque en voz alta con la frase de la portada y el sonido del proyector: nada de sentarse a escuchar." },
   { title: "Fuentes y expediente KOSMOS TIC", minutes: 7, phase: "Fuente", lead: "José", pop: "fuente" },
   { title: "Mecánica del juego", minutes: 5, phase: "Entrega", lead: "Dylber" },
   { title: "Nivel 1 · Identificación y diagnóstico", minutes: 8, phase: "Entrega", lead: "Karen", pop: "nivel1" },

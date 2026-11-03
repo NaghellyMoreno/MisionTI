@@ -889,3 +889,8 @@ a { color: var(--mint); }
   .canvas-list { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
   .canvas-grid-6 { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* Control remoto (clicker): pantalla en negro y aviso */
+.proj-black { position: fixed; inset: 0; background: #000; z-index: 50; }
+.proj-hint { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 40; max-width: min(720px, 92vw); padding: 12px 18px; border-radius: var(--radius); background: #14202b; color: #fff; font-size: 16px; text-align: center; box-shadow: 0 6px 24px rgba(0,0,0,0.25); }
+.speaker-notes { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 15px; line-height: 1.45; }
