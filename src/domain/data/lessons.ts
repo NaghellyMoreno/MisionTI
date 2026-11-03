@@ -61,7 +61,7 @@ export const SLIDES: Slide[] = [
       "Guía oficial colombiana: Marco de Referencia de Arquitectura Empresarial v3.0 de MinTIC (2023).",
       "Normativa: Ley 80 de 1993, Ley 1150 de 2007, Ley 1581 de 2012, Ley 1672 de 2013 y Ley 2300 de 2023.",
       "Empresa real: catálogo oficial y sitio web de KOSMOS TIC.",
-      "Experto: KOSMOS TIC en vivo a las 2:47 p. m.",
+      "Experto: Oscar, de KOSMOS TIC, en vivo a las 3:30 p. m.",
     ],
     sources: ["iso19770", "iso55000", "itil", "cobit", "nist80088", "mrae", "catalogo", "web"],
   },
@@ -89,7 +89,7 @@ export const SLIDES: Slide[] = [
     kind: "mision",
     kicker: "Su misión secreta",
     title: "Cada grupo llega a la entrevista con una pregunta",
-    lead: "Durante la clase aparecerán pistas 🔎 sobre KOSMOS TIC. Cada grupo tiene un tema asignado en la pestaña Invitado de su celular. Escriban su pregunta allí antes de las 2:47 p. m.",
+    lead: "Durante la clase aparecerán pistas 🔎 sobre KOSMOS TIC. Cada grupo tiene un tema asignado en la pestaña Invitado de su celular. Escriban su pregunta allí antes de las 3:30 p. m.",
     sources: ["catalogo"],
   },
 
@@ -395,34 +395,10 @@ export const SLIDES: Slide[] = [
     sources: [],
   },
 
-  /* ---------- FASE 3 · INVITADO ---------- */
-  {
-    id: "afinar",
-    agenda: 12,
-    kind: "mision",
-    kicker: "Últimos 5 minutos",
-    title: "Afinen su pregunta para KOSMOS TIC",
-    points: [
-      "Revisen la pista de su tema en la pestaña Invitado.",
-      "Una sola pregunta, de máximo 30 segundos.",
-      "Conéctenla con su empresa del juego: así será más interesante.",
-    ],
-    sources: ["catalogo"],
-  },
-  {
-    id: "en-vivo",
-    agenda: 13,
-    kind: "portada",
-    kicker: "Fase 3 · Invitado experto",
-    title: "Conexión en vivo con KOSMOS TIC",
-    lead: "Entrevista tipo podcast por Google Meet. Las preguntas de los grupos van en orden del ciclo de vida: del diagnóstico al fin de ciclo.",
-    sources: ["web"],
-  },
-
   /* ---------- FASE 4 · EVALUACIÓN ---------- */
   {
     id: "semaforo",
-    agenda: 14,
+    agenda: 12,
     kind: "actividad",
     kicker: "Fase 4 · Evaluación",
     title: "Juego Semáforo",
@@ -431,7 +407,7 @@ export const SLIDES: Slide[] = [
   },
   {
     id: "galeria",
-    agenda: 15,
+    agenda: 13,
     kind: "actividad",
     kicker: "Fase 4 · Evaluación",
     title: "Galería",
@@ -444,13 +420,37 @@ export const SLIDES: Slide[] = [
   },
   {
     id: "quiz",
-    agenda: 16,
+    agenda: 14,
     kind: "actividad",
     kicker: "Fase 4 · Evaluación",
     title: "Quiz final individual",
     points: ["12 preguntas en su celular.", "Acertar rápido da más puntos."],
     sources: [],
   },
+  /* ---------- FASE 3 · INVITADO ---------- */
+  {
+    id: "afinar",
+    agenda: 16,
+    kind: "mision",
+    kicker: "Últimos 10 minutos",
+    title: "Afinen su pregunta para KOSMOS TIC",
+    points: [
+      "Revisen la pista de su tema en la pestaña Invitado.",
+      "Una sola pregunta, de máximo 30 segundos.",
+      "Conéctenla con su empresa del juego: así será más interesante.",
+    ],
+    sources: ["catalogo"],
+  },
+  {
+    id: "en-vivo",
+    agenda: 17,
+    kind: "portada",
+    kicker: "Fase 3 · Invitado experto",
+    title: "Conexión en vivo con KOSMOS TIC",
+    lead: "Entrevista tipo podcast por Google Meet. Las preguntas de los grupos van en orden del ciclo de vida: del diagnóstico al fin de ciclo.",
+    sources: ["web"],
+  },
+
   {
     id: "cierre",
     agenda: 17,

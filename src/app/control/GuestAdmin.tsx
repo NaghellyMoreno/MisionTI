@@ -18,7 +18,12 @@ export function GuestAdmin({ snapshot, action }: { snapshot: Snapshot; action: A
       <div className="board row between wrap">
         <div className="stack-sm" style={{ gap: 2 }}>
           <span className="label">{GUEST_MEETING.company} · {GUEST_MEETING.channel}</span>
-          <strong style={{ fontFamily: "var(--display)", fontSize: 20 }}>Entrevista a las {GUEST_MEETING.start}</strong>
+          <strong style={{ fontFamily: "var(--display)", fontSize: 20 }}>Entrevista con {GUEST_MEETING.guest} a las {GUEST_MEETING.start}</strong>
+          {staff.meetUrl ? (
+            <a className="btn sm primary" href={staff.meetUrl} target="_blank" rel="noreferrer" style={{ justifySelf: "start" }}>Abrir Meet</a>
+          ) : (
+            <span className="hint">Falta el enlace de Meet: configuren GUEST_MEET_URL en Vercel.</span>
+          )}
         </div>
         <span className="coins" style={{ fontSize: 40 }}>
           {ready}

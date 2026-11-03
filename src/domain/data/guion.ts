@@ -20,7 +20,7 @@ export const GUION: Record<string, string[]> = {
     "Expliquen que nada de lo que verán hoy sale de la nada: hay cuatro tipos de fuente.",
     "Bibliografía: ISO/IEC 19770-1 (activos de TI), ISO 55000 (gestión de activos), ITIL 4, COBIT 2019 y NIST SP 800-88 (borrado seguro).",
     "Guía oficial colombiana: el Marco de Referencia de Arquitectura Empresarial v3.0 de MinTIC (2023). Normativa: Leyes 80 de 1993, 1150 de 2007, 1581 de 2012, 1672 de 2013 y 2300 de 2023.",
-    "Empresa real y experto: el catálogo oficial y el sitio de KOSMOS TIC, y su conexión en vivo a las 2:47 p. m.",
+    "Empresa real y experto: el catálogo oficial y el sitio de KOSMOS TIC, y la conexión en vivo con Oscar a las 3:30 p. m.",
     "Al cerrar este bloque, lancen la pregunta sorpresa del banco «Fuentes».",
   ],
   expediente: [
@@ -32,7 +32,7 @@ export const GUION: Record<string, string[]> = {
   "mision-entrevista": [
     "Expliquen la misión secreta: cada grupo tiene un tema asignado en la pestaña Invitado del celular.",
     "Durante la clase van a salir pistas con el ícono 🔎 en las diapositivas de KOSMOS TIC; esa pista les sirve para su pregunta.",
-    "Fecha límite: escribir la pregunta antes de las 2:47 p. m., cuando se conecta KOSMOS TIC.",
+    "Fecha límite: escribir la pregunta antes de las 3:30 p. m., cuando se conecta Oscar de KOSMOS TIC.",
   ],
   juego: [
     "Explicar la mecánica en menos de 5 minutos: cada grupo recibe una empresa en crisis y 100 TecnoCoins.",
@@ -164,15 +164,16 @@ export const GUION: Record<string, string[]> = {
     "Anuncien la hora de regreso y que el siguiente bloque es la entrevista con KOSMOS TIC.",
   ],
   afinar: [
-    "Últimos 5 minutos antes de la conexión.",
+    "Últimos 10 minutos antes de la conexión, que es lo último de la clase (3:30 a 4:00 p. m.).",
+    "Mientras los grupos escriben, prueben el Meet con Oscar: audio, enlace y compartir la pestaña del proyector.",
     "Revisen la pista del tema en la pestaña Invitado del celular.",
     "Una sola pregunta de máximo 30 segundos, conectada con la empresa del juego, para que sea más interesante.",
     "Camila puede corregir la redacción desde el panel antes de ponerla en pantalla.",
   ],
   "en-vivo": [
-    "Entrevista tipo podcast por Google Meet, a las 2:47 p. m.",
+    "Entrevista tipo podcast por Google Meet con Oscar, a las 3:30 p. m. Termina a las 4:00 p. m.",
     "Las preguntas van en orden del ciclo de vida: del diagnóstico al fin de ciclo.",
-    "Presenten al invitado, den la palabra y marquen cada pregunta como hecha en el panel (pestaña Invitado).",
+    "Presenten a Oscar, den la palabra y marquen cada pregunta como hecha en el panel (pestaña Invitado).",
     "Si lo desean, compartan la pestaña del proyector por Meet para que KOSMOS TIC vea la pregunta en pantalla.",
   ],
   semaforo: [
@@ -194,6 +195,7 @@ export const GUION: Record<string, string[]> = {
   cierre: [
     "Lean la frase final: la tecnología no se compra, se gestiona de principio a fin.",
     "Pregunta de cierre: ¿qué cambiarían de su lienzo después de escuchar a KOSMOS TIC?",
-    "Pasen a las notas, el podio y la premiación. Agradezcan a KOSMOS TIC.",
+    "Las notas y la premiación ya se hicieron antes de la conexión. Agradezcan a Oscar y a KOSMOS TIC.",
+    "Despidan la clase a las 4:00 p. m.",
   ],
 };

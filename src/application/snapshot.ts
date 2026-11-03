@@ -111,6 +111,8 @@ export interface Snapshot {
     scenarioVotes: { teamId: TeamId; choice: Light }[];
     galleryVoters: TeamId[];
     guestQuestions: GuestQuestion[];
+    /** Enlace de Meet con el invitado (variable GUEST_MEET_URL). Solo lo recibe el equipo docente. */
+    meetUrl: string | null;
     popDetail: { id: string; studentId: StudentId; name: string; teamLabel: string; questionId: string; choice: number | null; correct: boolean; voided: boolean; sentAt: string }[];
     grades: GradeView[];
   };
@@ -317,6 +319,7 @@ export class GetSnapshot {
         scenarioVotes: scVotes.map((v) => ({ teamId: v.teamId, choice: v.choice as Light })),
         galleryVoters: galleryVotes.map((v) => v.teamId),
         guestQuestions,
+        meetUrl: process.env.GUEST_MEET_URL?.trim() || null,
         popDetail: answers
           .filter((a) => a.kind === "sorpresa")
           .sort(byNewestSent)

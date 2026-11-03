@@ -31,7 +31,7 @@ export function GuestTab({ snapshot, action }: { snapshot: Snapshot; action: Act
         <span className="label">Conexión en vivo · {GUEST_MEETING.channel}</span>
         <strong style={{ fontFamily: "var(--display)", fontSize: 20 }}>{GUEST_MEETING.company}</strong>
         <span className="muted">
-          {GUEST_MEETING.start} · Su grupo pregunta en el turno {position} de {snapshot.guest.queue.length}
+          Con {GUEST_MEETING.guest} · {GUEST_MEETING.start} · Su grupo pregunta en el turno {position} de {snapshot.guest.queue.length}
         </span>
       </div>
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { AGENDA } from "@/domain/data/agenda";
 import { useEffect, useRef, useState } from "react";
 import type { Snapshot } from "@/application/snapshot";
 import { currentAgenda, activeCrisis } from "@/application/snapshot";
@@ -37,7 +38,7 @@ export function TeamApp({ initial }: { initial: Snapshot }) {
   const galleryLive = snapshot.state.gallery.status === "votando";
 
   const quizOpen = snapshot.state.quiz.status === "abierto";
-  const guestLive = snapshot.state.agendaIndex >= 12 && snapshot.state.agendaIndex <= 13;
+  const guestLive = AGENDA[snapshot.state.agendaIndex]?.phase === "Invitado";
 
   // Cuando el equipo docente abre una votación o el quiz, se lleva a cada celular a esa pestaña una vez.
   const lastOpen = useRef({ semaforo: snapshot.state.semaforo.scenarioId, gallery: snapshot.state.gallery.status, quiz: snapshot.state.quiz.index });

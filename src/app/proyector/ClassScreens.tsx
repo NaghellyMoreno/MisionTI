@@ -106,6 +106,7 @@ export function GuestScreen({ snapshot }: { snapshot: Snapshot }) {
       <div className="stack-sm">
         <span className="label">Conexión en vivo · {GUEST_MEETING.channel}</span>
         <h2 className="h-display" style={{ fontSize: "clamp(26px, min(3.4vw, 5.5vh), 40px)" }}>{GUEST_MEETING.company}</h2>
+        <span className="hint" style={{ fontSize: 16 }}>Invitado: {GUEST_MEETING.guest}</span>
       </div>
       {cur ? (
         <article className="guest-card">

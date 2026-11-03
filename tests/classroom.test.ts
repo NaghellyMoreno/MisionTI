@@ -20,7 +20,7 @@ import { budgetScore, gradeStudent, DEFAULT_WEIGHTS } from "@/domain/grading";
 import { findPopQuestion, FINAL_QUIZ } from "@/domain/data/questions";
 import { firstSlideOf } from "@/domain/data/lessons";
 import { AGENDA, agendaClock } from "@/domain/data/agenda";
-import { GUEST_TOPICS } from "@/domain/data/guest";
+import { GUEST_MEETING, GUEST_TOPICS } from "@/domain/data/guest";
 import { TEAMS } from "@/domain/data/teams";
 
 let game: GameDependencies;
@@ -37,10 +37,14 @@ beforeEach(() => {
 });
 
 describe("Contenido", () => {
-  it("el cronograma dura 175 minutos y la entrevista empieza a las 2:47 p. m.", () => {
-    expect(AGENDA.reduce((s, a) => s + a.minutes, 0)).toBe(175);
+  it("el cronograma dura 180 minutos y la conexión con el invitado es lo último, de 3:30 a 4:00 p. m.", () => {
+    expect(AGENDA.reduce((s, a) => s + a.minutes, 0)).toBe(180);
     expect(agendaClock(0)).toBe("1:00 p. m.");
-    expect(agendaClock(13)).toBe("2:47 p. m.");
+    const live = AGENDA.length - 1;
+    expect(AGENDA[live].title).toContain("Conexión en vivo");
+    expect(agendaClock(live)).toBe("3:30 p. m.");
+    expect(GUEST_MEETING.start).toBe(agendaClock(live));
+    expect(AGENDA[live].minutes).toBe(30);
   });
 
   it("cada grupo tiene un tema distinto para el invitado", () => {
@@ -49,7 +53,7 @@ describe("Contenido", () => {
 
   it("toda actividad con teoría tiene su diapositiva", () => {
     expect(firstSlideOf(0)).toBe(0);
-    expect(firstSlideOf(13)).not.toBeNull();
+    expect(firstSlideOf(AGENDA.length - 1)).not.toBeNull();
   });
 });
 

@@ -44,7 +44,7 @@ Los pasos detallados para crear el proyecto y subirlo a GitHub están en la secc
 - [ ] `/proyector` abierto en el computador del video beam (F11) y clic en **🔇 Activar sonido**.
 - [ ] **Control remoto (clicker USB):** conectar el receptor USB al computador del video beam. En ese mismo navegador, ingresar como equipo docente (pantalla de inicio) y abrir `/proyector`. Probar que ▶ pasa la diapositiva y ◀ la devuelve (solo funciona cuando el proyector está en **Teoría**). El botón de pantalla en negro (`.` o `B`) oscurece el proyector; `Esc` o cualquier avance lo restablece.
 - [ ] Imprimir o tener abierto `docs/guion-teoria.pdf` (qué decir en cada diapositiva). El mismo guion aparece en **Control → Clase**, debajo de la diapositiva en pantalla.
-- [ ] Confirmar con KOSMOS TIC el enlace de Meet para las **2:47 p. m.**
+- [ ] Poner la variable `GUEST_MEET_URL` en Vercel (enlace de Meet con Oscar) y confirmar con KOSMOS TIC la conexión de las **3:30 p. m.** El botón **Abrir Meet** aparece en Control → Invitado.
 - [ ] 12:45 p. m.: proyector en **Sala**. Los estudiantes van entrando y su nombre se pone verde.
 
 ### 2.1 Prueba de carga (¿se va a caer?)
@@ -70,14 +70,14 @@ Esta prueba mide el servidor y la base de datos. El wifi del salón solo se prue
 | 12:45 | Sala de espera | Pestaña **Asistencia**: ver quién falta |
 | 1:00 | Alerta Roja (sin video: se abre con la frase de la portada) | ▶ en el cronograma → **Iniciar**. La teoría salta sola a su diapositiva |
 | 1:10 | Fuentes y expediente KOSMOS TIC | Pestaña **Clase**: avanzar diapositivas. Al cerrar: **🎯 Lanzar** (bloque Fuentes) |
-| 1:22–2:34 | Niveles 1 a 6 + juego | Diapositivas → sorpresa al cerrar cada nivel (el panel sugiere el bloque) → Mercado y crisis. Los grupos llenan su **Lienzo** en el celular; el avance se ve en la pestaña **Lienzos** |
-| 2:34 | Pausa activa | Diapositiva de pausa: 60 segundos de pie |
-| 2:42 | Afinar pregunta | Los grupos escriben su pregunta en la pestaña **Invitado** del celular |
-| 2:47 | KOSMOS TIC en vivo | Pestaña **Invitado**: **En pantalla** en orden (del nivel 1 al 6) y **Marcar hecha** |
-| 3:17 | Semáforo | Pestaña **Semáforo**: abrir, votar de pie con el celular, revelar |
-| 3:27 | Galería | Pestaña **Galería** → **Abrir votación** (los lienzos se cierran). El proyector rota los lienzos cada 15 s o muestra el que fijen en **Lienzos → Proyectar este lienzo**; el vocero lo defiende en 20 s |
-| 3:33 | Quiz final | Pestaña **Quiz**: Iniciar → Revelar → Siguiente (12 preguntas, 20 s cada una) |
-| 3:45 | Notas y premiación | Pestaña **Lienzos**: José califica la rúbrica (puede hacerlo durante la Galería) → **Notas → Descargar para Excel** · proyector en **Podio** |
+| 1:22–2:42 | Niveles 1 a 6 + juego | Diapositivas → sorpresa al cerrar cada nivel (el panel sugiere el bloque) → Mercado y crisis. Los grupos llenan su **Lienzo** en el celular; el avance se ve en la pestaña **Lienzos** |
+| 2:34 | Pausa activa (hasta las 2:42) | Diapositiva de pausa: 60 segundos de pie |
+| 2:42 | Semáforo | Pestaña **Semáforo**: abrir, votar de pie con el celular, revelar |
+| 2:52 | Galería | Pestaña **Galería** → **Abrir votación** (los lienzos se cierran). El proyector rota los lienzos cada 15 s o muestra el que fijen en **Lienzos → Proyectar este lienzo**; el vocero lo defiende en 20 s |
+| 2:58 | Quiz final | Pestaña **Quiz**: Iniciar → Revelar → Siguiente (12 preguntas, 20 s cada una) |
+| 3:10 | Notas y premiación | Pestaña **Lienzos**: José califica la rúbrica (puede hacerlo durante la Galería) → **Notas → Descargar para Excel** · proyector en **Podio** |
+| 3:20 | Afinar pregunta y probar el Meet | Los grupos escriben su pregunta en la pestaña **Invitado** del celular. En **Control → Invitado**, **Abrir Meet** y probar audio con Oscar |
+| 3:30 | KOSMOS TIC en vivo (lo último de la clase) | Pestaña **Invitado**: **En pantalla** en orden (del nivel 1 al 6) y **Marcar hecha**. Al final, diapositiva de cierre y despedida a las 4:00 p. m. |
 
 **Tip para Meet:** en Google Meet usen *Presentar → Una pestaña* con `/proyector`. Así KOSMOS TIC ve en pantalla la pregunta de cada grupo mientras la escucha.
 
@@ -183,3 +183,7 @@ src/
 - El clicker envía teclas: **PageDown / → / ↓** avanzan, **PageUp / ← / ↑** retroceden (`src/app/proyector/usePresenterKeys.ts`). El botón del puntero láser no envía teclas.
 - Requiere sesión docente en el navegador del proyector (la acción `controlSlides` exige `requireStaff`). Si no la hay, el proyector muestra un aviso al pulsar.
 - Si cambian las diapositivas, actualicen también `src/domain/data/guion.ts` (una prueba falla si falta alguna) y regeneren el PDF con `scripts/exportar-guion.mjs` y `scripts/generar-guion.py` (requiere `reportlab==4.2.5`).
+
+### Conexión con el invitado (Oscar, KOSMOS TIC)
+- Es la **última actividad**: de 3:30 a 4:00 p. m. Las notas, el podio y el quiz se hacen antes.
+- El enlace de Meet vive en la variable de entorno `GUEST_MEET_URL` (Vercel y `.env.local`). No está en el código porque `src/domain/data` llega a los celulares; solo el panel docente lo recibe.

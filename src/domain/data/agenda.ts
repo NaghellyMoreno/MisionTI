@@ -18,7 +18,7 @@ export interface AgendaItem {
 export const CLASS_START = { hour: 13, minute: 0 };
 export const CLASS_DATE = "2026-11-04";
 
-/** Cronograma de 3 horas (1:00 a 4:00 p. m.) con 5 minutos de holgura al final. */
+/** Cronograma de 3 horas (1:00 a 4:00 p. m.). La conexión con el invitado es lo último y termina a las 4:00. */
 export const AGENDA: AgendaItem[] = [
   { title: "Alerta Roja", minutes: 10, phase: "Fuente", lead: "José", energy: "Arranque en voz alta con la frase de la portada y el sonido del proyector: nada de sentarse a escuchar." },
   { title: "Fuentes y expediente KOSMOS TIC", minutes: 7, phase: "Fuente", lead: "José", pop: "fuente" },
@@ -32,12 +32,12 @@ export const AGENDA: AgendaItem[] = [
   { title: "Niveles 5 y 6 · Operación y fin de ciclo", minutes: 8, phase: "Entrega", lead: "Camila", pop: "nivel56" },
   { title: "Soporte, mantenimiento y criterio de baja", minutes: 7, phase: "Entrega", lead: "Camila" },
   { title: "Pausa activa y descanso", minutes: 8, phase: "Pausa", lead: "—", energy: "60 segundos de estiramiento guiado antes de soltar el descanso." },
-  { title: "Afinen su pregunta para KOSMOS TIC", minutes: 5, phase: "Invitado", lead: "Camila" },
-  { title: "Conexión en vivo · KOSMOS TIC", minutes: 30, phase: "Invitado", lead: "Camila · José", pop: "kosmos" },
   { title: "Juego Semáforo", minutes: 10, phase: "Evaluación", lead: "Camila", energy: "De pie: cada grupo vota y levanta el celular con su color." },
   { title: "Galería", minutes: 6, phase: "Evaluación", lead: "José", energy: "El vocero de cada grupo defiende su lienzo de pie en 20 segundos." },
   { title: "Quiz final", minutes: 12, phase: "Evaluación", lead: "Camila" },
-  { title: "Notas, premiación y cierre", minutes: 10, phase: "Evaluación", lead: "José" },
+  { title: "Notas y premiación", minutes: 10, phase: "Evaluación", lead: "José" },
+  { title: "Afinen su pregunta y prueba de conexión", minutes: 10, phase: "Invitado", lead: "Camila", energy: "Mientras escriben, prueben el Meet con Oscar: audio, enlace y pestaña del proyector." },
+  { title: "Conexión en vivo · KOSMOS TIC", minutes: 30, phase: "Invitado", lead: "Camila · José", pop: "kosmos", energy: "Cierre de la clase: la conexión llega hasta las 4:00 p. m." },
 ];
 
 /** Hora de inicio de cada actividad, en formato 1:17 p. m. */
