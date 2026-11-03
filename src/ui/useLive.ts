@@ -8,6 +8,10 @@ const CHANNEL = "mision-ti";
 const EVENT = "changed";
 const POLL_WITH_REALTIME = 15_000;
 const POLL_WITHOUT_REALTIME = 3_000;
+/** Una petición que no responde en este tiempo se cancela, para no bloquear las siguientes. */
+const FETCH_TIMEOUT_MS = 8_000;
+/** Con fallos seguidos, el sondeo se espacia (hasta 12 s) en vez de saturar una red lenta. */
+const MAX_POLL_MS = 12_000;
 
 /**
  * Mantiene la pantalla sincronizada: escucha los avisos de Supabase Realtime
@@ -21,18 +25,26 @@ export function useLive(initial: Snapshot, options: { heartbeat?: boolean } = {}
   const [realtime, setRealtime] = useState(false);
   const offset = useRef(initial.serverNow - Date.now());
   const inflight = useRef<Promise<void> | null>(null);
+  const failures = useRef(0);
 
   const refresh = useCallback(() => {
     if (inflight.current) return inflight.current;
-    inflight.current = fetch("/api/state", { cache: "no-store" })
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+    inflight.current = fetch("/api/state", { cache: "no-store", signal: controller.signal })
       .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
       .then((s: Snapshot) => {
         offset.current = s.serverNow - Date.now();
         setSnapshot(s);
         setOnline(true);
+        failures.current = 0;
       })
-      .catch(() => setOnline(false))
+      .catch(() => {
+        failures.current += 1;
+        setOnline(false);
+      })
       .finally(() => {
+        clearTimeout(timeout);
         inflight.current = null;
       });
     return inflight.current;
@@ -56,12 +68,25 @@ export function useLive(initial: Snapshot, options: { heartbeat?: boolean } = {}
   }, [refresh]);
 
   useEffect(() => {
-    const id = setInterval(() => void refresh(), realtime ? POLL_WITH_REALTIME : POLL_WITHOUT_REALTIME);
-    const onFocus = () => void refresh();
+    const base = realtime ? POLL_WITH_REALTIME : POLL_WITHOUT_REALTIME;
+    let timer: ReturnType<typeof setTimeout>;
+    let stopped = false;
+    const tick = async () => {
+      // Con la pantalla apagada o la pestaña oculta no se gasta datos; al volver se actualiza (onFocus).
+      if (!document.hidden) await refresh();
+      if (stopped) return;
+      const delay = Math.min(base * 2 ** Math.min(failures.current, 3), Math.max(base, MAX_POLL_MS));
+      timer = setTimeout(() => void tick(), delay);
+    };
+    timer = setTimeout(() => void tick(), base);
+    const onFocus = () => {
+      if (!document.hidden) void refresh();
+    };
     window.addEventListener("focus", onFocus);
     document.addEventListener("visibilitychange", onFocus);
     return () => {
-      clearInterval(id);
+      stopped = true;
+      clearTimeout(timer);
       window.removeEventListener("focus", onFocus);
       document.removeEventListener("visibilitychange", onFocus);
     };
