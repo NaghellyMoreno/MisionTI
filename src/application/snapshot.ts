@@ -1,9 +1,10 @@
 import { AGENDA } from "@/domain/data/agenda";
 import { GUEST_TOPICS, guestTopicOf, type GuestTopic } from "@/domain/data/guest";
-import { FINAL_QUIZ, QUIZ_SECONDS, findPopQuestion } from "@/domain/data/questions";
+import { FINAL_QUIZ, QUIZ_MINUTES, findPopQuestion } from "@/domain/data/questions";
 import { SCENARIOS } from "@/domain/data/semaforo";
 import { findCrisis } from "@/domain/crisis/deck";
 import { GALLERY_ROUND, balanceOf, parseGalleryChoice, ranking, semaforoRound } from "@/domain/rules";
+import { quizOrderFor, rankQuiz, type QuizResult } from "@/domain/selection";
 import { isOnline, studentsOf } from "@/domain/students";
 import type { GameState, GuestQuestion, LedgerEntry, Light, Purchase, StaffName, StudentId, Team, TeamId } from "@/domain/types";
 import { POP_GRACE_MS } from "./usecases/classroom";
@@ -75,12 +76,13 @@ export interface Snapshot {
     status: GameState["quiz"]["status"];
     openedAt: number | null;
     durationMs: number;
-    question: QuestionView | null;
-    answered: number;
-    answer?: number;
-    explanation?: string;
-    tally?: number[];
-    leaderboard?: { name: string; teamLabel: string; points: number }[];
+    /** Cuántos estudiantes participan (conectados o con alguna respuesta) y cuántos ya contestaron todo. */
+    participants: number;
+    finished: number;
+    /** Todos los participantes terminaron antes de que se acabara el tiempo: el monitor lo avisa. */
+    allDone: boolean;
+    /** Ranking final (solo al terminar): más aciertos y, a igualdad, menor tiempo. */
+    leaderboard?: { name: string; teamLabel: string; correct: number; total: number; timeMs: number }[];
   };
   guest: {
     current: null | { teamLabel: string; levelName: string; topic: string; text: string };
@@ -99,8 +101,13 @@ export interface Snapshot {
     myGallery: TeamId[];
     pendingPops: { answerId: string; deadline: number; question: QuestionView }[];
     popScore: { asked: number; correct: number };
-    quizChoice: number | null;
-    quizPoints: number;
+    /** Quiz de este estudiante: preguntas en SU orden (sin respuesta correcta) y lo que ya contestó. */
+    quiz: null | {
+      questions: QuestionView[];
+      answered: Record<string, number>;
+      /** Solo al terminar. */
+      result?: { correct: number; total: number; timeMs: number; rank: number | null };
+    };
     guestTopic: GuestTopic | null;
     guestQuestion: GuestQuestion | null;
   };
@@ -219,32 +226,58 @@ export class GetSnapshot {
       };
     }
 
-    /* Quiz final */
+    /* Quiz final: cada estudiante avanza a su ritmo dentro de un tiempo común */
     const qz = state.quiz;
-    const quizQuestion = qz.index >= 0 ? FINAL_QUIZ[qz.index] : undefined;
-    const quizRows = quizQuestion ? answers.filter((a) => a.kind === "quiz" && a.questionId === quizQuestion.id) : [];
-    const showAnswer = qz.status === "revelado" || qz.status === "terminado";
+    const quizAnswers = answers.filter((a) => a.kind === "quiz" && a.choice !== null);
+    const byStudent = new Map<StudentId, typeof quizAnswers>();
+    for (const a of quizAnswers) byStudent.set(a.studentId, [...(byStudent.get(a.studentId) ?? []), a]);
+    const results: QuizResult[] = [...byStudent.entries()].map(([studentId, rows]) => ({
+      studentId,
+      correct: rows.filter((r) => r.choice === FINAL_QUIZ.find((q) => q.id === r.questionId)?.answer).length,
+      answered: rows.length,
+      timeMs: Math.max(...rows.map((r) => Date.parse(r.answeredAt ?? r.sentAt))) - (qz.openedAt ?? 0),
+    }));
+    const participants = new Set<StudentId>([...roster.filter((r) => r.online).map((r) => r.id), ...byStudent.keys()]);
+    const finishedCount = results.filter((r) => r.answered >= FINAL_QUIZ.length).length;
+    const ranked = rankQuiz(results);
     const quiz: Snapshot["quiz"] = {
       index: qz.index,
       total: FINAL_QUIZ.length,
       status: qz.status,
       openedAt: qz.openedAt,
-      durationMs: QUIZ_SECONDS * 1000,
-      question: quizQuestion && qz.status !== "cerrado" ? { id: quizQuestion.id, text: quizQuestion.text, options: [...quizQuestion.options] } : null,
-      answered: quizRows.length,
+      durationMs: QUIZ_MINUTES * 60_000,
+      participants: participants.size,
+      finished: finishedCount,
+      allDone: qz.status === "abierto" && participants.size > 0 && finishedCount >= participants.size,
     };
-    if (quizQuestion && showAnswer) {
-      quiz.answer = quizQuestion.answer;
-      quiz.explanation = quizQuestion.explanation;
-      quiz.tally = [0, 1, 2, 3].map((i) => quizRows.filter((a) => a.choice === i).length);
-      const totals = new Map<StudentId, number>();
-      for (const a of answers) if (a.kind === "quiz") totals.set(a.studentId, (totals.get(a.studentId) ?? 0) + a.points);
-      quiz.leaderboard = [...totals.entries()]
-        .filter(([, points]) => points > 0)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5)
-        .map(([id, points]) => ({ name: studentName.get(id) ?? id, teamLabel: teamLabel.get(id.split("-")[0]) ?? "", points }));
+    if (qz.status === "terminado") {
+      quiz.leaderboard = ranked.slice(0, 10).map((r) => ({
+        name: studentName.get(r.studentId) ?? r.studentId,
+        teamLabel: teamLabel.get(r.studentId.split("-")[0]) ?? "",
+        correct: r.correct,
+        total: FINAL_QUIZ.length,
+        timeMs: r.timeMs,
+      }));
     }
+
+    const quizView = (studentId: StudentId): NonNullable<Snapshot["team"]>["quiz"] => {
+      if (qz.status === "cerrado") return null;
+      const order = quizOrderFor(studentId, FINAL_QUIZ.map((q) => q.id));
+      const mine = byStudent.get(studentId) ?? [];
+      const view: NonNullable<Snapshot["team"]>["quiz"] = {
+        questions: order.map((id) => {
+          const q = FINAL_QUIZ.find((x) => x.id === id)!;
+          return { id: q.id, text: q.text, options: [...q.options] };
+        }),
+        answered: Object.fromEntries(mine.map((a) => [a.questionId, a.choice as number])),
+      };
+      if (qz.status === "terminado") {
+        const r = results.find((x) => x.studentId === studentId);
+        const pos = ranked.findIndex((x) => x.studentId === studentId);
+        view.result = { correct: r?.correct ?? 0, total: FINAL_QUIZ.length, timeMs: r?.timeMs ?? 0, rank: pos >= 0 ? pos + 1 : null };
+      }
+      return view;
+    };
 
     /* Invitado: orden de la entrevista por nivel del ciclo */
     const byTeam = new Map(guestQuestions.map((g) => [g.teamId, g]));
@@ -303,8 +336,7 @@ export class GetSnapshot {
               return { answerId: a.id, deadline: a.deadline!, question: { id: q.id, text: q.text, options: [...q.options] } };
             }),
           popScore: { asked: myPops.filter((a) => !a.voided).length, correct: myPops.filter((a) => a.correct && !a.voided).length },
-          quizChoice: quizQuestion ? (myAnswers.find((a) => a.kind === "quiz" && a.questionId === quizQuestion.id)?.choice ?? null) : null,
-          quizPoints: myAnswers.filter((a) => a.kind === "quiz").reduce((s, a) => s + a.points, 0),
+          quiz: quizView(viewer.studentId),
           guestTopic: guestTopicOf(team.id),
           guestQuestion: byTeam.get(team.id) ?? null,
         };

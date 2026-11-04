@@ -11,8 +11,8 @@ export interface Question {
 
 /** Tiempo para responder una pregunta sorpresa. */
 export const POP_SECONDS = 45;
-/** Tiempo por pregunta del quiz final. */
-export const QUIZ_SECONDS = 20;
+/** Tiempo total del quiz final: todas las preguntas, a su ritmo. */
+export const QUIZ_MINUTES = 15;
 
 export const POP_SECTIONS: Record<PopSection, string> = {
   fuente: "Fase 1 · Fuentes y KOSMOS TIC",

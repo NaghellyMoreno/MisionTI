@@ -188,9 +188,10 @@ export const GUION: Record<string, string[]> = {
     "José califica la rúbrica de 6 criterios mientras avanza la Galería.",
   ],
   quiz: [
-    "Quiz final individual: 12 preguntas en el celular, 20 segundos cada una.",
-    "Acertar rápido da más puntos.",
-    "Flujo en el panel: Iniciar, Revelar, Siguiente.",
+    "Quiz final individual: 12 preguntas en el celular, 15 minutos en total, cada estudiante a su ritmo.",
+    "Cada estudiante ve las preguntas en un orden distinto. No hay retroalimentación durante el quiz.",
+    "Gana quien más acierta y, si empatan, quien termina en menos tiempo.",
+    "Flujo en el panel: Iniciar quiz. Si todos terminan antes, el monitor avisa. Luego, Mostrar ranking.",
   ],
   cierre: [
     "Lean la frase final: la tecnología no se compra, se gestiona de principio a fin.",

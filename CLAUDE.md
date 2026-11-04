@@ -52,9 +52,3 @@ npm test        # vitest: tests/*.test.ts
 npm run build
 ```
 Antes de dar algo por terminado: `npx tsc --noEmit`, `npm test` y `npm run build` deben pasar. Si cambian el modelo de datos, actualicen ambos adaptadores (memoria y Supabase), `schema.sql` y una migración nueva.
-
-## Pendiente o por decidir
-- Cambiar `STAFF_PIN` en Vercel: `2026` es el código de pruebas y está escrito en el repositorio.
-- Correr la prueba de carga contra Vercel antes de la clase.
-- La propuesta en PDF (fases, cronograma y materiales) se escribió para 13 grupos; la app ya usa 11.
-- La integración con Supabase en vivo debe probarse en un ensayo real en el salón, con los celulares en el wifi de la universidad.

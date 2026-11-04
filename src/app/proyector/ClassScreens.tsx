@@ -6,6 +6,7 @@ import { GUEST_MEETING } from "@/domain/data/guest";
 import { SLIDES } from "@/domain/data/lessons";
 import { firstName } from "@/domain/students";
 import { SlideView } from "@/ui/SlideView";
+import { formatClock } from "@/ui/time";
 import { useTick } from "@/ui/useLive";
 
 const LETTERS = ["A", "B", "C", "D"];
@@ -132,58 +133,44 @@ export function GuestScreen({ snapshot }: { snapshot: Snapshot }) {
 }
 
 export function QuizScreen({ snapshot, serverNow }: { snapshot: Snapshot; serverNow: () => number }) {
-  useTick(250);
+  useTick(500);
   const q = snapshot.quiz;
-  const online = snapshot.roster.filter((r) => r.online).length;
 
-  if (q.status === "cerrado" || !q.question) {
+  if (q.status === "cerrado") {
     return (
       <section className="takeover">
         <span className="label" style={{ fontSize: 16 }}>Quiz final individual</span>
         <h2 className="h-display" style={{ fontSize: "clamp(36px, min(6vw, 9vh), 72px)" }}>Saquen el celular.</h2>
-        <p className="muted" style={{ fontSize: "clamp(18px, 2.4vw, 26px)", margin: 0 }}>{q.total} preguntas · acertar rápido da más puntos</p>
+        <p className="muted" style={{ fontSize: "clamp(18px, 2.4vw, 26px)", margin: 0 }}>
+          {q.total} preguntas · {Math.round(q.durationMs / 60_000)} minutos · gana quien más acierte y en menos tiempo
+        </p>
       </section>
     );
   }
 
-  if (q.status === "terminado") return <Leaderboard snapshot={snapshot} title="Podio del quiz" />;
+  if (q.status === "terminado") return <Leaderboard snapshot={snapshot} title="Ranking del quiz" />;
 
-  const left = q.openedAt ? Math.max(0, Math.ceil((q.openedAt + q.durationMs - serverNow()) / 1000)) : 0;
-  const revealed = q.status === "revelado";
-  const max = Math.max(1, ...(q.tally ?? [1]));
+  const leftMs = q.openedAt ? Math.max(0, q.openedAt + q.durationMs - serverNow()) : 0;
+  const pct = q.participants ? Math.round((q.finished / q.participants) * 100) : 0;
 
   return (
-    <section className="quiz-screen">
-      <div className="row between">
-        <span className="label" style={{ fontSize: 14 }}>Pregunta {q.index + 1} de {q.total}</span>
-        <span className="mono muted" style={{ fontSize: 20 }}>{q.answered}/{online} respondieron</span>
-      </div>
-      <div className="row between quiz-head" style={{ alignItems: "start", gap: 32 }}>
-        <p className="quiz-big">{q.question.text}</p>
-        {!revealed && <span className={`coins ${left <= 5 ? "coral" : ""}`} style={{ fontSize: "clamp(56px, min(9vw, 13vh), 110px)", lineHeight: 1 }}>{left}</span>}
-      </div>
-      <div className="quiz-options">
-        {q.question.options.map((o, i) => (
-          <div key={i} className={`quiz-opt opt-${i} ${revealed ? (i === q.answer ? "right" : "dim-out") : ""}`}>
-            <span className="mono quiz-letter">{LETTERS[i]}</span>
-            <span className="grow">{o}</span>
-            {revealed && q.tally && (
-              <span className="quiz-bar">
-                <i style={{ width: `${(q.tally[i] / max) * 100}%` }} />
-                <b className="mono">{q.tally[i]}</b>
-              </span>
-            )}
-          </div>
-        ))}
-      </div>
-      {revealed && q.leaderboard && q.leaderboard.length > 0 && (
-        <div className="quiz-top">
-          {q.leaderboard.slice(0, 3).map((l, i) => (
-            <span key={i} className="chip mint" style={{ fontSize: 15, padding: "6px 14px" }}>
-              {i + 1}. {firstName(l.name)} · {l.points}
-            </span>
-          ))}
+    <section className="takeover">
+      <span className="label" style={{ fontSize: 16 }}>Quiz final individual · {q.total} preguntas</span>
+      <span className={`coins ${leftMs <= 60_000 ? "coral" : ""}`} style={{ fontSize: "clamp(80px, min(16vw, 24vh), 220px)", lineHeight: 1 }}>
+        {formatClock(leftMs)}
+      </span>
+      {q.allDone ? (
+        <div className="panel alert" style={{ padding: "18px 28px" }}>
+          <strong style={{ fontFamily: "var(--display)", fontSize: "clamp(24px, 3.6vw, 44px)" }}>
+            ¡Todos terminaron! Ya se puede mostrar el ranking.
+          </strong>
         </div>
+      ) : leftMs === 0 ? (
+        <p className="muted" style={{ fontSize: "clamp(18px, 2.4vw, 28px)", margin: 0 }}>Se acabó el tiempo.</p>
+      ) : (
+        <p className="muted" style={{ fontSize: "clamp(18px, 2.4vw, 28px)", margin: 0 }}>
+          Cada uno a su ritmo · {q.finished}/{q.participants} ya terminaron ({pct} %)
+        </p>
       )}
     </section>
   );
@@ -193,12 +180,14 @@ function Leaderboard({ snapshot, title }: { snapshot: Snapshot; title: string })
   const top = snapshot.quiz.leaderboard ?? [];
   return (
     <section className="stack" style={{ alignContent: "center", maxWidth: 1000, margin: "0 auto", width: "100%" }}>
-      <span className="label" style={{ fontSize: 16 }}>{title}</span>
+      <span className="label" style={{ fontSize: 16 }}>{title} · más aciertos en menos tiempo</span>
       {top.map((l, i) => (
-        <div key={i} className={`proj-row ${i === 0 ? "lead" : ""}`} style={{ gridTemplateColumns: "70px 1fr 220px", animationDelay: `${(top.length - i) * 200}ms` }}>
+        <div key={i} className={`proj-row ${i === 0 ? "lead" : ""}`} style={{ gridTemplateColumns: "70px 1fr 260px", animationDelay: `${(top.length - i) * 200}ms` }}>
           <span className="pos">#{i + 1}</span>
           <span className="case" style={{ fontSize: 28, color: "var(--text)" }}>{l.name} <span className="dim" style={{ fontSize: 18 }}>G·{l.teamLabel}</span></span>
-          <span className="coins" style={{ fontSize: 40, textAlign: "right" }}>{l.points}<span className="unit">pts</span></span>
+          <span className="coins" style={{ fontSize: 40, textAlign: "right" }}>
+            {l.correct}/{l.total}<span className="unit"> · {formatClock(l.timeMs)}</span>
+          </span>
         </div>
       ))}
     </section>

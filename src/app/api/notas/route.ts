@@ -26,10 +26,10 @@ export async function GET() {
     "Sorpresa aciertos",
     `${COMPONENT_LABELS.quiz} (${w.quiz} %)`,
     "Quiz aciertos",
-    "Quiz puntos",
     `${COMPONENT_LABELS.lienzo} (${w.lienzo} %)`,
     `${COMPONENT_LABELS.juego} (${w.juego} %)`,
     "Nota final",
+    "Pesos aplicados",
     "Observación",
   ];
   const rows = grades.map((g) => [
@@ -39,12 +39,14 @@ export async function GET() {
     g.components.sorpresa ?? null,
     `${g.sorpresa.correct}/${g.sorpresa.asked}`,
     g.components.quiz ?? null,
-    String(g.quiz.correct),
-    g.quiz.points,
+    `${g.quiz.correct}/${g.quiz.total}`,
     g.components.lienzo ?? null,
     g.components.juego ?? null,
     g.final,
-    g.partial ? "Nota calculada con los componentes disponibles" : "",
+    (Object.keys(g.weightsUsed) as (keyof typeof g.weightsUsed)[])
+      .map((k) => `${k} ${String(g.weightsUsed[k]).replace(".", ",")} %`)
+      .join(" · "),
+    [g.partial ? "Nota calculada con los componentes disponibles" : "", ...g.issues].filter(Boolean).join(" "),
   ]);
   const csv = "﻿" + [header, ...rows].map((r) => r.map(cell).join(";")).join("\r\n");
   return new Response(csv, {

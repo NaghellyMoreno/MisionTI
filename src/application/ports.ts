@@ -1,4 +1,4 @@
-import type { Answer, CanvasEntry, GameState, GuestQuestion, GuestQuestionStatus, LedgerEntry, Presence, Purchase, StudentId, Team, TeamId, Vote } from "@/domain/types";
+import type { Answer, AnswerKind, CanvasEntry, GameState, GuestQuestion, GuestQuestionStatus, LedgerEntry, Presence, Purchase, StudentId, Team, TeamId, Vote } from "@/domain/types";
 
 /*
  * Puertos de la aplicación (Dependency Inversion + Interface Segregation).
@@ -53,6 +53,8 @@ export interface AnswerRepository {
   respond(id: string, patch: Pick<Answer, "choice" | "correct" | "points" | "answeredAt">): Promise<boolean>;
   /** Marca o desmarca una respuesta como anulada. */
   setVoided(id: string, voided: boolean): Promise<void>;
+  /** Borra todas las respuestas de un tipo (se usa al reiniciar el quiz). */
+  deleteKind(kind: AnswerKind): Promise<void>;
 }
 
 /** Preguntas que cada grupo le hará al invitado. */

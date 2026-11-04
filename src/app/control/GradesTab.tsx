@@ -9,6 +9,8 @@ import { rubricScore } from "@/domain/grading";
 import type { ActionApi } from "./ControlApp";
 
 const KEYS: (keyof GradeWeights)[] = ["sorpresa", "quiz", "lienzo", "juego"];
+const usedText = (w: Partial<Record<keyof GradeWeights, number>>) =>
+  KEYS.filter((k) => w[k] !== undefined).map((k) => `${COMPONENT_LABELS[k]} ${String(w[k]).replace(".", ",")} %`).join(" · ");
 const fmt = (n: number | null | undefined) => (n === null || n === undefined ? "—" : n.toFixed(1).replace(".", ","));
 
 export function GradesTab({ snapshot, action }: { snapshot: Snapshot; action: ActionApi }) {
@@ -85,12 +87,13 @@ export function GradesTab({ snapshot, action }: { snapshot: Snapshot; action: Ac
                   {!g.attended && <span className="chip coral" style={{ marginLeft: 6 }}>no se conectó</span>}
                 </td>
                 <td className="mono">{fmt(g.components.sorpresa)} <span className="dim">({g.sorpresa.correct}/{g.sorpresa.asked})</span></td>
-                <td className="mono">{fmt(g.components.quiz)} <span className="dim">({g.quiz.correct})</span></td>
+                <td className="mono">{fmt(g.components.quiz)} <span className="dim">({g.quiz.correct}/{g.quiz.total})</span></td>
                 <td className="mono">{fmt(g.components.lienzo)}</td>
                 <td className="mono">{fmt(g.components.juego)}</td>
                 <td className="mono" style={{ textAlign: "right", fontSize: 18 }}>
                   <b className={g.final !== null && g.final < 3 ? "coral" : ""}>{fmt(g.final)}</b>
-                  {g.partial && <span className="dim" title="Calculada con los componentes disponibles">*</span>}
+                  {g.partial && <span className="dim" title={`Pesos aplicados: ${usedText(g.weightsUsed)}`}>*</span>}
+                  {g.issues.length > 0 && <span className="chip coral" style={{ marginLeft: 6 }} title={g.issues.join("\n")}>revisar</span>}
                 </td>
               </tr>
             ))}
@@ -98,7 +101,7 @@ export function GradesTab({ snapshot, action }: { snapshot: Snapshot; action: Ac
         </table>
       </div>
       <p className="hint" style={{ margin: 0 }}>
-        * Nota parcial: si a alguien no le tocó pregunta sorpresa o el lienzo aún no tiene nota, ese componente se excluye y su peso se reparte entre los demás.
+        Cada componente va de 0 a 5 y la nota final es su promedio ponderado, así que nunca pasa de 5,0. * Nota parcial: si a alguien no le tocó pregunta sorpresa o el lienzo aún no tiene nota, ese componente se excluye y su peso se reparte entre los demás (pasen el mouse por el * para ver los pesos aplicados). «revisar»: hubo datos fuera de rango que no se tuvieron en cuenta.
       </p>
     </section>
   );

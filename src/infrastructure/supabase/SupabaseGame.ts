@@ -1,6 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { initialGameState } from "@/domain/rules";
-import type { Answer, CanvasEntry, GameState, GuestQuestion, GuestQuestionStatus, LedgerEntry, Presence, Purchase, Team, Vote } from "@/domain/types";
+import type { Answer, AnswerKind, CanvasEntry, GameState, GuestQuestion, GuestQuestionStatus, LedgerEntry, Presence, Purchase, Team, Vote } from "@/domain/types";
 import type {
   AccessCodes,
   AnswerRepository,
@@ -225,6 +225,10 @@ class SupabaseAnswers implements AnswerRepository, Resettable {
     check(await this.db.from("answers").update({ voided }).eq("id", id));
   }
 
+  async deleteKind(kind: AnswerKind) {
+    check(await this.db.from("answers").delete().eq("kind", kind));
+  }
+
   async clear() {
     check(await this.db.from("answers").delete().not("id", "is", null));
   }
@@ -293,7 +297,10 @@ class SupabaseState implements GameStateRepository {
 
   async get(): Promise<GameState> {
     const row = check(await this.db.from("game_state").select("state").eq("id", 1).maybeSingle());
-    return { ...initialGameState(), ...(row?.state as Partial<GameState> | undefined) };
+    const state = { ...initialGameState(), ...(row?.state as Partial<GameState> | undefined) };
+    // Estado guardado con la mecánica anterior del quiz (pregunta por pregunta): se da por terminado.
+    if ((state.quiz.status as string) === "revelado") state.quiz = { ...state.quiz, status: "terminado" };
+    return state;
   }
 
   async update(mutate: (s: GameState) => GameState) {

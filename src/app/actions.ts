@@ -131,10 +131,10 @@ export async function answerPop(answerId: string, choice: number) {
   }
 }
 
-export async function answerQuiz(choice: number) {
+export async function answerQuiz(questionId: string, choice: number) {
   return run(async () => {
     const { studentId, teamId } = await requireTeam();
-    await new AnswerQuiz(getGame()).execute({ studentId, teamId, choice });
+    await new AnswerQuiz(getGame()).execute({ studentId, teamId, questionId, choice });
   });
 }
 
@@ -178,7 +178,7 @@ export async function voidPopAnswer(answerId: string, voided: boolean) {
   });
 }
 
-export async function controlQuiz(command: "start" | "reveal" | "next" | "finish" | "reset") {
+export async function controlQuiz(command: "start" | "finish" | "reset") {
   return run(async () => {
     await requireStaff();
     await new ControlQuiz(getGame()).execute(command);

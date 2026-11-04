@@ -56,7 +56,7 @@ export function useSoundCues(snapshot: Snapshot) {
       if (s.activeCrisisId && s.activeCrisisId !== prev.crisis) play("crisis");
       else if (s.pop && s.pop.launchedAt !== prev.pop) play("pop");
       else if (quizKey !== prev.quiz && s.quiz.status === "abierto") play("quiz");
-      else if ((quizKey !== prev.quiz && s.quiz.status === "revelado") || (s.semaforo.status === "revelado" && prev.semaforo !== "revelado")) play("reveal");
+      else if ((quizKey !== prev.quiz && s.quiz.status === "terminado") || (s.semaforo.status === "revelado" && prev.semaforo !== "revelado")) play("reveal");
       else if (s.screen === "sala" && online > prev.online) play("join");
     }
     last.current = { crisis: s.activeCrisisId, pop: s.pop?.launchedAt ?? null, quiz: quizKey, semaforo: s.semaforo.status, online };

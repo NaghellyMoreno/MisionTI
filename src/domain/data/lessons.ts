@@ -424,7 +424,7 @@ export const SLIDES: Slide[] = [
     kind: "actividad",
     kicker: "Fase 4 · Evaluación",
     title: "Quiz final individual",
-    points: ["12 preguntas en su celular.", "Acertar rápido da más puntos."],
+    points: ["12 preguntas en su celular, en un orden distinto para cada uno.", "Tienen 15 minutos en total y van a su ritmo.", "Gana quien más acierta y en menos tiempo."],
     sources: [],
   },
   /* ---------- FASE 3 · INVITADO ---------- */

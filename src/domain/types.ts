@@ -195,7 +195,7 @@ export interface GameState {
   slideIndex: number;
   /** Última ronda de preguntas sorpresa (para el proyector). */
   pop: { questionId: string; studentIds: StudentId[]; launchedAt: number; deadline: number } | null;
-  quiz: { index: number; status: "cerrado" | "abierto" | "revelado" | "terminado"; openedAt: number | null };
+  quiz: { index: number; status: "cerrado" | "abierto" | "terminado"; openedAt: number | null };
   guestCurrent: string | null;
   /** Nota del lienzo por grupo (0–5), la pone José con la rúbrica. */
   canvasScores: Record<TeamId, number>;

@@ -1,7 +1,7 @@
 import { INITIAL_BALANCE } from "@/domain/data/catalog";
 import { TEAMS } from "@/domain/data/teams";
 import { initialGameState } from "@/domain/rules";
-import type { Answer, CanvasEntry, GameState, GuestQuestion, GuestQuestionStatus, LedgerEntry, Presence, Purchase, Team, Vote } from "@/domain/types";
+import type { Answer, AnswerKind, CanvasEntry, GameState, GuestQuestion, GuestQuestionStatus, LedgerEntry, Presence, Purchase, Team, Vote } from "@/domain/types";
 import type {
   AccessCodes,
   AnswerRepository,
@@ -104,6 +104,7 @@ class MemoryAnswers implements AnswerRepository, Resettable {
     const row = this.rows.find((r) => r.id === answerId);
     if (row) row.voided = voided;
   }
+  async deleteKind(kind: AnswerKind) { this.rows = this.rows.filter((r) => r.kind !== kind); }
   async clear() { this.rows = []; }
 }
 

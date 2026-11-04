@@ -1,9 +1,10 @@
 import { SLIDES } from "@/domain/data/lessons";
-import { FINAL_QUIZ, POP_BANK, POP_SECONDS, QUIZ_SECONDS, findPopQuestion } from "@/domain/data/questions";
+import { FINAL_QUIZ, POP_BANK, POP_SECONDS, QUIZ_MINUTES, findPopQuestion } from "@/domain/data/questions";
 import type { PopSection } from "@/domain/data/agenda";
 import { GameRuleError } from "@/domain/rules";
+import { validWeights } from "@/domain/grading";
 import { isOnline, studentsOf } from "@/domain/students";
-import { pickFairly, quizPoints, type Random } from "@/domain/selection";
+import { pickFairly, type Random } from "@/domain/selection";
 import type { GuestQuestionStatus, StudentId, TeamId } from "@/domain/types";
 import type { GameDependencies } from "../ports";
 
@@ -11,7 +12,7 @@ type Deps<K extends keyof GameDependencies> = Pick<GameDependencies, K>;
 type Clock = () => number;
 
 /** Margen para respuestas que llegan tarde por una reconexión. */
-export const POP_GRACE_MS = 60_000;
+export const POP_GRACE_MS = 3_000;
 export const QUIZ_GRACE_MS = 3_000;
 
 /* ---------- Asistencia ---------- */
@@ -158,23 +159,21 @@ export class VoidPopAnswer {
 /* ---------- Quiz final ---------- */
 
 export class ControlQuiz {
-  constructor(private readonly deps: Deps<"state" | "notifier">, private readonly clock: Clock = Date.now) {}
+  constructor(private readonly deps: Deps<"state" | "answers" | "notifier">, private readonly clock: Clock = Date.now) {}
 
-  async execute(command: "start" | "reveal" | "next" | "finish" | "reset") {
+  /** "start" abre el quiz para todos; "finish" lo cierra y muestra el ranking; "reset" borra sus respuestas y lo deja sin iniciar. */
+  async execute(command: "start" | "finish" | "reset") {
     const now = this.clock();
+    // Sin las respuestas viejas, al reiniciar todos pueden volver a responder y la nota y el ranking no las usan.
+    if (command === "reset") await this.deps.answers.deleteKind("quiz");
     await this.deps.state.update((s) => {
-      const q = s.quiz;
       switch (command) {
         case "start":
+          if (s.quiz.status !== "cerrado") return s;
           return { ...s, quiz: { index: 0, status: "abierto", openedAt: now }, screen: "quiz" };
-        case "reveal":
-          if (q.status !== "abierto") return s;
-          return { ...s, quiz: { ...q, status: "revelado" } };
-        case "next":
-          if (q.index + 1 >= FINAL_QUIZ.length) return { ...s, quiz: { ...q, status: "terminado" } };
-          return { ...s, quiz: { index: q.index + 1, status: "abierto", openedAt: now }, screen: "quiz" };
         case "finish":
-          return { ...s, quiz: { ...q, status: "terminado" } };
+          if (s.quiz.status === "cerrado") return s;
+          return { ...s, quiz: { ...s.quiz, status: "terminado" }, screen: "quiz" };
         case "reset":
           return { ...s, quiz: { index: -1, status: "cerrado", openedAt: null } };
       }
@@ -186,16 +185,16 @@ export class ControlQuiz {
 export class AnswerQuiz {
   constructor(private readonly deps: Deps<"answers" | "state" | "notifier">, private readonly clock: Clock = Date.now) {}
 
-  async execute(input: { studentId: StudentId; teamId: TeamId; choice: number }) {
+  async execute(input: { studentId: StudentId; teamId: TeamId; questionId: string; choice: number }) {
     const { quiz } = await this.deps.state.get();
-    const question = FINAL_QUIZ[quiz.index];
-    if (quiz.status !== "abierto" || !question || quiz.openedAt === null) throw new GameRuleError("No hay una pregunta abierta.");
+    if (quiz.status !== "abierto" || quiz.openedAt === null) throw new GameRuleError("El quiz no está abierto.");
+    const question = FINAL_QUIZ.find((q) => q.id === input.questionId);
+    if (!question) throw new GameRuleError("Esa pregunta no existe.");
     if (!Number.isInteger(input.choice) || input.choice < 0 || input.choice > 3) throw new GameRuleError("Opción no válida.");
 
     const now = this.clock();
-    const elapsed = now - quiz.openedAt;
-    const duration = QUIZ_SECONDS * 1000;
-    if (elapsed > duration + QUIZ_GRACE_MS) throw new GameRuleError("Se acabó el tiempo.");
+    const duration = QUIZ_MINUTES * 60_000;
+    if (now - quiz.openedAt > duration + QUIZ_GRACE_MS) throw new GameRuleError("Se acabó el tiempo.");
 
     const existing = (await this.deps.answers.list()).some(
       (a) => a.kind === "quiz" && a.questionId === question.id && a.studentId === input.studentId,
@@ -211,7 +210,8 @@ export class AnswerQuiz {
         teamId: input.teamId,
         choice: input.choice,
         correct,
-        points: quizPoints(correct, elapsed, duration),
+        // Un punto por acierto: el desempate es el tiempo (answeredAt menos la apertura del quiz).
+        points: correct ? 1 : 0,
         sentAt: new Date(quiz.openedAt).toISOString(),
         answeredAt: new Date(now).toISOString(),
         deadline: quiz.openedAt + duration,
@@ -303,7 +303,7 @@ export class SetWeights {
   async execute(weights: { sorpresa: number; quiz: number; lienzo: number; juego: number }) {
     const values = Object.values(weights);
     if (values.some((v) => !Number.isInteger(v) || v < 0 || v > 100)) throw new GameRuleError("Cada peso es un entero entre 0 y 100.");
-    if (values.reduce((a, b) => a + b, 0) !== 100) throw new GameRuleError("Los pesos deben sumar 100 %.");
+    if (!validWeights(weights)) throw new GameRuleError("Los pesos deben sumar 100 %.");
     await this.deps.state.update((s) => ({ ...s, weights: { ...weights } }));
     await this.deps.notifier.notify();
   }

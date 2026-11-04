@@ -27,7 +27,8 @@ function writeQueue(q: { answerId: string; choice: number }[]) {
 
 /**
  * Pregunta sorpresa a pantalla completa. Si el celular pierde la señal,
- * la respuesta queda guardada y se reenvía sola al reconectar.
+ * la respuesta queda guardada y se reenvía sola al reconectar; solo cuenta si
+ * llega antes del límite más 3 s de margen (POP_GRACE_MS).
  */
 export function PopOverlay({ pending, serverNow, refresh }: { pending: Pending[]; serverNow: () => number; refresh: () => Promise<void> | void }) {
   useTick(250);
@@ -45,7 +46,10 @@ export function PopOverlay({ pending, serverNow, refresh }: { pending: Pending[]
     for (const item of queue) {
       try {
         const r = await answerPop(item.answerId, item.choice);
-        if (!r.ok && /No se pudo/.test(r.error)) rest.push(item);
+        if (r.ok) setResult({ correct: r.correct, explanation: r.explanation, answer: r.answer, options: [] });
+        else if (/No se pudo/.test(r.error)) rest.push(item);
+        // Llegó tarde (o ya no cuenta): se le dice al estudiante en vez de descartarla en silencio.
+        else setResult({ correct: false, explanation: r.error, answer: -1, options: [] });
       } catch {
         rest.push(item);
       }
@@ -97,7 +101,7 @@ export function PopOverlay({ pending, serverNow, refresh }: { pending: Pending[]
       <div className="pop-overlay" role="dialog" aria-modal="true" aria-label="Resultado">
         <div className={`pop-card ${result.correct ? "ok" : "ko"}`}>
           <span className="pop-big">{result.correct ? "¡Correcto!" : "Esta vez no"}</span>
-          {result.answer >= 0 && !result.correct && (
+          {result.answer >= 0 && !result.correct && result.options[result.answer] && (
             <p style={{ margin: 0 }}>Respuesta: <b>{result.options[result.answer]}</b></p>
           )}
           <p className="muted" style={{ margin: 0 }}>{result.explanation}</p>

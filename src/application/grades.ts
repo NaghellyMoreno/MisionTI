@@ -1,4 +1,3 @@
-import { FINAL_QUIZ } from "@/domain/data/questions";
 import { gradeStudent, rubricScore, type GradeRow } from "@/domain/grading";
 import { balances } from "@/domain/rules";
 import { studentsOf } from "@/domain/students";
@@ -24,7 +23,6 @@ export class GetGrades {
     ]);
     const bal = balances(teams, ledger);
     const all = [...bal.values()];
-    const opened = quizQuestionsOpened(state.quiz);
     const seen = new Set(presence.map((p) => p.studentId));
     const label = new Map(teams.map((t) => [t.id, t.label]));
 
@@ -33,7 +31,7 @@ export class GetGrades {
         studentId: s.id,
         teamId: s.teamId,
         answers: answers.filter((a) => a.studentId === s.id),
-        quizQuestionsOpened: opened,
+        quizStarted: state.quiz.index >= 0,
         canvasScore: rubricScore(state.rubric[s.teamId]) ?? state.canvasScores[s.teamId],
         teamBalance: bal.get(s.teamId) ?? 0,
         balances: all,
@@ -44,9 +42,4 @@ export class GetGrades {
       attended: seen.has(s.id),
     }));
   }
-}
-
-export function quizQuestionsOpened(quiz: { index: number; status: string }): number {
-  if (quiz.index < 0) return 0;
-  return Math.min(quiz.index + 1, FINAL_QUIZ.length);
 }
