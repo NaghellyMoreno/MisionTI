@@ -102,13 +102,15 @@ def slide_flow(slide, say, agenda_item):
     inner += [Paragraph(f'QUÉ DECIR  ·  {clean(agenda_item["lead"])}', S["label"])]
     inner += [Paragraph(clean(line), S["say"], bulletText="›") for line in say]
 
-    table = Table([[inner]], colWidths=[17.2 * cm])
+    # Una fila por párrafo: así la caja se puede partir entre páginas cuando el guion es largo.
+    table = Table([[x] for x in inner], colWidths=[17.2 * cm], splitByRow=True)
     table.setStyle(TableStyle([
         ("BACKGROUND", (0, 0), (-1, -1), colors.white),
         ("BOX", (0, 0), (-1, -1), 0.6, MIST),
         ("LINEBEFORE", (0, 0), (0, -1), 3, BLUE),
         ("LEFTPADDING", (0, 0), (-1, -1), 12), ("RIGHTPADDING", (0, 0), (-1, -1), 12),
-        ("TOPPADDING", (0, 0), (-1, -1), 8), ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+        ("TOPPADDING", (0, 0), (-1, -1), 0), ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
+        ("TOPPADDING", (0, 0), (-1, 0), 8), ("BOTTOMPADDING", (0, -1), (-1, -1), 8),
     ]))
     return table
 

@@ -40,7 +40,9 @@ export function ClassAdmin({ snapshot, action }: { snapshot: Snapshot; action: A
             <span className="label">Qué decir · {AGENDA[slide.agenda]?.lead}</span>
             <ul className="speaker-notes">
               {GUION[slide.id].map((line) => (
-                <li key={line}>{line}</li>
+                <li key={line} className={line.startsWith("[") && line.endsWith("]") ? "note-action" : undefined}>
+                  {line}
+                </li>
               ))}
             </ul>
           </div>
