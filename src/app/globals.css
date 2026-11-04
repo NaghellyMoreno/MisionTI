@@ -401,6 +401,15 @@ a { color: var(--mint); }
 .timer-tweaks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
 .timer-tweaks .btn, .timer-controls .btn { padding-inline: 4px; }
 .control-main { display: grid; gap: 14px; min-width: 0; }
+.pop-alert { position: sticky; top: 64px; z-index: 30; display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(148, 96, 15, 0.35); background: var(--amber-soft); color: var(--text); animation: rise 0.2s ease-out; }
+.pop-alert > div { display: grid; gap: 2px; min-width: 0; }
+.pop-alert strong { font-family: var(--display); font-weight: 600; font-size: 16px; color: var(--amber); }
+.pop-alert span { font-size: 13px; }
+.pop-alert-icon { font-size: 22px; }
+.pop-alert.now { border: 2px solid var(--coral); background: linear-gradient(90deg, var(--coral-soft), var(--ink-2)); animation: rise 0.2s ease-out, pop-ring 1.4s ease-in-out infinite; }
+.pop-alert.now strong { color: var(--coral); font-size: 18px; }
+@keyframes pop-ring { 50% { box-shadow: 0 0 0 6px rgba(180, 69, 47, 0.18); } }
+@media (prefers-reduced-motion: reduce) { .pop-alert.now { animation: none; } }
 .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); overflow-x: auto; scrollbar-width: none; }
 .tabs button {
   border: 0; background: transparent; padding: 12px 14px; cursor: pointer; color: var(--muted);

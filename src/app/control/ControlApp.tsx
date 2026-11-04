@@ -21,6 +21,7 @@ import { GuestAdmin } from "./GuestAdmin";
 import { QuizAdmin } from "./QuizAdmin";
 import { GradesTab } from "./GradesTab";
 import { CanvasAdmin } from "./CanvasAdmin";
+import { PopAlert } from "./PopAlert";
 
 type Tab =
   | "asistencia"
@@ -159,6 +160,7 @@ export function ControlApp({ initial, liveDatabase }: { initial: Snapshot; liveD
         </aside>
 
         <main className="control-main">
+          <PopAlert snapshot={snapshot} left={countdown.left} serverNow={live.serverNow} onGo={() => setTab("clase")} />
           <nav className="tabs" role="tablist">
             {tabs.map((t) => (
               <button key={t.id} role="tab" aria-selected={tab === t.id} onClick={() => setTab(t.id)}>
