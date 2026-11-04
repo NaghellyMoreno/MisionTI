@@ -4,6 +4,7 @@ import type { GameDependencies } from "@/application/ports";
 import {
   AnswerPop,
   AnswerQuiz,
+  ControlSlides,
   ControlQuiz,
   Heartbeat,
   LaunchPop,
@@ -18,7 +19,7 @@ import { GetSnapshot } from "@/application/snapshot";
 import { pickFairly, quizOrderFor, rankQuiz } from "@/domain/selection";
 import { budgetScore, gradeStudent, DEFAULT_WEIGHTS } from "@/domain/grading";
 import { findPopQuestion, FINAL_QUIZ, QUIZ_MINUTES, POP_SECONDS } from "@/domain/data/questions";
-import { firstSlideOf } from "@/domain/data/lessons";
+import { SLIDES, firstSlideOf } from "@/domain/data/lessons";
 import { AGENDA, agendaClock } from "@/domain/data/agenda";
 import { GUEST_MEETING, GUEST_TOPICS } from "@/domain/data/guest";
 import { TEAMS } from "@/domain/data/teams";
@@ -323,5 +324,25 @@ describe("Nota 0 a 5", () => {
   it("pickFairly prioriza a quien menos preguntas tiene", () => {
     const asked = new Map([["a", 2], ["b", 0], ["c", 1]]);
     expect(pickFairly(["a", "b", "c"], asked, 2, () => 0)).toEqual(["b", "c"]);
+  });
+});
+
+describe("Diapositivas y cronograma", () => {
+  it("al pasar a una diapositiva de la siguiente actividad, la actividad y el cronómetro avanzan", async () => {
+    await new ControlAgenda(game, clock).execute("start");
+    const target = SLIDES.findIndex((sl) => sl.agenda === 1);
+    await new ControlSlides(game, clock).execute({ goto: target });
+    const s = await game.state.get();
+    expect(s.agendaIndex).toBe(1);
+    expect(s.timer.status).toBe("running");
+    expect(s.timer.remainingMs).toBe(AGENDA[1].minutes * 60_000);
+  });
+
+  it("retroceder a una diapositiva de una actividad anterior no cambia la actividad", async () => {
+    await new ControlAgenda(game, clock).execute({ goto: 1 });
+    await new ControlSlides(game, clock).execute({ goto: 0 });
+    const s = await game.state.get();
+    expect(s.slideIndex).toBe(0);
+    expect(s.agendaIndex).toBe(1);
   });
 });

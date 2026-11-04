@@ -1,7 +1,7 @@
 import { SLIDES } from "@/domain/data/lessons";
 import { FINAL_QUIZ, POP_BANK, POP_SECONDS, QUIZ_MINUTES, findPopQuestion } from "@/domain/data/questions";
 import type { PopSection } from "@/domain/data/agenda";
-import { GameRuleError } from "@/domain/rules";
+import { GameRuleError, freshTimer } from "@/domain/rules";
 import { validWeights } from "@/domain/grading";
 import { isOnline, studentsOf } from "@/domain/students";
 import { pickFairly, type Random } from "@/domain/selection";
@@ -32,12 +32,24 @@ export class Heartbeat {
 /* ---------- Teoría ---------- */
 
 export class ControlSlides {
-  constructor(private readonly deps: Deps<"state" | "notifier">) {}
+  constructor(private readonly deps: Deps<"state" | "notifier">, private readonly clock: Clock = Date.now) {}
 
   async execute(command: "next" | "prev" | { goto: number }) {
+    const now = this.clock();
     await this.deps.state.update((s) => {
       const target = typeof command === "object" ? command.goto : s.slideIndex + (command === "next" ? 1 : -1);
-      return { ...s, slideIndex: Math.min(Math.max(target, 0), SLIDES.length - 1), screen: "teoria" };
+      const slideIndex = Math.min(Math.max(target, 0), SLIDES.length - 1);
+      const next = { ...s, slideIndex, screen: "teoria" as const };
+      // Si la diapositiva es de una actividad posterior, la actividad avanza con ella.
+      // Hacia atrás no se mueve, para que un clic de más no reinicie el cronómetro.
+      const agendaIndex = SLIDES[slideIndex].agenda;
+      if (agendaIndex <= s.agendaIndex) return next;
+      const timer = freshTimer(agendaIndex);
+      return {
+        ...next,
+        agendaIndex,
+        timer: s.timer.status === "running" ? { status: "running" as const, startedAt: now, remainingMs: timer.remainingMs } : timer,
+      };
     });
     await this.deps.notifier.notify();
   }
