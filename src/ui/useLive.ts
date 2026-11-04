@@ -6,18 +6,18 @@ import type { Snapshot } from "@/application/snapshot";
 
 const CHANNEL = "mision-ti";
 const EVENT = "changed";
-const POLL_WITH_REALTIME = 15_000;
-const POLL_WITHOUT_REALTIME = 3_000;
+const POLL_WITH_REALTIME = 20_000;
+const POLL_WITHOUT_REALTIME = 6_000;
 /** Una petición que no responde en este tiempo se cancela, para no bloquear las siguientes. */
 const FETCH_TIMEOUT_MS = 8_000;
-/** Con fallos seguidos, el sondeo se espacia (hasta 12 s) en vez de saturar una red lenta. */
-const MAX_POLL_MS = 12_000;
+/** Con fallos seguidos, el sondeo se espacia (hasta 30 s) en vez de saturar una red lenta. */
+const MAX_POLL_MS = 30_000;
 
 /**
  * Mantiene la pantalla sincronizada: escucha los avisos de Supabase Realtime
  * y, como respaldo, consulta el estado periódicamente.
  */
-const HEARTBEAT_MS = 15_000;
+const HEARTBEAT_MS = 45_000;
 
 export function useLive(initial: Snapshot, options: { heartbeat?: boolean } = {}) {
   const [snapshot, setSnapshot] = useState(initial);

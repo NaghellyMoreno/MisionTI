@@ -312,7 +312,11 @@ class SupabaseState implements GameStateRepository {
 }
 
 export function createSupabaseGame(env: { url: string; serviceKey: string }): GameDependencies {
-  const db = createClient(env.url, env.serviceKey, { auth: { persistSession: false } });
+  // Si Supabase no responde, se corta a los 8 s en vez de dejar la función colgada hasta 300 s.
+  const db = createClient(env.url, env.serviceKey, {
+    auth: { persistSession: false },
+    global: { fetch: (input, init) => fetch(input, { ...init, signal: init?.signal ?? AbortSignal.timeout(8_000) }) },
+  });
   const teams = new SupabaseTeams(db);
   return {
     teams,

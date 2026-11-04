@@ -8,7 +8,7 @@ export function studentsOf(teams: Team[]): Student[] {
 export const findStudent = (teams: Team[], id: StudentId) => studentsOf(teams).find((s) => s.id === id) ?? null;
 
 /** Se considera conectado quien envió señal en los últimos 45 segundos. */
-export const ONLINE_WINDOW_MS = 45_000;
+export const ONLINE_WINDOW_MS = 100_000;
 
 export const isOnline = (p: Presence | undefined, now: number) => !!p && now - p.lastSeen <= ONLINE_WINDOW_MS;
 

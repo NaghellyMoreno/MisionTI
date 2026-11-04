@@ -38,7 +38,7 @@ Ciclo de vida (tema del profesor): identificación y diagnóstico → análisis 
 | Teclas del control remoto (clicker) | `src/app/proyector/usePresenterKeys.ts` |
 | Preguntas sorpresa y quiz | `src/domain/data/questions.ts` |
 | Orden aleatorio de preguntas y opciones por estudiante | `src/domain/selection.ts` (`quizOrderFor`, `optionOrderFor`) |
-| Libreto imprimible de Karen (diapositivas, guion, frases para memorizar, cronómetro) | `node scripts/exportar-guion.mjs` + `scripts/generar-libreto-karen.py` (salida: `docs/libreto-karen.pdf`) |
+| Libreto de Karen (solo lo que dice, con su frase clave por diapositiva) | `node scripts/exportar-guion.mjs` + `scripts/generar-libreto-karen.py` (salida: `docs/libreto-karen.pdf`) |
 | Material de estudio de Karen (niveles 1 y 2, ruta legal, Mercado) | `scripts/generar-estudio-karen.py` (salida: `docs/estudio-karen-niveles-1-2.pdf`) |
 | Quiz impreso (sin internet) y su clave | `scripts/exportar-quiz.mjs` + `scripts/generar-quiz-impreso.py` (salida: `docs/quiz-impreso.pdf` y `docs/quiz-impreso-clave.pdf`) |
 | Temas de entrevista por grupo | `src/domain/data/guest.ts` |
