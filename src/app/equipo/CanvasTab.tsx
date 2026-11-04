@@ -30,6 +30,13 @@ export function CanvasTab({ snapshot, refresh }: { snapshot: Snapshot; refresh: 
         <span className="label">Lienzo · {company.name}</span>
         <span className="chip mono">{me.canvas.filled}/{CANVAS_FIELDS.length}</span>
       </div>
+      <div className="panel" style={{ padding: 14 }}>
+        <div className="row between">
+          <span className="label">Situación actual</span>
+          <span className="chip">{company.sector}</span>
+        </div>
+        <p style={{ margin: "8px 0 0" }}>{company.situation}</p>
+      </div>
       {company.express && <p className="hint" style={{ margin: 0 }}>{company.express.note}</p>}
       {locked ? (
         <div className="panel alert" style={{ padding: 14 }}>El lienzo se cerró porque empezó la Galería. Así todos votan sobre la misma versión.</div>
