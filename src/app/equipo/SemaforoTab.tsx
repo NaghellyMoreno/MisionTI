@@ -21,7 +21,7 @@ export function SemaforoTab({ snapshot, action }: { snapshot: Snapshot; action: 
       <section className="stack">
         <span className="label coral">Juego Semáforo</span>
         <div className="empty">
-          Cuando Camila abra una situación aparecerá aquí. Decidan en grupo: ¿mantener, mantenimiento o dar de baja?
+          Cuando Camila abra una situación, aparecerá aquí. Decidan en grupo: ¿mantener, mantenimiento o dar de baja?
         </div>
       </section>
     );

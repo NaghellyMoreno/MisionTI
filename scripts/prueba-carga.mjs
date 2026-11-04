@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
- * Prueba de carga de Misión TI: simula los celulares de la clase.
+ * Prueba de carga de Misión TI: simula los celulares y computadores de la clase.
  *
  * Cada estudiante simulado:
  *   1. entra con el código de su grupo (POST /api/login),
  *   2. envía su señal de asistencia cada 15 s (POST /api/presence),
- *   3. pide el estado de la clase cada N segundos (GET /api/state), como hace el celular
+ *   3. pide el estado de la clase cada N segundos (GET /api/state), como hace el celular o computador
  *      cuando el canal en vivo falla (el peor caso).
  *
  * Uso (desde la carpeta del proyecto, con Node 18 o superior):

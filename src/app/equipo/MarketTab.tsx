@@ -34,7 +34,7 @@ export function MarketTab({ snapshot, action }: { snapshot: Snapshot; action: Ac
   return (
     <section className="stack">
       <div className="row between wrap">
-        <span className="label">Mercado tecnológico</span>
+        <span className="label">Mercado Tecnológico</span>
         {snapshot.state.marketOpen ? (
           <span className="chip mint live"><span className="dot" />Abierto</span>
         ) : (

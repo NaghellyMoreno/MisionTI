@@ -20,7 +20,7 @@ export function AttendanceTab({ snapshot }: { snapshot: Snapshot }) {
           </span>
         </div>
         <p className="muted" style={{ margin: 0, maxWidth: "38ch", fontSize: 14 }}>
-          Un estudiante aparece en verde si su celular dio señal en los últimos 45 segundos. Si alguien se cae, vuelve a verde solo al reconectar.
+          Un estudiante aparece en verde si su celular o computador dio señal en los últimos 45 segundos. Si alguien se cae, vuelve a verde solo al reconectar.
         </p>
       </div>
 

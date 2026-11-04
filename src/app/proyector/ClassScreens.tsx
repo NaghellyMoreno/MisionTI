@@ -20,14 +20,14 @@ export function LobbyScreen({ snapshot, join }: { snapshot: Snapshot; join: { ur
     <section className="lobby">
       <div className="lobby-head">
         <div className="stack-sm">
-          <span className="label">Sala de espera · entren desde su celular</span>
+          <span className="label">Sala de espera · entren desde su celular o computador</span>
           <h2 className="h-display" style={{ fontSize: "clamp(28px, min(3.6vw, 6vh), 44px)" }}>Misión TI empieza a la 1:00 p. m.</h2>
         </div>
         <div className="lobby-join">
           {/* SVG generado en el servidor con la dirección de la app: contenido propio, no del usuario. */}
           <div className="lobby-qr" aria-label={`Código QR para entrar: ${join.url}`} dangerouslySetInnerHTML={{ __html: join.svg }} />
           <div className="stack-sm" style={{ gap: 4 }}>
-            <span className="label">Escaneen para entrar</span>
+            <span className="label">Escaneen el QR o escriban la dirección</span>
             <span className="mono lobby-url">{join.url.replace(/^https?:\/\//, "")}</span>
             <span className="hint">Grupo → nombre → código del grupo</span>
           </div>
@@ -76,7 +76,7 @@ export function PopScreen({ snapshot, serverNow }: { snapshot: Snapshot; serverN
   return (
     <section className="takeover pop-screen">
       <span className="chip coral live" style={{ fontSize: 14, padding: "6px 14px" }}><span className="dot" />Pregunta sorpresa</span>
-      <h2 className="h-display" style={{ fontSize: "clamp(32px, min(5vw, 7vh), 56px)" }}>{pop.reveal ? "Se acabó el tiempo" : "Revisen su celular…"}</h2>
+      <h2 className="h-display" style={{ fontSize: "clamp(32px, min(5vw, 7vh), 56px)" }}>{pop.reveal ? "Se acabó el tiempo" : "Revisen su celular o computador…"}</h2>
       <div className="pop-names">
         {pop.students.map((s, i) => (
           <div key={s.id} className={`pop-name ${s.answered ? "done" : ""}`} style={{ animationDelay: `${i * 220}ms` }}>
@@ -140,7 +140,7 @@ export function QuizScreen({ snapshot, serverNow }: { snapshot: Snapshot; server
     return (
       <section className="takeover">
         <span className="label" style={{ fontSize: 16 }}>Quiz final individual</span>
-        <h2 className="h-display" style={{ fontSize: "clamp(36px, min(6vw, 9vh), 72px)" }}>Saquen el celular.</h2>
+        <h2 className="h-display" style={{ fontSize: "clamp(36px, min(6vw, 9vh), 72px)" }}>Saquen el celular o el computador.</h2>
         <p className="muted" style={{ fontSize: "clamp(18px, 2.4vw, 26px)", margin: 0 }}>
           {q.total} preguntas · {Math.round(q.durationMs / 60_000)} minutos · gana quien más acierte y en menos tiempo
         </p>

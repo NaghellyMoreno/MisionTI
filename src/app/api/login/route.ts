@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 /**
  * Ingreso de un estudiante por JSON. Hace lo mismo que el formulario de ingreso;
- * existe para que la prueba de carga (scripts/prueba-carga.mjs) pueda simular celulares.
+ * existe para que la prueba de carga (scripts/prueba-carga.mjs) pueda simular celulares y computadores.
  */
 export async function POST(request: Request) {
   let body: { teamId?: string; studentId?: string; pin?: string };

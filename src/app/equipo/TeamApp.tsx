@@ -40,7 +40,7 @@ export function TeamApp({ initial }: { initial: Snapshot }) {
   const quizOpen = snapshot.state.quiz.status === "abierto";
   const guestLive = AGENDA[snapshot.state.agendaIndex]?.phase === "Invitado";
 
-  // Cuando el equipo docente abre una votación o el quiz, se lleva a cada celular a esa pestaña una vez.
+  // Cuando el equipo docente abre una votación o el quiz, se lleva a cada celular o computador a esa pestaña una vez.
   const lastOpen = useRef({ semaforo: snapshot.state.semaforo.scenarioId, gallery: snapshot.state.gallery.status, quiz: snapshot.state.quiz.index });
   useEffect(() => {
     const prev = lastOpen.current;
@@ -67,7 +67,7 @@ export function TeamApp({ initial }: { initial: Snapshot }) {
         <div className="row" style={{ gap: 10 }}>
           <Signal online={live.online} realtime={live.realtime} />
           <form action={logout}>
-            <button className="btn ghost sm" type="submit" title="Para que otro integrante entre desde este celular">Cambiar</button>
+            <button className="btn ghost sm" type="submit" title="Para que otro integrante entre desde este celular o computador">Cambiar</button>
           </form>
         </div>
       </header>

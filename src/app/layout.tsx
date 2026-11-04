@@ -8,7 +8,7 @@ import "@fontsource/ibm-plex-mono/500.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Misión TI · Rescate Empresarial",
+  title: "Misión TI · Rescate empresarial",
   description: "Tablero en vivo del juego de Gestión de Recursos Tecnológicos.",
   icons: { icon: "/icon.svg" },
 };

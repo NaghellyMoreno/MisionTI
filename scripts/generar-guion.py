@@ -139,7 +139,7 @@ def main(src, out):
 
     # Portada
     story += [Spacer(1, 3 * cm), Paragraph("Guion de la teoría", S["title"]), Spacer(1, 6),
-              Paragraph("Misión TI: Rescate Empresarial", S["subtitle"]), Spacer(1, 14),
+              Paragraph("Misión TI: Rescate empresarial", S["subtitle"]), Spacer(1, 14),
               Paragraph("Gestión de Recursos Tecnológicos · Ingeniería de Sistemas y Computación<br/>"
                         "Miércoles 4 de noviembre de 2026, de 1:00 a 4:00 p. m.", S["body"]), Spacer(1, 18),
               Paragraph("Equipo 3: José Castellanos (docente), Karen Moreno (estratega y cronometrista), "

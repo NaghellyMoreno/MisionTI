@@ -93,7 +93,7 @@ describe("Asistencia y preguntas sorpresa", () => {
     await expect(new LaunchPop(game, clock).execute({ section: "fuente", count: 3 })).rejects.toThrow(/conectados/);
   });
 
-  it("el celular no recibe la respuesta correcta antes de contestar", async () => {
+  it("el celular o computador no recibe la respuesta correcta antes de contestar", async () => {
     await new Heartbeat(game, clock).execute("EQ01-1", "EQ01");
     await new LaunchPop(game, clock, seq([0])).execute({ section: "fuente", count: 1 });
     const snap = await new GetSnapshot(game, clock).execute({ role: "team", teamId: "EQ01", studentId: "EQ01-1" });
@@ -176,7 +176,7 @@ describe("Quiz final", () => {
     expect(r.map((x) => x.studentId)).toEqual(["c", "b", "a"]);
   });
 
-  it("el celular recibe las preguntas en su orden y sin la respuesta correcta", async () => {
+  it("el celular o computador recibe las preguntas en su orden y sin la respuesta correcta", async () => {
     await new ControlQuiz(game, clock).execute("start");
     const snap = await new GetSnapshot(game, clock).execute({ role: "team", teamId: "EQ01", studentId: "EQ01-1" });
     expect(snap.team!.quiz!.questions.map((q) => q.id)).toEqual(quizOrderFor("EQ01-1", ids));

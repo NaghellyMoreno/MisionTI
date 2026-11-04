@@ -50,7 +50,7 @@ export function SemaforoAdmin({ snapshot, action }: { snapshot: Snapshot; action
           const done = awardedScenarios.includes(s.id);
           const isCurrent = current?.id === s.id;
           return (
-            <div key={s.id} className="panel row" style={{ padding: 14, opacity: done && !isCurrent ? 0.6 : 1 }}>
+            <div key={s.id} className="panel row scenario-row" style={{ padding: 14, opacity: done && !isCurrent ? 0.6 : 1 }}>
               <span className="mono dim">{s.id}</span>
               <span className="grow">{s.text}</span>
               <span className={`chip ${s.answer === "verde" ? "mint" : s.answer === "amarillo" ? "amber" : "coral"}`}>{s.answer}</span>

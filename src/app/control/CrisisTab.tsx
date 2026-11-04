@@ -11,7 +11,7 @@ export function CrisisTab({ snapshot, action }: { snapshot: Snapshot; action: Ac
   return (
     <section className="stack">
       <p className="muted" style={{ margin: 0 }}>
-        Al lanzar una carta, su efecto se aplica automáticamente según lo que compró cada grupo y aparece en el proyector y en los celulares.
+        Al lanzar una carta, su efecto se aplica automáticamente según lo que compró cada grupo y aparece en el proyector y en los celulares y computadores.
         Cada carta se juega una sola vez.
       </p>
       <div className="deck">

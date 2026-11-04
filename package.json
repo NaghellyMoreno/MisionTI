@@ -2,7 +2,7 @@
   "name": "mision-ti",
   "version": "1.0.0",
   "private": true,
-  "description": "Misión TI: Rescate Empresarial — tablero en vivo del juego de la clase de Gestión de Recursos Tecnológicos",
+  "description": "Misión TI: Rescate empresarial — tablero en vivo del juego de la clase de Gestión de Recursos Tecnológicos",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

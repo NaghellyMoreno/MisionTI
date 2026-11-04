@@ -92,7 +92,7 @@ export function useLive(initial: Snapshot, options: { heartbeat?: boolean } = {}
     };
   }, [realtime, refresh]);
 
-  // Señal de vida para la lista de asistencia (solo celulares de estudiantes).
+  // Señal de vida para la lista de asistencia (solo celulares y computadores de estudiantes).
   useEffect(() => {
     if (!options.heartbeat) return;
     const beat = () => {

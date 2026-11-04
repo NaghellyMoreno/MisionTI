@@ -89,7 +89,7 @@ export const SLIDES: Slide[] = [
     kind: "mision",
     kicker: "Su misión secreta",
     title: "Cada grupo llega a la entrevista con una pregunta",
-    lead: "Durante la clase aparecerán pistas 🔎 sobre KOSMOS TIC. Cada grupo tiene un tema asignado en la pestaña Invitado de su celular. Escriban su pregunta allí antes de las 3:30 p. m.",
+    lead: "Durante la clase aparecerán pistas 🔎 sobre KOSMOS TIC. Cada grupo tiene un tema asignado en la pestaña Invitado de su celular o computador. Escriban su pregunta allí antes de las 3:30 p. m.",
     sources: ["catalogo"],
   },
 
@@ -102,7 +102,7 @@ export const SLIDES: Slide[] = [
     title: "Ustedes son la firma consultora",
     points: [
       "Cada grupo recibe una empresa en crisis y 100 TecnoCoins.",
-      "Compran recursos en el Mercado desde el celular, con ruta legal y justificación.",
+      "Compran recursos en el Mercado desde el celular o computador, con ruta legal y justificación.",
       "Las cartas de crisis premian o castigan sus decisiones.",
       "Ojo: la app puede escoger a cualquiera para una pregunta sorpresa individual.",
     ],
@@ -147,7 +147,7 @@ export const SLIDES: Slide[] = [
     kind: "actividad",
     kicker: "Manos a la obra",
     title: "Diagnóstico de su empresa en el lienzo",
-    lead: "Pestaña Lienzo del celular · casilla 1. Se guarda solo; uno dicta y otro escribe.",
+    lead: "Pestaña Lienzo del celular o computador · casilla 1. Se guarda solo; uno dicta y otro escribe.",
     points: [
       "¿Cuál es la situación actual?",
       "Tres necesidades específicas.",
@@ -302,7 +302,7 @@ export const SLIDES: Slide[] = [
     kind: "actividad",
     kicker: "Manos a la obra",
     title: "¿Dónde queda cada recurso y a quién capacitan?",
-    lead: "Pestaña Lienzo del celular · casillas 3 y 4.",
+    lead: "Pestaña Lienzo del celular o computador · casillas 3 y 4.",
     points: ["Casilla 3: la ubicación física o lógica de cada recurso.", "Casilla 4: a quién capacitar, en qué y cómo."],
     sources: [],
   },
@@ -381,7 +381,7 @@ export const SLIDES: Slide[] = [
     kind: "actividad",
     kicker: "Manos a la obra",
     title: "Soporte, mantenimiento y criterio de baja",
-    lead: "Pestaña Lienzo del celular · casillas 5 y 6. Al abrir la Galería el lienzo se cierra.",
+    lead: "Pestaña Lienzo del celular o computador · casillas 5 y 6. Al abrir la Galería el lienzo se cierra.",
     points: ["Casilla 5: ¿quién da soporte y cada cuánto se hace mantenimiento?", "Casilla 6: ¿cuándo darían de baja su recurso principal: por daño u obsolescencia?"],
     sources: [],
   },
@@ -412,7 +412,7 @@ export const SLIDES: Slide[] = [
     kicker: "Fase 4 · Evaluación",
     title: "Galería",
     points: [
-      "El proyector muestra cada lienzo; en el celular pueden leerlos todos.",
+      "El proyector muestra cada lienzo; en el celular o computador pueden leerlos todos.",
       "Cuando aparezca su lienzo, el vocero lo defiende de pie en 20 segundos.",
       "Cada grupo vota por los 2 mejores, sin contar el propio.",
     ],
@@ -424,7 +424,7 @@ export const SLIDES: Slide[] = [
     kind: "actividad",
     kicker: "Fase 4 · Evaluación",
     title: "Quiz final individual",
-    points: ["12 preguntas en su celular, en un orden distinto para cada uno.", "Tienen 15 minutos en total y van a su ritmo.", "Gana quien más acierta y en menos tiempo."],
+    points: ["12 preguntas en su celular o computador, en un orden distinto para cada uno.", "Tienen 15 minutos en total y van a su ritmo.", "Gana quien más acierta y en menos tiempo."],
     sources: [],
   },
   /* ---------- FASE 3 · INVITADO ---------- */

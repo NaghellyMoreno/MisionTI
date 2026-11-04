@@ -109,7 +109,7 @@ export function ClassAdmin({ snapshot, action }: { snapshot: Snapshot; action: A
         <div className="panel stack-sm" style={{ maxHeight: 420, overflowY: "auto" }}>
           <span className="label">Historial de preguntas sorpresa</span>
           {staff.popDetail.length === 0 && <span className="hint">Aún no se ha lanzado ninguna.</span>}
-          <span className="hint">¿A alguien se le apagó el celular? Anulen su pregunta: no cuenta en la nota y vuelve a la fila.</span>
+          <span className="hint">¿A alguien se le apagó el celular o computador? Anulen su pregunta: no cuenta en la nota y vuelve a la fila.</span>
           {staff.popDetail.map((p) => (
             <div key={p.id} className={`ledger-row pop-row ${p.voided ? "voided" : ""}`}>
               <div>

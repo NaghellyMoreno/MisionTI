@@ -13,7 +13,7 @@ export const GUION: Record<string, string[]> = {
   "que-es": [
     "Definan el tema en una frase: gestionar recursos tecnológicos es acompañar la tecnología durante toda su vida en la organización, desde antes de comprarla hasta que se retira.",
     "Recorran los 6 niveles del ciclo de vida sin explicarlos todavía: solo nómbrenlos. Son el mapa de toda la clase.",
-    "Anuncien que cada nivel tiene su bloque, su pregunta sorpresa y su casilla en el lienzo del celular.",
+    "Anuncien que cada nivel tiene su bloque, su pregunta sorpresa y su casilla en el lienzo del celular o computador.",
     "Fuentes de respaldo: ISO/IEC 19770-1, ISO 55000 y el MRAE v3.0 de MinTIC.",
   ],
   fuentes: [
@@ -30,13 +30,13 @@ export const GUION: Record<string, string[]> = {
     "No agreguen cifras ni clientes que no estén en el catálogo.",
   ],
   "mision-entrevista": [
-    "Expliquen la misión secreta: cada grupo tiene un tema asignado en la pestaña Invitado del celular.",
+    "Expliquen la misión secreta: cada grupo tiene un tema asignado en la pestaña Invitado del celular o computador.",
     "Durante la clase van a salir pistas con el ícono 🔎 en las diapositivas de KOSMOS TIC; esa pista les sirve para su pregunta.",
     "Fecha límite: escribir la pregunta antes de las 3:30 p. m., cuando se conecta Oscar de KOSMOS TIC.",
   ],
   juego: [
     "Explicar la mecánica en menos de 5 minutos: cada grupo recibe una empresa en crisis y 100 TecnoCoins.",
-    "Compran en el Mercado desde el celular, eligiendo recurso, ruta legal y escribiendo por qué lo necesitan.",
+    "Compran en el Mercado desde el celular o computador, eligiendo recurso, ruta legal y escribiendo por qué lo necesitan.",
     "Las cartas de crisis premian o castigan las decisiones.",
     "Adviertan con una sonrisa: la app puede escoger a cualquiera para una pregunta sorpresa individual, así que todos deben estar atentos.",
   ],
@@ -54,7 +54,7 @@ export const GUION: Record<string, string[]> = {
     "Al cerrar el bloque, lancen la pregunta sorpresa del banco «Nivel 1».",
   ],
   lienzo1: [
-    "Pasen de escuchar a hacer: abran la pestaña Lienzo del celular, casilla 1. Se guarda sola.",
+    "Pasen de escuchar a hacer: abran la pestaña Lienzo del celular o computador, casilla 1. Se guarda sola.",
     "Regla de trabajo: una persona dicta y otra escribe, y rotan en cada casilla.",
     "Qué deben dejar escrito: la situación actual, tres necesidades específicas, una oportunidad tecnológica y el reto principal.",
     "Tiempo: 8 minutos. Recorran los grupos y revisen el avance en la pestaña Lienzos del panel.",
@@ -119,7 +119,7 @@ export const GUION: Record<string, string[]> = {
     "Pista para el grupo EQ07.",
   ],
   lienzo2: [
-    "Pestaña Lienzo del celular, casillas 3 y 4.",
+    "Pestaña Lienzo del celular o computador, casillas 3 y 4.",
     "Casilla 3: dónde queda cada recurso, en lo físico o en lo lógico.",
     "Casilla 4: a quién capacitar, en qué y cómo.",
     "Segunda carta de crisis hacia la mitad del bloque (10 minutos).",
@@ -153,7 +153,7 @@ export const GUION: Record<string, string[]> = {
     "Pista para los grupos EQ11 y EQ12.",
   ],
   lienzo3: [
-    "Pestaña Lienzo del celular, casillas 5 y 6.",
+    "Pestaña Lienzo del celular o computador, casillas 5 y 6.",
     "Casilla 5: quién da soporte y cada cuánto se hace mantenimiento.",
     "Casilla 6: cuándo darían de baja su recurso principal, por daño o por obsolescencia.",
     "Avisen que al abrir la Galería el lienzo se cierra, así que terminen a tiempo.",
@@ -166,7 +166,7 @@ export const GUION: Record<string, string[]> = {
   afinar: [
     "Últimos 10 minutos antes de la conexión, que es lo último de la clase (3:30 a 4:00 p. m.).",
     "Mientras los grupos escriben, prueben el Meet con Oscar: audio, enlace y compartir la pestaña del proyector.",
-    "Revisen la pista del tema en la pestaña Invitado del celular.",
+    "Revisen la pista del tema en la pestaña Invitado del celular o computador.",
     "Una sola pregunta de máximo 30 segundos, conectada con la empresa del juego, para que sea más interesante.",
     "Camila puede corregir la redacción desde el panel antes de ponerla en pantalla.",
   ],
@@ -177,18 +177,18 @@ export const GUION: Record<string, string[]> = {
     "Si lo desean, compartan la pestaña del proyector por Meet para que KOSMOS TIC vea la pregunta en pantalla.",
   ],
   semaforo: [
-    "Fase 4, evaluación. Juego de pie: cada grupo vota y levanta el celular con su color.",
+    "Fase 4, evaluación. Juego de pie: cada grupo vota y muestra su color en el celular o computador.",
     "Verde: mantener. Amarillo: soporte o mantenimiento. Rojo: dar de baja (¿por daño o por obsolescencia?).",
     "Se revela la respuesta con su explicación y se premia a los grupos que acertaron.",
   ],
   galeria: [
-    "El proyector muestra cada lienzo; en el celular pueden leerlos todos.",
+    "El proyector muestra cada lienzo; en el celular o computador pueden leerlos todos.",
     "Cuando aparezca su lienzo, el vocero lo defiende de pie en 20 segundos.",
     "Cada grupo vota por los 2 mejores, sin contar el propio.",
     "José califica la rúbrica de 6 criterios mientras avanza la Galería.",
   ],
   quiz: [
-    "Quiz final individual: 12 preguntas en el celular, 15 minutos en total, cada estudiante a su ritmo.",
+    "Quiz final individual: 12 preguntas en el celular o computador, 15 minutos en total, cada estudiante a su ritmo.",
     "Cada estudiante ve las preguntas en un orden distinto. No hay retroalimentación durante el quiz.",
     "Gana quien más acierta y, si empatan, quien termina en menos tiempo.",
     "Flujo en el panel: Iniciar quiz. Si todos terminan antes, el monitor avisa. Luego, Mostrar ranking.",

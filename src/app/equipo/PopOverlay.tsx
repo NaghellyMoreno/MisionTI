@@ -11,7 +11,7 @@ type Result = { correct: boolean; explanation: string; answer: number; options: 
 const QUEUE_KEY = "mti-pop-queue";
 const LETTERS = ["A", "B", "C", "D"];
 
-/** Respuestas guardadas en el celular mientras vuelve la conexión. */
+/** Respuestas guardadas en el celular o computador mientras vuelve la conexión. */
 function readQueue(): { answerId: string; choice: number }[] {
   try {
     return JSON.parse(localStorage.getItem(QUEUE_KEY) ?? "[]");
@@ -26,7 +26,7 @@ function writeQueue(q: { answerId: string; choice: number }[]) {
 }
 
 /**
- * Pregunta sorpresa a pantalla completa. Si el celular pierde la señal,
+ * Pregunta sorpresa a pantalla completa. Si el celular o computador pierde la señal,
  * la respuesta queda guardada y se reenvía sola al reconectar; solo cuenta si
  * llega antes del límite más 3 s de margen (POP_GRACE_MS).
  */

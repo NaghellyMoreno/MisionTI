@@ -52,7 +52,7 @@ create table if not exists public.votes (
   primary key (round, team_id)
 );
 
--- Asistencia: última señal de cada celular -----------------------------
+-- Asistencia: última señal de cada celular o computador -----------------------------
 create table if not exists public.presence (
   student_id text primary key,
   team_id    text not null references public.teams(id) on delete cascade,

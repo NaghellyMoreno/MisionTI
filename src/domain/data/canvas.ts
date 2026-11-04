@@ -1,6 +1,6 @@
 /**
  * Lienzo digital: una casilla por nivel del ciclo de vida.
- * Reemplaza el pliego de papel; los grupos lo llenan desde el celular.
+ * Reemplaza el pliego de papel; los grupos lo llenan desde el celular o computador.
  */
 export type CanvasFieldId = "diagnostico" | "adquisicion" | "implementacion" | "capacitacion" | "operacion" | "fin";
 

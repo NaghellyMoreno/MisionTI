@@ -17,7 +17,7 @@ select 'EQ14', 100, 'inicial', 'Presupuesto inicial'
 where not exists (select 1 from public.ledger where team_id = 'EQ14');
 delete from public.teams where id = 'EQ13';
 
--- Asistencia: última señal de cada celular -----------------------------
+-- Asistencia: última señal de cada celular o computador -----------------------------
 create table if not exists public.presence (
   student_id text primary key,
   team_id    text not null references public.teams(id) on delete cascade,

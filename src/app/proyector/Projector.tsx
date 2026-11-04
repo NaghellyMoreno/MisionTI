@@ -205,11 +205,11 @@ function Podium({ snapshot }: { snapshot: Snapshot }) {
         <span className="team">G·{r.label}</span>
         <span className="muted">{caseName(r.caseId)}</span>
         <Coins value={r.balance} className="" />
-        <div className="block" style={{ height: `min(${height}px, ${height / 8}vh)` }}>{place}</div>
+        <div className="block" style={{ height: `min(${height}px, ${height / 12}vh)` }}>{place}</div>
       </div>
     );
   return (
-    <section className="stack" style={{ alignContent: "end", gap: 28 }}>
+    <section className="stack" style={{ alignContent: "end", gap: "clamp(12px, 3vh, 28px)" }}>
       <div className="row between">
         <span className="label" style={{ fontSize: 16 }}>Misión cumplida · mejor manejo del presupuesto</span>
         {gallery && gallery.votes > 0 && <span className="chip mint" style={{ fontSize: 14, padding: "6px 14px" }}>Galería: G·{gallery.label} · {gallery.votes} votos</span>}

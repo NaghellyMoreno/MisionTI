@@ -11,7 +11,7 @@ const KIND_LABEL: Record<Slide["kind"], string> = {
   pausa: "Pausa activa",
 };
 
-/** Una diapositiva de teoría. La misma pieza sirve para proyector, celular y vista previa. */
+/** Una diapositiva de teoría. La misma pieza sirve para proyector, celular o computador y vista previa. */
 export function SlideView({ slide, size = "md", clue }: { slide: Slide; size?: "sm" | "md" | "lg"; clue?: boolean }) {
   return (
     <article className={`slide slide-${slide.kind} slide-${size}`}>
