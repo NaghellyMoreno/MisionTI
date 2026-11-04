@@ -30,12 +30,24 @@ export function CanvasTab({ snapshot, refresh }: { snapshot: Snapshot; refresh: 
         <span className="label">Lienzo · {company.name}</span>
         <span className="chip mono">{me.canvas.filled}/{CANVAS_FIELDS.length}</span>
       </div>
-      <div className="panel" style={{ padding: 14 }}>
+      <div className="panel" style={{ padding: 14, display: "grid", gap: 10 }}>
         <div className="row between">
-          <span className="label">Situación actual</span>
+          <span className="label">Su empresa</span>
           <span className="chip">{company.sector}</span>
         </div>
-        <p style={{ margin: "8px 0 0" }}>{company.situation}</p>
+        <p style={{ margin: 0 }}>{company.profile}</p>
+        <div>
+          <span className="label">Situación actual</span>
+          <p style={{ margin: "4px 0 0" }}>{company.situation}</p>
+          <ul style={{ margin: "6px 0 0", paddingLeft: 18, display: "grid", gap: 4 }}>
+            {company.problems.map((p) => <li key={p}>{p}</li>)}
+          </ul>
+        </div>
+        <div>
+          <span className="label">Su reto</span>
+          <p style={{ margin: "4px 0 0" }}>{company.challenge}</p>
+        </div>
+        {company.isPublic && <p className="hint" style={{ margin: 0 }}>Es una entidad pública: toda compra sigue la contratación estatal.</p>}
       </div>
       {company.express && <p className="hint" style={{ margin: 0 }}>{company.express.note}</p>}
       {locked ? (

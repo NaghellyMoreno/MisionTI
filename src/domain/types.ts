@@ -24,6 +24,12 @@ export interface CompanyCase {
   name: string;
   sector: string;
   situation: string;
+  /** Quién es la empresa: tamaño, qué hace y a quién atiende. */
+  profile: string;
+  /** Problemas concretos que los estudiantes deben detectar en el diagnóstico. */
+  problems: string[];
+  /** Qué se espera del grupo con sus 100 TecnoCoins. */
+  challenge: string;
   /** Las entidades públicas deben seguir la contratación estatal. */
   isPublic: boolean;
   /** Modo exprés para quien juega sola: menos carga, mismas reglas y mismo presupuesto. */
