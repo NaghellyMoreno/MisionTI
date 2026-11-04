@@ -199,13 +199,20 @@ function GalleryScreen({ snapshot, serverNow }: { snapshot: Snapshot; serverNow:
 function Podium({ snapshot }: { snapshot: Snapshot }) {
   const [first, second, third] = snapshot.ranking;
   const gallery = snapshot.gallery.results?.[0];
+  // ¿Hay otro grupo con el mismo saldo? Entonces se explica cómo se desempató.
+  const tiedOnCoins = (r: typeof first) => snapshot.ranking.some((x) => x.teamId !== r.teamId && x.balance === r.balance);
   const step = (r: typeof first | undefined, place: number, height: number) =>
     r && (
       <div className={`step ${place === 1 ? "first" : ""}`} style={{ animationDelay: `${(3 - place) * 250}ms` }}>
         <span className="team">G·{r.label}</span>
         <span className="muted">{caseName(r.caseId)}</span>
         <Coins value={r.balance} className="" />
-        <div className="block" style={{ height: `min(${height}px, ${height / 12}vh)` }}>{place}</div>
+        {tiedOnCoins(r) && (
+          <span className="hint">
+            {r.galleryVotes !== undefined ? `Desempate: ${r.galleryVotes} ${r.galleryVotes === 1 ? "voto" : "votos"} en la Galería` : "Empate en TecnoCoins"}
+          </span>
+        )}
+        <div className="block" style={{ height: `min(${height}px, ${height / 12}vh)` }}>{r.position}</div>
       </div>
     );
   return (

@@ -4,7 +4,7 @@ import type { PopSection } from "@/domain/data/agenda";
 import { GameRuleError, freshTimer } from "@/domain/rules";
 import { validWeights } from "@/domain/grading";
 import { isOnline, studentsOf } from "@/domain/students";
-import { pickFairly, type Random } from "@/domain/selection";
+import { optionOrderFor, pickFairly, type Random } from "@/domain/selection";
 import type { GuestQuestionStatus, StudentId, TeamId } from "@/domain/types";
 import type { GameDependencies } from "../ports";
 
@@ -143,16 +143,20 @@ export class AnswerPop {
     if (row.deadline !== null && now > row.deadline + POP_GRACE_MS) throw new GameRuleError("Se acabó el tiempo para esta pregunta.");
 
     const question = findPopQuestion(row.questionId)!;
-    const correct = input.choice === question.answer;
+    // El estudiante elige la posición en su pantalla; se guarda el índice original de la opción.
+    const order = optionOrderFor(input.studentId, question.id, question.options.length);
+    const choice = order[input.choice];
+    const correct = choice === question.answer;
     const ok = await this.deps.answers.respond(row.id, {
-      choice: input.choice,
+      choice,
       correct,
       points: correct ? 1 : 0,
       answeredAt: new Date(now).toISOString(),
     });
     if (!ok) throw new GameRuleError("Ya respondiste esta pregunta.");
     await this.deps.notifier.notify();
-    return { correct, explanation: question.explanation, answer: question.answer };
+    // La respuesta correcta se devuelve en la posición en que la ve este estudiante.
+    return { correct, explanation: question.explanation, answer: order.indexOf(question.answer) };
   }
 }
 
@@ -213,14 +217,16 @@ export class AnswerQuiz {
     );
     if (existing) throw new GameRuleError("Ya respondiste esta pregunta.");
 
-    const correct = input.choice === question.answer;
+    // El estudiante elige la posición en su pantalla; se guarda el índice original de la opción.
+    const choice = optionOrderFor(input.studentId, question.id, question.options.length)[input.choice];
+    const correct = choice === question.answer;
     await this.deps.answers.createMany([
       {
         kind: "quiz",
         questionId: question.id,
         studentId: input.studentId,
         teamId: input.teamId,
-        choice: input.choice,
+        choice,
         correct,
         // Un punto por acierto: el desempate es el tiempo (answeredAt menos la apertura del quiz).
         points: correct ? 1 : 0,

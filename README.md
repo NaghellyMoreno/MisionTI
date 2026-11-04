@@ -55,7 +55,7 @@ App de la clase **Gestión de Recursos Tecnológicos**: presenta la teoría, lle
 | 2:42 | Semáforo | **Semáforo**: abrir, votar de pie con el celular o computador, revelar |
 | 2:52 | Galería | **Galería** → **Abrir votación** (los lienzos se cierran). El proyector rota los lienzos cada 15 s o muestra el que fijen en **Lienzos → Proyectar este lienzo** |
 | 2:58 | Quiz final (15 min) | **Quiz**: **Iniciar quiz**. Cada estudiante responde las 12 preguntas a su ritmo, en un orden distinto. Si todos terminan antes, el proyector lo avisa. Luego **Terminar y mostrar ranking** |
-| 3:13 | Notas y premiación | **Lienzos**: José califica la rúbrica → **Notas → Descargar para Excel** · proyector en **Podio** |
+| 3:13 | Notas y premiación | **Lienzos**: José califica la rúbrica → **Notas → Descargar para Excel** · proyector en **Podio** (si hay empate en TC, desempatan los votos de la Galería ya revelada) |
 | 3:20 | Afinar pregunta y probar el Meet | Los grupos escriben su pregunta en **Invitado**. **Abrir Meet** y probar audio con Oscar |
 | 3:30 | KOSMOS TIC en vivo (lo último, hasta las 4:00) | **Invitado**: **En pantalla** en orden (nivel 1 al 6) y **Marcar hecha**. Cierre con la última diapositiva |
 

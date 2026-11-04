@@ -274,7 +274,7 @@ def story():
             ("Quiz", "2:58 · Camila. Iniciar quiz: 12 preguntas en 15 min, en un orden distinto para cada estudiante, sin saber si acertó. "
              "El proyector muestra el reloj y cuántos terminaron, y avisa «¡Todos terminaron!». Luego, Terminar y mostrar ranking: más "
              "aciertos y, si empatan, menos tiempo."),
-            ("Notas", "3:13 · José. En Notas se ven todas las notas; Descargar para Excel. Proyector en Podio para la premiación."),
+            ("Notas", "3:13 · José. En Notas se ven todas las notas; Descargar para Excel. Proyector en Podio para la premiación; si dos grupos empatan en TC, desempata la votación de la Galería (por eso conviene revelarla antes)."),
         ]),
         block("3:20", "Fase 3 · Invitado: KOSMOS TIC", "3:20–4:00 · 40 min · lidera: Camila y José", [
             ("Panel", "3:20: los grupos afinan su pregunta en Invitado; Abrir Meet y probar audio con Oscar. 3:30: poner cada pregunta En "

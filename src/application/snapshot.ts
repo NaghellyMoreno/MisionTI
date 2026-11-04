@@ -3,8 +3,8 @@ import { GUEST_TOPICS, guestTopicOf, type GuestTopic } from "@/domain/data/guest
 import { FINAL_QUIZ, QUIZ_MINUTES, findPopQuestion } from "@/domain/data/questions";
 import { SCENARIOS } from "@/domain/data/semaforo";
 import { findCrisis } from "@/domain/crisis/deck";
-import { GALLERY_ROUND, balanceOf, parseGalleryChoice, ranking, semaforoRound } from "@/domain/rules";
-import { quizOrderFor, rankQuiz, type QuizResult } from "@/domain/selection";
+import { GALLERY_ROUND, balanceOf, galleryCounts, parseGalleryChoice, ranking, semaforoRound } from "@/domain/rules";
+import { optionOrderFor, optionsFor, quizOrderFor, rankQuiz, type QuizResult } from "@/domain/selection";
 import { isOnline, studentsOf } from "@/domain/students";
 import type { GameState, GuestQuestion, LedgerEntry, Light, Purchase, StaffName, StudentId, Team, TeamId } from "@/domain/types";
 import { POP_GRACE_MS } from "./usecases/classroom";
@@ -23,6 +23,8 @@ export interface RankingView {
   balance: number;
   position: number;
   assets: number;
+  /** Votos en la Galería, solo cuando ya se revelaron (desempate del ranking y del podio). */
+  galleryVotes?: number;
 }
 
 export interface RosterView {
@@ -153,13 +155,17 @@ export class GetSnapshot {
     const studentName = new Map(students.map((s) => [s.id, s.name]));
     const presenceById = new Map(presence.map((p) => [p.studentId, p]));
 
-    const rows: RankingView[] = ranking(teams, ledger, purchases).map((r) => ({
+    // Los votos de la Galería desempatan el ranking, pero solo cuando ya se revelaron.
+    const galleryVotes = votes.filter((v) => v.round === GALLERY_ROUND);
+    const galleryCount = state.gallery.status === "revelada" ? galleryCounts(teams, galleryVotes.map((v) => v.choice)) : undefined;
+    const rows: RankingView[] = ranking(teams, ledger, purchases, galleryCount).map((r) => ({
       teamId: r.team.id,
       label: r.team.label,
       caseId: r.team.caseId,
       balance: r.balance,
       position: r.position,
       assets: r.assets,
+      ...(r.galleryVotes !== undefined && { galleryVotes: r.galleryVotes }),
     }));
 
     const roster: RosterView[] = students.map((s) => ({ ...s, online: isOnline(presenceById.get(s.id), now) }));
@@ -187,11 +193,9 @@ export class GetSnapshot {
       : null;
 
     /* Galería */
-    const galleryVotes = votes.filter((v) => v.round === GALLERY_ROUND);
     const gallery: Snapshot["gallery"] = { status: state.gallery.status, voted: galleryVotes.length };
-    if (state.gallery.status === "revelada") {
-      const count = new Map<TeamId, number>(teams.map((t) => [t.id, 0]));
-      for (const v of galleryVotes) for (const id of parseGalleryChoice(v.choice)) count.set(id, (count.get(id) ?? 0) + 1);
+    if (galleryCount) {
+      const count = galleryCount;
       gallery.results = teams
         .map((t) => ({ teamId: t.id, label: t.label, votes: count.get(t.id) ?? 0 }))
         .sort((a, b) => b.votes - a.votes || a.teamId.localeCompare(b.teamId));
@@ -267,9 +271,10 @@ export class GetSnapshot {
       const view: NonNullable<Snapshot["team"]>["quiz"] = {
         questions: order.map((id) => {
           const q = FINAL_QUIZ.find((x) => x.id === id)!;
-          return { id: q.id, text: q.text, options: [...q.options] };
+          return { id: q.id, text: q.text, options: optionsFor(studentId, q.id, q.options) };
         }),
-        answered: Object.fromEntries(mine.map((a) => [a.questionId, a.choice as number])),
+        // Posición en pantalla de lo que respondió (se guarda el índice original).
+        answered: Object.fromEntries(mine.map((a) => [a.questionId, optionOrderFor(studentId, a.questionId).indexOf(a.choice as number)])),
       };
       if (qz.status === "terminado") {
         const r = results.find((x) => x.studentId === studentId);
@@ -333,7 +338,7 @@ export class GetSnapshot {
             .filter((a) => a.choice === null && !a.voided && a.deadline !== null && now <= a.deadline + POP_GRACE_MS)
             .map((a) => {
               const q = findPopQuestion(a.questionId)!;
-              return { answerId: a.id, deadline: a.deadline!, question: { id: q.id, text: q.text, options: [...q.options] } };
+              return { answerId: a.id, deadline: a.deadline!, question: { id: q.id, text: q.text, options: optionsFor(viewer.studentId, q.id, q.options) } };
             }),
           popScore: { asked: myPops.filter((a) => !a.voided).length, correct: myPops.filter((a) => a.correct && !a.voided).length },
           quiz: quizView(viewer.studentId),

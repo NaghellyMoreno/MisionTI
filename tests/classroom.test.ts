@@ -16,7 +16,10 @@ import {
 import { ControlAgenda } from "@/application/usecases/agenda";
 import { GetGrades } from "@/application/grades";
 import { GetSnapshot } from "@/application/snapshot";
-import { pickFairly, quizOrderFor, rankQuiz } from "@/domain/selection";
+import { optionOrderFor, pickFairly, quizOrderFor, rankQuiz } from "@/domain/selection";
+
+/** Posición en que un estudiante ve la opción original `original` de una pregunta. */
+const shown = (studentId: string, questionId: string, original: number) => optionOrderFor(studentId, questionId).indexOf(original);
 import { budgetScore, gradeStudent, DEFAULT_WEIGHTS } from "@/domain/grading";
 import { findPopQuestion, FINAL_QUIZ, QUIZ_MINUTES, POP_SECONDS } from "@/domain/data/questions";
 import { SLIDES, firstSlideOf } from "@/domain/data/lessons";
@@ -84,7 +87,7 @@ describe("Asistencia y preguntas sorpresa", () => {
     const answer = new AnswerPop(game, clock);
     await expect(answer.execute({ studentId: "EQ02-1", answerId: row.id, choice: 2 })).rejects.toThrow(/no es para ti/);
     now += POP_SECONDS * 1000 + 2_000; // pasó el límite, pero dentro del margen de 3 s por señal
-    const r = await answer.execute({ studentId: "EQ01-1", answerId: row.id, choice: findPopQuestion("F4")!.answer });
+    const r = await answer.execute({ studentId: "EQ01-1", answerId: row.id, choice: shown("EQ01-1", "F4", findPopQuestion("F4")!.answer) });
     expect(r.correct).toBe(true);
     await expect(answer.execute({ studentId: "EQ01-1", answerId: row.id, choice: 0 })).rejects.toThrow(/Ya respondiste/);
   });
@@ -119,7 +122,7 @@ describe("Quiz final", () => {
   const ids = FINAL_QUIZ.map((q) => q.id);
   const answerAll = async (studentId: string, teamId: string, correct = true) => {
     for (const q of FINAL_QUIZ)
-      await new AnswerQuiz(game, clock).execute({ studentId, teamId, questionId: q.id, choice: correct ? q.answer : (q.answer + 1) % 4 });
+      await new AnswerQuiz(game, clock).execute({ studentId, teamId, questionId: q.id, choice: shown(studentId, q.id, correct ? q.answer : (q.answer + 1) % 4) });
   };
 
   it("cada estudiante tiene su propio orden, estable y sin repetir preguntas", () => {
@@ -133,7 +136,7 @@ describe("Quiz final", () => {
   it("no deja responder dos veces ni fuera de los 15 minutos", async () => {
     await new ControlQuiz(game, clock).execute("start");
     const q = FINAL_QUIZ[0];
-    await new AnswerQuiz(game, clock).execute({ studentId: "EQ01-1", teamId: "EQ01", questionId: q.id, choice: q.answer });
+    await new AnswerQuiz(game, clock).execute({ studentId: "EQ01-1", teamId: "EQ01", questionId: q.id, choice: shown("EQ01-1", q.id, q.answer) });
     await expect(
       new AnswerQuiz(game, clock).execute({ studentId: "EQ01-1", teamId: "EQ01", questionId: q.id, choice: 0 }),
     ).rejects.toThrow(/Ya respondiste/);
@@ -181,6 +184,43 @@ describe("Quiz final", () => {
     const snap = await new GetSnapshot(game, clock).execute({ role: "team", teamId: "EQ01", studentId: "EQ01-1" });
     expect(snap.team!.quiz!.questions.map((q) => q.id)).toEqual(quizOrderFor("EQ01-1", ids));
     expect(JSON.stringify(snap.team!.quiz)).not.toContain('"answer"');
+  });
+});
+
+describe("Orden aleatorio de las opciones", () => {
+  it("cada estudiante ve las opciones en su propio orden, estable, y la correcta no queda siempre en la misma letra", () => {
+    const a = FINAL_QUIZ.map((q) => optionOrderFor("EQ01-1", q.id).join());
+    expect(FINAL_QUIZ.map((q) => optionOrderFor("EQ01-1", q.id).join())).toEqual(a);
+    for (const order of a) expect(order.split(",").sort().join()).toBe("0,1,2,3");
+    expect(new Set(FINAL_QUIZ.map((q) => shown("EQ01-1", q.id, q.answer))).size).toBeGreaterThan(1);
+    expect(FINAL_QUIZ.some((q) => optionOrderFor("EQ02-1", q.id).join() !== optionOrderFor("EQ01-1", q.id).join())).toBe(true);
+  });
+
+  it("el quiz muestra las opciones mezcladas y califica con el índice original", async () => {
+    await new ControlQuiz(game, clock).execute("start");
+    const q = FINAL_QUIZ[0];
+    const snap = await new GetSnapshot(game, clock).execute({ role: "team", teamId: "EQ01", studentId: "EQ01-1" });
+    const view = snap.team!.quiz!.questions.find((x) => x.id === q.id)!;
+    const pos = view.options.indexOf(q.options[q.answer]);
+    expect(pos).toBe(shown("EQ01-1", q.id, q.answer));
+    await new AnswerQuiz(game, clock).execute({ studentId: "EQ01-1", teamId: "EQ01", questionId: q.id, choice: pos });
+    const [row] = (await game.answers.list()).filter((x) => x.kind === "quiz");
+    expect(row.choice).toBe(q.answer);
+    expect(row.correct).toBe(true);
+    const after = await new GetSnapshot(game, clock).execute({ role: "team", teamId: "EQ01", studentId: "EQ01-1" });
+    expect(after.team!.quiz!.answered[q.id]).toBe(pos);
+  });
+
+  it("la pregunta sorpresa devuelve la correcta en la posición que ve el estudiante", async () => {
+    await new Heartbeat(game, clock).execute("EQ01-1", "EQ01");
+    await new LaunchPop(game, clock, seq([0])).execute({ section: "fuente", questionId: "F3", count: 1 });
+    const snap = await new GetSnapshot(game, clock).execute({ role: "team", teamId: "EQ01", studentId: "EQ01-1" });
+    const pending = snap.team!.pendingPops[0];
+    const q = findPopQuestion("F3")!;
+    const wrong = pending.question.options.findIndex((o) => o !== q.options[q.answer]);
+    const r = await new AnswerPop(game, clock).execute({ studentId: "EQ01-1", answerId: pending.answerId, choice: wrong });
+    expect(r.correct).toBe(false);
+    expect(pending.question.options[r.answer]).toBe(q.options[q.answer]);
   });
 });
 
@@ -291,12 +331,12 @@ describe("Nota 0 a 5", () => {
     await new LaunchPop(game, clock, seq([0])).execute({ section: "fuente", questionId: "F1", count: 1 });
     await new ControlQuiz(game, clock).execute("start");
     const q = FINAL_QUIZ[0];
-    await new AnswerQuiz(game, clock).execute({ studentId: "EQ01-1", teamId: "EQ01", questionId: q.id, choice: q.answer });
+    await new AnswerQuiz(game, clock).execute({ studentId: "EQ01-1", teamId: "EQ01", questionId: q.id, choice: shown("EQ01-1", q.id, q.answer) });
     await new ControlQuiz(game, clock).execute("reset");
     const kinds = (await game.answers.list()).map((a) => a.kind);
     expect(kinds).toEqual(["sorpresa"]);
     await new ControlQuiz(game, clock).execute("start");
-    await new AnswerQuiz(game, clock).execute({ studentId: "EQ01-1", teamId: "EQ01", questionId: q.id, choice: q.answer });
+    await new AnswerQuiz(game, clock).execute({ studentId: "EQ01-1", teamId: "EQ01", questionId: q.id, choice: shown("EQ01-1", q.id, q.answer) });
   });
 
   it("calcula la nota con datos reales de la partida", async () => {
@@ -304,9 +344,9 @@ describe("Nota 0 a 5", () => {
     await new Heartbeat(game, clock).execute("EQ01-1", "EQ01");
     await new LaunchPop(game, clock, seq([0])).execute({ section: "fuente", questionId: "F1", count: 1 });
     const [pop] = await game.answers.list();
-    await new AnswerPop(game, clock).execute({ studentId: "EQ01-1", answerId: pop.id, choice: 1 });
+    await new AnswerPop(game, clock).execute({ studentId: "EQ01-1", answerId: pop.id, choice: shown("EQ01-1", "F1", findPopQuestion("F1")!.answer) });
     await new ControlQuiz(game, clock).execute("start");
-    for (const q of FINAL_QUIZ) await new AnswerQuiz(game, clock).execute({ studentId: "EQ01-1", teamId: "EQ01", questionId: q.id, choice: q.answer });
+    for (const q of FINAL_QUIZ) await new AnswerQuiz(game, clock).execute({ studentId: "EQ01-1", teamId: "EQ01", questionId: q.id, choice: shown("EQ01-1", q.id, q.answer) });
 
     const grades = await new GetGrades(game).execute();
     const g = grades.find((x) => x.studentId === "EQ01-1")!;

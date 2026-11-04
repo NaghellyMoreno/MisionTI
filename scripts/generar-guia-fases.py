@@ -343,7 +343,7 @@ def story():
             ["2:42", "Juego Semáforo (10 min)", "Se proyecta una situación y cada grupo vota de pie: <b>verde</b> (mantener), <b>amarillo</b> (soporte o mantenimiento) o <b>rojo</b> (dar de baja, por daño u obsolescencia). Acertar suma 5 TC.", "Grupo"],
             ["2:52", "Galería (6 min)", "El proyector muestra cada lienzo y el vocero lo defiende de pie en 20 segundos. Cada grupo vota por los 2 mejores, sin contar el propio.", "Grupo"],
             ["2:58", "Quiz final (15 min)", "12 preguntas en el celular o computador, en un orden distinto para cada uno. Cada respuesta es definitiva. Gana quien más acierta y, si hay empate, en menos tiempo.", "Individual"],
-            ["3:13", "Notas y premiación (7 min)", "Se muestran los resultados y el Podio con el mejor manejo del presupuesto.", "—"],
+            ["3:13", "Notas y premiación (7 min)", "Se muestran los resultados y el Podio con el mejor manejo del presupuesto. Si dos grupos empatan en TecnoCoins, desempata la votación de la Galería.", "—"],
         ], [2.0 * cm, 3.3 * cm, WIDTH - 7.3 * cm, 2.0 * cm]),
         P("Cómo se calcula la nota", "h2"),
         table(["Componente", "Peso", "Cálculo"], [

@@ -37,6 +37,8 @@ Ciclo de vida (tema del profesor): identificación y diagnóstico → análisis 
 | Guía del estudiante (Word) y guía de las fases (PDF) | `docs/guia-estudiante.doc` y `.docx`; `scripts/generar-guia-fases.py` (salida: `docs/guia-fases-estudiantes.pdf`) |
 | Teclas del control remoto (clicker) | `src/app/proyector/usePresenterKeys.ts` |
 | Preguntas sorpresa y quiz | `src/domain/data/questions.ts` |
+| Orden aleatorio de preguntas y opciones por estudiante | `src/domain/selection.ts` (`quizOrderFor`, `optionOrderFor`) |
+| Quiz impreso (sin internet) y su clave | `scripts/exportar-quiz.mjs` + `scripts/generar-quiz-impreso.py` (salida: `docs/quiz-impreso.pdf` y `docs/quiz-impreso-clave.pdf`) |
 | Temas de entrevista por grupo | `src/domain/data/guest.ts` |
 | Fuentes citadas | `src/domain/data/sources.ts` |
 | Grupos e integrantes | `src/domain/data/teams.ts` **y** la tabla `teams` en Supabase |

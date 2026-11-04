@@ -112,6 +112,43 @@ describe("Semáforo y Galería", () => {
   });
 });
 
+describe("Desempate del ranking por la Galería", () => {
+  it("mientras se vota no desempata (los votos son secretos); al revelar, gana quien tiene más votos", async () => {
+    // Todos empiezan con 100 TC: empate total.
+    await new SetGallery(game).execute("votando");
+    const vote = new CastGalleryVote(game);
+    await vote.execute("EQ01", ["EQ04", "EQ05"]);
+    await vote.execute("EQ02", ["EQ04", "EQ06"]);
+    await vote.execute("EQ05", ["EQ04", "EQ06"]);
+
+    const during = await new GetSnapshot(game).execute({ role: "public" });
+    expect(during.ranking.every((r) => r.position === 1)).toBe(true);
+    expect(during.ranking.some((r) => r.galleryVotes !== undefined)).toBe(false);
+
+    await new SetGallery(game).execute("revelada");
+    const after = await new GetSnapshot(game).execute({ role: "public" });
+    expect(after.ranking.slice(0, 3).map((r) => [r.teamId, r.position, r.galleryVotes])).toEqual([
+      ["EQ04", 1, 3],
+      ["EQ06", 2, 2],
+      ["EQ05", 3, 1],
+    ]);
+    // Los que empatan en saldo y en votos comparten el puesto.
+    expect(after.ranking.slice(3).every((r) => r.position === 4 && r.galleryVotes === 0)).toBe(true);
+  });
+
+  it("el saldo manda: la Galería solo desempata entre grupos con los mismos TecnoCoins", async () => {
+    await new AdjustBalance(game).execute({ teamIds: ["EQ09"], amount: 5, note: "Oportunidad", staff: "José" });
+    await new SetGallery(game).execute("votando");
+    await new CastGalleryVote(game).execute("EQ01", ["EQ04", "EQ05"]);
+    await new SetGallery(game).execute("revelada");
+    const snap = await new GetSnapshot(game).execute({ role: "public" });
+    expect(snap.ranking[0]).toMatchObject({ teamId: "EQ09", position: 1, balance: 105 });
+    expect(snap.ranking.slice(1, 3).map((r) => r.teamId)).toEqual(["EQ04", "EQ05"]);
+    expect(snap.ranking[1].position).toBe(2);
+    expect(snap.ranking[2].position).toBe(2);
+  });
+});
+
 describe("Administración", () => {
   it("ajustes, temporizador y reinicio", async () => {
     await new AdjustBalance(game).execute({ teamIds: ["EQ07", "EQ09"], amount: 12, note: "Oportunidad", staff: "José" });

@@ -38,6 +38,27 @@ const hash = (text: string) => {
 };
 
 /**
+ * Orden en que un estudiante ve las opciones de una pregunta: aleatorio, pero siempre el mismo
+ * para esa persona y esa pregunta. `order[d]` es el índice original de la opción que aparece en
+ * la posición d. Así la respuesta correcta no queda siempre en la misma letra y cada uno la ve en
+ * un lugar distinto; lo que se guarda y se califica sigue siendo el índice original.
+ */
+export function optionOrderFor(studentId: string, questionId: string, count = 4): number[] {
+  const random = seeded(hash(`opciones:${studentId}:${questionId}`));
+  const order = Array.from({ length: count }, (_, i) => i);
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  return order;
+}
+
+/** Las opciones de una pregunta en el orden en que las ve ese estudiante. */
+export function optionsFor<T>(studentId: string, questionId: string, options: readonly T[]): T[] {
+  return optionOrderFor(studentId, questionId, options.length).map((i) => options[i]);
+}
+
+/**
  * Orden de las preguntas del quiz para un estudiante: aleatorio, pero siempre el mismo
  * para esa persona (si recarga la página no se le reordena ni se le repite nada).
  */

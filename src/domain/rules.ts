@@ -34,20 +34,31 @@ export interface RankingRow {
   balance: number;
   position: number;
   assets: number;
+  /** Votos recibidos en la Galería; solo existe cuando ya se revelaron y se usan para desempatar. */
+  galleryVotes?: number;
 }
 
-export function ranking(teams: Team[], ledger: LedgerEntry[], purchases: Purchase[]): RankingRow[] {
+/**
+ * Ranking por saldo de TecnoCoins. Si dos grupos tienen el mismo saldo, desempata quien tenga más
+ * votos en la Galería (solo cuando ya se revelaron: antes son secretos). Si también empatan en votos,
+ * comparten el puesto; el número del grupo solo fija el orden en que se listan.
+ */
+export function ranking(teams: Team[], ledger: LedgerEntry[], purchases: Purchase[], galleryVotes?: Map<TeamId, number>): RankingRow[] {
   const bal = balances(teams, ledger);
-  const sorted = [...teams].sort((a, b) => (bal.get(b.id) ?? 0) - (bal.get(a.id) ?? 0) || a.id.localeCompare(b.id));
-  let lastBalance: number | null = null;
+  const votesOf = (id: TeamId) => galleryVotes?.get(id) ?? 0;
+  const sorted = [...teams].sort(
+    (a, b) => (bal.get(b.id) ?? 0) - (bal.get(a.id) ?? 0) || votesOf(b.id) - votesOf(a.id) || a.id.localeCompare(b.id),
+  );
+  let last: { balance: number; votes: number } | null = null;
   let lastPosition = 0;
   return sorted.map((team, i) => {
     const balance = bal.get(team.id) ?? 0;
-    const position = balance === lastBalance ? lastPosition : i + 1;
-    lastBalance = balance;
+    const votes = votesOf(team.id);
+    const position = last && balance === last.balance && votes === last.votes ? lastPosition : i + 1;
+    last = { balance, votes };
     lastPosition = position;
     const assets = purchases.filter((p) => p.teamId === team.id && p.status === "aprobada").length;
-    return { team, balance, position, assets };
+    return { team, balance, position, assets, ...(galleryVotes && { galleryVotes: votes }) };
   });
 }
 
@@ -137,4 +148,11 @@ export const semaforoRound = (scenarioId: string) => `semaforo:${scenarioId}`;
 
 export function parseGalleryChoice(choice: string): TeamId[] {
   return choice.split(",").filter(Boolean);
+}
+
+/** Votos que recibió cada grupo en la Galería (cada voto puede elegir varios lienzos). */
+export function galleryCounts(teams: Team[], choices: string[]): Map<TeamId, number> {
+  const count = new Map<TeamId, number>(teams.map((t) => [t.id, 0]));
+  for (const c of choices) for (const id of parseGalleryChoice(c)) if (count.has(id)) count.set(id, (count.get(id) ?? 0) + 1);
+  return count;
 }
